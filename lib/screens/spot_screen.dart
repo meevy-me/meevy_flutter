@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/models/spots.dart';
 
 class SpotScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class SpotScreen extends StatefulWidget {
 
 class _SpotScreenState extends State<SpotScreen> {
   final SoulController controller = Get.find<SoulController>();
+  final SpotController spotController = Get.find<SpotController>();
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -120,14 +122,46 @@ class _SpotScreenState extends State<SpotScreen> {
                                   )
                                 ],
                               ),
-                              IconButton(
-                                  onPressed: () {
-                                    Get.back();
-                                  },
-                                  icon: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                  ))
+                              Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        Get.back();
+                                      },
+                                      icon: const Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                      )),
+                                  PopupMenuButton(
+                                      elevation: 0,
+                                      icon: const Icon(
+                                        Icons.more_horiz_sharp,
+                                        color: Colors.white,
+                                      ),
+                                      color: Colors.white.withOpacity(0.7),
+                                      itemBuilder: (context) {
+                                        return [
+                                          PopupMenuItem(
+                                              onTap: () {
+                                                spotController
+                                                    .deleteSpot(spot.id);
+                                              },
+                                              child: Row(
+                                                children: const [
+                                                  Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
+                                                  SizedBox(
+                                                    width: defaultPadding,
+                                                  ),
+                                                  Text("Delete")
+                                                ],
+                                              ))
+                                        ];
+                                      })
+                                ],
+                              )
                             ],
                           ),
                         ),

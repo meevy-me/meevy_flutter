@@ -63,6 +63,17 @@ class SpotController extends GetxController {
     }
   }
 
+  void deleteSpot(int id) async {
+    http.Response res = await client.delete(fetchSpotsUrl + '$id/');
+    log(res.body);
+    if (res.statusCode <= 210) {
+      if (Get.currentRoute == 'spot_screen') {
+        Get.back();
+      }
+      fetchMySpot();
+    }
+  }
+
   void openConnection() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String token = preferences.getString("token")!;

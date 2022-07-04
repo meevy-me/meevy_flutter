@@ -122,7 +122,6 @@ class Spotify {
         parameters: {"uri": uri},
         useToken: false,
         headers: {'Authorization': "Bearer $accessToken"});
-
     if (res.statusCode <= 210) {
       showSnackBar(context, "Song added to your queue");
     } else if (res.statusCode == 401 &&

@@ -22,7 +22,7 @@ class _MessagesPageState extends State<MessagesPage> {
   final SoulController controller = Get.find<SoulController>();
   final SpotController spotController = Get.find<SpotController>();
   final MessageController messageController = Get.find<MessageController>();
-
+  final SoulController soulController = Get.find<SoulController>();
   @override
   void initState() {
     spotController.fetchSpots();
@@ -43,7 +43,9 @@ class _MessagesPageState extends State<MessagesPage> {
         floatingActionButton: FloatingActionButton(
             backgroundColor: Theme.of(context).primaryColor,
             child: const Icon(FontAwesomeIcons.spotify),
-            onPressed: () async {}),
+            onPressed: () async {
+              var details = soulController.spotify.fetchCurrentPlaying(context);
+            }),
         body: SafeArea(
           child: Column(
             children: [

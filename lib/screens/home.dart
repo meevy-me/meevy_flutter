@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/bottom_navigation.dart';
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   final SoulController controller = Get.put(SoulController());
   final SpotController spotController = Get.put(SpotController());
   final MessageController msgController = Get.put(MessageController());
-
+  PageController _pageController = PageController();
   int selectedIndex = 0;
   List<Widget> pages = const [MatchScreen(), ProfileHome(), SettingsHome()];
   @override
@@ -29,11 +30,22 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: SoulBottomNavigationBar(
         onTap: (index) {
           setState(() {
+            _pageController.animateToPage(index,
+                duration: const Duration(seconds: 1), curve: Curves.easeInOut);
             selectedIndex = index;
           });
         },
       ),
-      body: pages[selectedIndex],
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        },
+        children: pages,
+      ),
     );
   }
 }

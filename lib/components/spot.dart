@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/spots.dart';
 import 'package:soul_date/screens/spot_screen.dart';
+import 'package:soul_date/services/transitions.dart';
 
 class SpotWidget extends StatelessWidget {
   const SpotWidget({
@@ -22,7 +23,8 @@ class SpotWidget extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            Get.to(() => SpotScreen(spots: spots!));
+            Navigator.push(
+                context, scaledTransition(SpotScreen(spots: spots!)));
           },
           child: Stack(
             alignment: Alignment.bottomRight,
@@ -48,16 +50,12 @@ class SpotWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              Hero(
-                tag: spot.details.item.album.images[0].url +
-                    spot.profile.id.toString(),
-                child: CircleAvatar(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.white,
-                  radius: 10,
-                  foregroundImage: CachedNetworkImageProvider(
-                      spot.details.item.album.images[0].url),
-                ),
+              CircleAvatar(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.white,
+                radius: 10,
+                foregroundImage: CachedNetworkImageProvider(
+                    spot.details.item.album.images[0].url),
               )
             ],
           ),
