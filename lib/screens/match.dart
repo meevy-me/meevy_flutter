@@ -1,0 +1,89 @@
+import 'package:animations/animations.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:soul_date/components/appbar_home.dart';
+import 'package:soul_date/components/loading.dart';
+import 'package:soul_date/components/match_card.dart';
+import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/screens/match_detail.dart';
+import 'package:collection/collection.dart';
+
+class MatchScreen extends StatefulWidget {
+  const MatchScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MatchScreen> createState() => _MatchScreenState();
+}
+
+class _MatchScreenState extends State<MatchScreen> {
+  final SoulController controller = Get.find<SoulController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child: Scaffold(
+            appBar: buildHomeAppBar(context),
+            body: _MatchScreenBody(
+              controller: controller,
+            )));
+  }
+}
+
+class _MatchScreenBody extends StatelessWidget {
+  _MatchScreenBody({Key? key, required this.controller}) : super(key: key);
+  final SoulController controller;
+  TextEditingController searchField = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: () {
+        return Future.delayed(const Duration(seconds: 1), (() async {
+          controller.fetchMatches();
+        }));
+      },
+      color: Theme.of(context).primaryColor,
+      child: ListView(
+        padding: scrollPadding,
+        children: [
+          // Padding(
+          //   padding: const EdgeInsets.only(
+          //       top: defaultMargin, bottom: defaultMargin * 2),
+          //   child: SoulField(
+          //     controller: searchField,
+          //     activeColor: Theme.of(context).primaryColor,
+          //     hintText: "Search by Spotify Profile",
+          //     suffixIcon: const Icon(Icons.search),
+          //     prefixIcon: const Icon(FontAwesomeIcons.spotify),
+          //   ),
+          // ),
+          Text(
+            "Your Matches",
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          Padding(
+              padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+              child: Obx(() => controller.matches.isNotEmpty
+                  ? Column(
+                      children: controller.matches
+                          .mapIndexed((index, element) => OpenContainer(
+                                openBuilder: (context, action) => MatchDetail(
+                                    match: controller.matches[index]),
+                                closedBuilder: (context, action) => Padding(
+                                  padding: const EdgeInsets.only(
+                                      bottom: defaultMargin),
+                                  child: MatchCard(
+                                    onLiked: (match) {
+                                      controller.matches.remove(match);
+                                    },
+                                    match: controller.matches[index],
+                                  ),
+                                ),
+                              ))
+                          .toList())
+                  : const Loading()))
+        ],
+      ),
+    );
+  }
+}
