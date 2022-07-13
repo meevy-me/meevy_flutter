@@ -125,6 +125,8 @@ class SpotifyController extends GetxController {
     });
     if (response.statusCode <= 210) {
       Get.to(() => const HomePage());
+    } else if (response.statusCode <= 500) {
+      Get.to(() => const HomePage());
     } else {
       log(response.body, name: "ERROR");
     }

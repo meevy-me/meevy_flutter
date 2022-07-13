@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-class Details {
+import 'package:soul_date/models/match_base.dart';
+
+class Details extends SoulMatch {
   Details({
     this.href,
     this.image,
@@ -77,6 +79,26 @@ class Details {
         "spotify": spotify,
         "popularity": popularity,
       };
+
+  @override
+  String get matchImage {
+    return detailImage;
+  }
+
+  @override
+  String get matchMethod {
+    return "Top Artists";
+  }
+
+  @override
+  String get matchName {
+    return artistName ?? name!;
+  }
+
+  @override
+  String get matchUri {
+    return spotifyLink!;
+  }
 }
 
 class ImagesImage {

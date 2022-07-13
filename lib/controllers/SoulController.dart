@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/models/chat_model.dart';
 import 'package:soul_date/models/friend_model.dart';
@@ -180,6 +181,7 @@ class SoulController extends GetxController {
       Get.to(() => const LoginScreen());
       Get.delete<SoulController>();
       Get.delete<SpotController>();
+      Get.delete<MessageController>();
     }
   }
 }

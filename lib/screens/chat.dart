@@ -7,6 +7,7 @@ import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/chat_model.dart';
+import 'package:soul_date/models/profile_model.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.chat}) : super(key: key);
@@ -20,9 +21,20 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController text = TextEditingController();
   late MessageController messageController;
   final ScrollController scrollController = ScrollController();
+  final SoulController controller = Get.find<SoulController>();
+  late Profile profile;
+
+  Profile currentProfile() {
+    if (controller.profile.first.id == widget.chat.friends.profile1.id) {
+      return widget.chat.friends.profile2;
+    } else {
+      return widget.chat.friends.profile1;
+    }
+  }
 
   @override
   void initState() {
+    profile = currentProfile();
     messageController = Get.find<MessageController>();
     super.initState();
   }
@@ -38,14 +50,14 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: Text(
-          widget.chat.friends.profile2.name,
+          profile.name,
           style: Theme.of(context).textTheme.bodyText1,
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: defaultMargin),
             child: SoulCircleAvatar(
-              imageUrl: widget.chat.friends.profile2.images[0]['image'],
+              imageUrl: profile.images[0]['image'],
               radius: 15,
             ),
           )

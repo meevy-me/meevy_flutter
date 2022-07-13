@@ -71,24 +71,24 @@ class MatchImage extends StatelessWidget {
                           .copyWith(color: Colors.white),
                     ),
                   ),
-                  Row(
-                    children: [
-                      const Icon(
-                        FontAwesomeIcons.locationCrosshairs,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(
-                        width: defaultPadding,
-                      ),
-                      Text(
-                        "Nairobi, Kenya",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(color: Colors.white),
-                      )
-                    ],
-                  )
+                  // Row(
+                  //   children: [
+                  //     const Icon(
+                  //       FontAwesomeIcons.locationCrosshairs,
+                  //       color: Colors.white,
+                  //     ),
+                  //     const SizedBox(
+                  //       width: defaultPadding,
+                  //     ),
+                  //     // Text(
+                  //     //   "Nairobi, Kenya",
+                  //     //   style: Theme.of(context)
+                  //     //       .textTheme
+                  //     //       .bodyText1!
+                  //     //       .copyWith(color: Colors.white),
+                  //     // )
+                  //   ],
+                  // )
                 ],
               ),
               IconButton(
@@ -104,35 +104,35 @@ class MatchImage extends StatelessWidget {
             ],
           ),
         ),
-        Positioned(
-          top: defaultMargin,
-          left: defaultMargin,
-          child: Container(
-            padding: const EdgeInsets.all(defaultMargin),
-            decoration: BoxDecoration(
-                color: Colors.black, borderRadius: BorderRadius.circular(20)),
-            child: Row(
-              children: [
-                Container(
-                  height: 10,
-                  width: 10,
-                  decoration: const BoxDecoration(
-                      shape: BoxShape.circle, color: spotifyGreen),
-                ),
-                const SizedBox(
-                  width: defaultMargin,
-                ),
-                Text(
-                  "Common Top Artists",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2!
-                      .copyWith(color: Colors.white, fontSize: 12),
-                )
-              ],
-            ),
-          ),
-        )
+        // Positioned(
+        //   top: defaultMargin,
+        //   left: defaultMargin,
+        //   child: Container(
+        //     padding: const EdgeInsets.all(defaultMargin),
+        //     decoration: BoxDecoration(
+        //         color: Colors.black, borderRadius: BorderRadius.circular(20)),
+        //     child: Row(
+        //       children: [
+        //         Container(
+        //           height: 10,
+        //           width: 10,
+        //           decoration: const BoxDecoration(
+        //               shape: BoxShape.circle, color: spotifyGreen),
+        //         ),
+        //         const SizedBox(
+        //           width: defaultMargin,
+        //         ),
+        //         Text(
+        //           match.matchMethod,
+        //           style: Theme.of(context)
+        //               .textTheme
+        //               .bodyText2!
+        //               .copyWith(color: Colors.white, fontSize: 12),
+        //         )
+        //       ],
+        //     ),
+        //   ),
+        // )
       ],
     );
   }

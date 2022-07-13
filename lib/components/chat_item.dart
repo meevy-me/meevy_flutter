@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/chat_model.dart';
+import 'package:soul_date/models/profile_model.dart';
 
 import '../constants/constants.dart';
 import 'image_circle.dart';
 
 class ChatItem extends StatelessWidget {
-  const ChatItem({
+  ChatItem({
     Key? key,
     required this.message,
     required this.size,
@@ -14,13 +17,23 @@ class ChatItem extends StatelessWidget {
 
   final Chat message;
   final Size size;
+  final SoulController controller = Get.find<SoulController>();
+
+  Profile currentProfile() {
+    if (controller.profile.first.id == message.friends.profile1.id) {
+      return message.friends.profile2;
+    } else {
+      return message.friends.profile1;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    Profile profile = currentProfile();
     return Row(
       children: [
         SoulCircleAvatar(
-          imageUrl: message.friends.profile2.images[0]['image'],
+          imageUrl: profile.images[0]['image'],
           radius: 25,
         ),
         Padding(
@@ -29,7 +42,7 @@ class ChatItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                message.friends.profile2.name,
+                profile.name,
                 style: Theme.of(context).textTheme.bodyText1,
               ),
               Padding(

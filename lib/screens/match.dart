@@ -1,7 +1,9 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/appbar_home.dart';
+import 'package:soul_date/components/inputfield.dart';
 import 'package:soul_date/components/loading.dart';
 import 'package:soul_date/components/match_card.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -38,25 +40,25 @@ class _MatchScreenBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () {
-        return Future.delayed(const Duration(seconds: 1), (() async {
+        return Future.delayed(const Duration(seconds: 1), () {
           controller.fetchMatches();
-        }));
+        });
       },
       color: Theme.of(context).primaryColor,
       child: ListView(
         padding: scrollPadding,
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.only(
-          //       top: defaultMargin, bottom: defaultMargin * 2),
-          //   child: SoulField(
-          //     controller: searchField,
-          //     activeColor: Theme.of(context).primaryColor,
-          //     hintText: "Search by Spotify Profile",
-          //     suffixIcon: const Icon(Icons.search),
-          //     prefixIcon: const Icon(FontAwesomeIcons.spotify),
-          //   ),
-          // ),
+          Padding(
+            padding: const EdgeInsets.only(
+                top: defaultMargin, bottom: defaultMargin * 2),
+            child: SoulField(
+              controller: searchField,
+              activeColor: Theme.of(context).primaryColor,
+              hintText: "Search by user spotify url",
+              suffixIcon: const Icon(Icons.search),
+              prefixIcon: const Icon(FontAwesomeIcons.spotify),
+            ),
+          ),
           Text(
             "Your Matches",
             style: Theme.of(context).textTheme.headline5,
