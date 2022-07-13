@@ -71,6 +71,17 @@ class _PasswordScreenBodyState extends State<_PasswordScreenBody> {
             ],
           ),
         ),
+        GetBuilder<SpotifyController>(
+            id: "Login_errors",
+            builder: (controller) {
+              return Text(
+                controller.errors,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: Colors.red),
+              );
+            }),
         Form(
           key: formKey,
           child: Padding(

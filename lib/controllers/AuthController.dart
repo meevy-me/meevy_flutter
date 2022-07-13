@@ -16,6 +16,7 @@ import 'package:soul_date/services/spotify.dart';
 class SpotifyController extends GetxController {
   Spotify spotify = Spotify();
   HttpClient client = HttpClient();
+  String errors = "";
   Future<Spotify?> spotifyLogin() async {
     final Uri url = Uri.https('accounts.spotify.com', '/authorize', {
       'response_type': 'code',
@@ -97,6 +98,10 @@ class SpotifyController extends GetxController {
           Get.to(() => const ProfileCreatePage());
         }
       }
+    } else {
+      log(response.body, name: "LOGIN ERROR");
+      errors = json.decode(response.body);
+      update(["Login_errors"]);
     }
   }
 
