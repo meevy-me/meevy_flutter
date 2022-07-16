@@ -9,7 +9,9 @@ import 'package:soul_date/constants/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/screens/datafetch.dart';
 import 'package:soul_date/screens/home.dart';
+import 'package:soul_date/screens/password.dart';
 import 'package:soul_date/screens/profile.dart';
+import 'package:soul_date/screens/reset_code_Screen.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/spotify.dart';
 
@@ -134,6 +136,46 @@ class SpotifyController extends GetxController {
       Get.to(() => const HomePage());
     } else {
       log(response.body, name: "ERROR");
+    }
+  }
+
+  resetPasswordEmail(Map<String, String> body) async {
+    body['spotifyID'] = spotify.currentUser!.id;
+    http.Response response =
+        await client.post(resetPasswordUrl + 'email/', body: body);
+    if (response.statusCode <= 210) {
+      Get.to(() => ResetCodeScreen(
+            email: body['email']!,
+          ));
+    } else {
+      errors = json.decode(response.body);
+      log(response.body, name: "EMAIL RESET");
+    }
+  }
+
+  Future<String> validatResetCode(String pin) async {
+    Map<String, String> body = {'spotifyID': spotify.currentUser!.id};
+    body['code'] = pin;
+
+    http.Response response =
+        await client.post(resetPasswordUrl + 'validate/', body: body);
+    log(response.body);
+    if (response.statusCode <= 210) {
+      return json.decode(response.body)['grant_token'];
+    } else {
+      return "error";
+    }
+  }
+
+  Future<String?> resetPassword(String grant, Map<String, String> body) async {
+    http.Response response =
+        await client.post(resetPasswordUrl + '$grant/', body: body);
+
+    log(response.body);
+    if (response.statusCode <= 210) {
+      return null;
+    } else {
+      return "Your Password Reset duration has expired";
     }
   }
 }

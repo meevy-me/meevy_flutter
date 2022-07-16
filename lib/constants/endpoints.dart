@@ -27,3 +27,4 @@ const String messagesWs = 'ws://souldate.herokuapp.com/ws/chats/';
 const String requestUrl = baseUrl + 'socials/friend/request/';
 const String uploadImageUrl = baseUrl + 'users/pictures/add/';
 const String picturesUrl = baseUrl + 'users/pictures/';
+const String resetPasswordUrl = baseUrl + 'users/password/reset/';

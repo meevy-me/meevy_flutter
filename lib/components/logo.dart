@@ -13,8 +13,7 @@ class Logo extends StatelessWidget {
         Text("Soul", style: Theme.of(context).textTheme.bodyText1),
         const SizedBox(
           width: defaultPadding,
-        ),
-        SvgPicture.asset(
+        ),        SvgPicture.asset(
           'assets/images/logo.svg',
           width: 30,
         ),

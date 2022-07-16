@@ -7,6 +7,7 @@ import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/AuthController.dart';
 import 'package:soul_date/models/spotifyuser.dart';
+import 'package:soul_date/screens/password_reset_email.dart';
 
 class PasswordScreen extends StatelessWidget {
   final SpotifyUser user;
@@ -93,6 +94,7 @@ class _PasswordScreenBodyState extends State<_PasswordScreenBody> {
                     email: email,
                   )
                 : _LoginWidget(
+                    user: widget.user,
                     pass: pass1,
                   ),
           ),
@@ -180,8 +182,10 @@ class _LoginWidget extends StatelessWidget {
   const _LoginWidget({
     Key? key,
     required this.pass,
+    required this.user,
   }) : super(key: key);
   final TextEditingController pass;
+  final SpotifyUser user;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -207,11 +211,21 @@ class _LoginWidget extends StatelessWidget {
                 "Forgot Password?",
                 style: Theme.of(context).textTheme.bodyText2,
               ),
-              Text(
-                " Reset Password?",
-                style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.w600),
+              InkWell(
+                onTap: (() {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PasswordResetEmail(
+                                user: user,
+                              )));
+                }),
+                child: Text(
+                  " Reset Password?",
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w600),
+                ),
               ),
             ],
           ),
