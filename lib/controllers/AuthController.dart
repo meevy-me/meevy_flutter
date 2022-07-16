@@ -9,7 +9,6 @@ import 'package:soul_date/constants/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/screens/datafetch.dart';
 import 'package:soul_date/screens/home.dart';
-import 'package:soul_date/screens/password.dart';
 import 'package:soul_date/screens/profile.dart';
 import 'package:soul_date/screens/reset_code_Screen.dart';
 import 'package:soul_date/services/network.dart';

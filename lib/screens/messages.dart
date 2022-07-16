@@ -43,9 +43,7 @@ class _MessagesPageState extends State<MessagesPage> {
         floatingActionButton: FloatingActionButton(
             backgroundColor: Theme.of(context).primaryColor,
             child: const Icon(FontAwesomeIcons.spotify),
-            onPressed: () async {
-              var details = soulController.spotify.fetchCurrentPlaying(context);
-            }),
+            onPressed: () async {}),
         body: SafeArea(
           child: Column(
             children: [

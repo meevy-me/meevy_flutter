@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/bottom_navigation.dart';
@@ -21,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   final SoulController controller = Get.put(SoulController());
   final SpotController spotController = Get.put(SpotController());
   final MessageController msgController = Get.put(MessageController());
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   int selectedIndex = 0;
   List<Widget> pages = const [MatchScreen(), ProfileHome(), SettingsHome()];
   @override

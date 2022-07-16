@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/spots.dart';
 import 'package:soul_date/screens/spot_screen.dart';

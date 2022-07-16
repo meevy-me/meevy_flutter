@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
-import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/profile_model.dart';
 
 class SlideToLike extends StatefulWidget {

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/appbar.dart';
 import 'package:soul_date/components/authfield.dart';
@@ -20,7 +18,7 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController pass1 = TextEditingController();
   final TextEditingController pass2 = TextEditingController();
   final SpotifyController controller = Get.find<SpotifyController>();

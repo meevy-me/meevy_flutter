@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 import 'package:soul_date/components/appbar.dart';
-import 'package:soul_date/components/appbar_home.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/AuthController.dart';
 import 'package:soul_date/screens/reset_password.dart';
