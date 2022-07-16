@@ -31,7 +31,8 @@ class _HomePageState extends State<HomePage> {
         onTap: (index) {
           setState(() {
             _pageController.animateToPage(index,
-                duration: const Duration(seconds: 1), curve: Curves.easeInOut);
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut);
             selectedIndex = index;
           });
         },

@@ -131,9 +131,10 @@ class _MatchProfile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: defaultMargin),
             child: Center(
                 child: SlideToLike(
-                    match: match,
+                    match: match.matched,
                     onLiked: (value) {
-                      controller.sendRequest(value, context: context);
+                      controller.sendRequest({'matchID': match.id.toString()},
+                          context: context);
                     })),
           ),
         ],

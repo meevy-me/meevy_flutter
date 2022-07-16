@@ -6,8 +6,10 @@ import 'package:soul_date/components/appbar_home.dart';
 import 'package:soul_date/components/inputfield.dart';
 import 'package:soul_date/components/loading.dart';
 import 'package:soul_date/components/match_card.dart';
+import 'package:soul_date/components/search_profile_dialog.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/screens/match_detail.dart';
 import 'package:collection/collection.dart';
 
@@ -55,8 +57,38 @@ class _MatchScreenBody extends StatelessWidget {
               controller: searchField,
               activeColor: Theme.of(context).primaryColor,
               hintText: "Search by user spotify url",
-              suffixIcon: const Icon(Icons.search),
-              prefixIcon: const Icon(FontAwesomeIcons.spotify),
+              suffixIcon: IconButton(
+                  onPressed: () async {
+                    String text = searchField.text;
+                    String searchText = text;
+                    if (text.isNotEmpty) {
+                      if (text.contains("https://open.spotify.com/")) {
+                        var textf =
+                            text.replaceAll("https://open.spotify.com/", "");
+                        var keys = textf.split("/");
+                        var fieldId = keys[1];
+                        if (fieldId.contains("?")) {
+                          searchText = fieldId.split("?")[0];
+                        }
+                      }
+                      Profile? searchProfile =
+                          await controller.searchProfile(searchText);
+                      if (searchProfile == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text(":/ Soul not found")));
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (context) =>
+                                SearchProfileDialog(profile: searchProfile));
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.search)),
+              prefixIcon: const Icon(
+                FontAwesomeIcons.spotify,
+                color: spotifyGreen,
+              ),
             ),
           ),
           Text(

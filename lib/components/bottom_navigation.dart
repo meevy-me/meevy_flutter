@@ -76,7 +76,7 @@ class _BottomNavigationItemState extends State<_BottomNavigationItem> {
     Size size = MediaQuery.of(context).size;
     return AnimatedContainer(
       width: widget.active ? size.width / 2 : (size.width / 2.83),
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
           color: widget.active ? Colors.white : null,

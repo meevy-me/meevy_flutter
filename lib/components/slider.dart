@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:soul_date/models/match_model.dart';
+import 'package:soul_date/models/profile_model.dart';
 
 class SlideToLike extends StatefulWidget {
   const SlideToLike({Key? key, required this.match, required this.onLiked})
       : super(key: key);
-  final Match match;
-  final Function(Match match) onLiked;
+  final Profile match;
+  final Function(Profile match) onLiked;
   @override
   State<SlideToLike> createState() => _SlideToLikeState();
 }
@@ -26,7 +27,7 @@ class _SlideToLikeState extends State<SlideToLike> {
         foregroundColor: Colors.transparent,
         width: 300,
         height: 60,
-        text: "Slide to Like ${widget.match.matched.name}",
+        text: "Slide to Pair with ${widget.match.name}",
         textStyle: Theme.of(context).textTheme.caption,
         onConfirmation: () {
           Future.delayed(const Duration(microseconds: 100), () {

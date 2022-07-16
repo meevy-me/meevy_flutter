@@ -107,15 +107,15 @@ class SoulController extends GetxController {
     }
   }
 
-  void sendRequest(Match id, {required BuildContext context}) async {
-    http.Response res =
-        await client.post(requestUrl, body: {'matchID': id.id.toString()});
+  void sendRequest(Map<String, String> body,
+      {required BuildContext context}) async {
+    http.Response res = await client.post(requestUrl, body: body);
     if (res.statusCode <= 210) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Match Request Sent")));
+          .showSnackBar(const SnackBar(content: Text("Request has been sent")));
 
       Get.back();
-      matches.remove(id);
+      fetchMatches();
     }
   }
 
@@ -142,6 +142,16 @@ class SoulController extends GetxController {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("An error has occured")));
     }
+  }
+
+  Future<Profile?> searchProfile(String id) async {
+    String endpoint = baseUrl + 'users/search/user/';
+    var res = await client.get(endpoint + "$id/");
+
+    if (res.statusCode <= 210) {
+      return Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)));
+    }
+    return null;
   }
 
   uploadImage(XFile file, {required BuildContext context}) async {
