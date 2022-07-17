@@ -37,7 +37,7 @@ class MatchImage extends StatelessWidget {
                     ]).createShader(bounds);
               },
               child: CachedNetworkImage(
-                imageUrl: match.matched.images.last['image'],
+                imageUrl: match.matched.images.last.image,
                 fit: BoxFit.cover,
                 progressIndicatorBuilder: (context, text, percentage) {
                   return const SizedBox(width: 20, child: Loading());
@@ -94,7 +94,7 @@ class MatchImage extends StatelessWidget {
               IconButton(
                   onPressed: () async {
                     launchUrlString(
-                        "https://open.spotify.com/user/${match.matched.user.spotifyId}");
+                        "https://open.spotify.com/user/${match.matched.user.target!.spotifyId}");
                   },
                   icon: const Icon(
                     FontAwesomeIcons.spotify,

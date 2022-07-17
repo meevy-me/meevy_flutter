@@ -25,10 +25,11 @@ class _ChatScreenState extends State<ChatScreen> {
   late Profile profile;
 
   Profile currentProfile() {
-    if (controller.profile.first.id == widget.chat.friends.profile1.id) {
-      return widget.chat.friends.profile2;
+    if (controller.profile.first.id ==
+        widget.chat.friends.target!.profile1.target!.id) {
+      return widget.chat.friends.target!.profile2.target!;
     } else {
-      return widget.chat.friends.profile1;
+      return widget.chat.friends.target!.profile1.target!;
     }
   }
 
@@ -57,7 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
           Padding(
             padding: const EdgeInsets.only(right: defaultMargin),
             child: SoulCircleAvatar(
-              imageUrl: profile.images[0]['image'],
+              imageUrl: profile.images.first.image,
               radius: 15,
             ),
           )
@@ -173,18 +174,18 @@ class _MessageBodyState extends State<_MessageBody> {
           duration: const Duration(seconds: 1),
           curve: Curves.linear);
     }
-    return Obx(() => ListView(
-          controller: widget.scrollController,
-          padding: scaffoldPadding,
-          children: [
-            ...widget.chat.messages
-                .map((element) => ChatBox(
-                    size: size,
-                    mine: element.sender == controller.profile[0].id,
-                    text: element.content,
-                    time: DateFormat.jm().format(element.datePosted)))
-                .toList()
-          ],
-        ));
+    return ListView(
+      controller: widget.scrollController,
+      padding: scaffoldPadding,
+      children: [
+        ...widget.chat.messages
+            .map((element) => ChatBox(
+                size: size,
+                mine: element.sender == controller.profile[0].id,
+                text: element.content,
+                time: DateFormat.jm().format(element.datePosted)))
+            .toList()
+      ],
+    );
   }
 }

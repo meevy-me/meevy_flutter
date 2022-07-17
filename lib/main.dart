@@ -5,6 +5,7 @@ import 'package:soul_date/constants/colors.dart';
 import 'package:soul_date/screens/home.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

@@ -41,7 +41,7 @@ class SpotWidget extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: CachedNetworkImage(
-                      imageUrl: spot.profile.images.last['image'],
+                      imageUrl: spot.profile.images.last.image,
                       fit: BoxFit.cover,
                       width: 50,
                       height: 50,

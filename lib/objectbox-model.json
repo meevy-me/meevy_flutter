@@ -1,0 +1,201 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:6714089126297128343",
+      "lastPropertyId": "3:5045056517262744980",
+      "name": "Chat",
+      "properties": [
+        {
+          "id": "1:360290954668447531",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:3421935401248745147",
+          "name": "friendsId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:156106009981655963",
+          "relationTarget": "Friends"
+        },
+        {
+          "id": "3:5045056517262744980",
+          "name": "dateCreated",
+          "type": 10
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:8251691790805673972",
+          "name": "messages",
+          "targetId": "3:2253509713044817841"
+        }
+      ]
+    },
+    {
+      "id": "2:5751743259074997123",
+      "lastPropertyId": "5:7350730964031820703",
+      "name": "Friends",
+      "properties": [
+        {
+          "id": "1:429208442247355916",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:1347445695355161326",
+          "name": "profile2Id",
+          "type": 11,
+          "flags": 520,
+          "indexId": "2:3835717775038074624",
+          "relationTarget": "Profile"
+        },
+        {
+          "id": "3:1214117766279467779",
+          "name": "accepted",
+          "type": 1
+        },
+        {
+          "id": "4:8705510239384658003",
+          "name": "dateAdded",
+          "type": 10
+        },
+        {
+          "id": "5:7350730964031820703",
+          "name": "profile1Id",
+          "type": 11,
+          "flags": 520,
+          "indexId": "3:3946412709594771342",
+          "relationTarget": "Profile"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:2253509713044817841",
+      "lastPropertyId": "4:8062422024160714380",
+      "name": "Message",
+      "properties": [
+        {
+          "id": "1:844980088346202103",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:7995401647993439757",
+          "name": "content",
+          "type": 9
+        },
+        {
+          "id": "3:698582122897799029",
+          "name": "datePosted",
+          "type": 10
+        },
+        {
+          "id": "4:8062422024160714380",
+          "name": "sender",
+          "type": 6
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:7332190955515328081",
+      "lastPropertyId": "5:7444239027507149595",
+      "name": "Profile",
+      "properties": [
+        {
+          "id": "1:7573817153003269179",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:5273641687600313329",
+          "name": "userId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "4:4857610066674421387",
+          "relationTarget": "User"
+        },
+        {
+          "id": "3:6929107495784978973",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "4:7980452014426625437",
+          "name": "dateOfBirth",
+          "type": 10
+        },
+        {
+          "id": "5:7444239027507149595",
+          "name": "bio",
+          "type": 9
+        }
+      ],
+      "relations": [
+        {
+          "id": "2:8866988630169782075",
+          "name": "images",
+          "targetId": "5:5261969142082156847"
+        }
+      ]
+    },
+    {
+      "id": "5:5261969142082156847",
+      "lastPropertyId": "2:2065621413627115192",
+      "name": "ProfileImages",
+      "properties": [
+        {
+          "id": "1:5443382446585934419",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "2:2065621413627115192",
+          "name": "image",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:220465078078885656",
+      "lastPropertyId": "2:4030579164794779196",
+      "name": "User",
+      "properties": [
+        {
+          "id": "1:8802236087504554460",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:4030579164794779196",
+          "name": "spotifyId",
+          "type": 9
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "6:220465078078885656",
+  "lastIndexId": "4:4857610066674421387",
+  "lastRelationId": "2:8866988630169782075",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

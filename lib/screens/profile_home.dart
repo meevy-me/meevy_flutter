@@ -48,7 +48,7 @@ class _ProfileHomeState extends State<ProfileHome> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: CachedNetworkImage(
-                      imageUrl: profile.images.last['image'],
+                      imageUrl: profile.images.last.image,
                       fit: BoxFit.cover,
                     ),
                   ),

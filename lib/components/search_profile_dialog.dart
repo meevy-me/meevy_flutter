@@ -25,7 +25,7 @@ class SearchProfileDialog extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: profile.images
                     .map((e) => SoulCircleAvatar(
-                          imageUrl: e['image'],
+                          imageUrl: e.image,
                           radius: 12,
                         ))
                     .toList(),

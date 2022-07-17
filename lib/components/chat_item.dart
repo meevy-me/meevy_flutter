@@ -20,10 +20,11 @@ class ChatItem extends StatelessWidget {
   final SoulController controller = Get.find<SoulController>();
 
   Profile currentProfile() {
-    if (controller.profile.first.id == message.friends.profile1.id) {
-      return message.friends.profile2;
+    if (controller.profile.first.id ==
+        message.friends.target!.profile1.target!.id) {
+      return message.friends.target!.profile2.target!;
     } else {
-      return message.friends.profile1;
+      return message.friends.target!.profile1.target!;
     }
   }
 
@@ -33,7 +34,7 @@ class ChatItem extends StatelessWidget {
     return Row(
       children: [
         SoulCircleAvatar(
-          imageUrl: profile.images[0]['image'],
+          imageUrl: profile.images.first.image,
           radius: 25,
         ),
         Padding(
