@@ -75,13 +75,14 @@ class FriendRequestCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SoulCircleAvatar(imageUrl: friend.profile2.images[0]['image']),
+                SoulCircleAvatar(
+                    imageUrl: friend.profile2.target!.images.first.image),
                 const SizedBox(
                   width: defaultMargin,
                 ),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(
-                    friend.profile2.name,
+                    friend.profile2.target!.name,
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ])

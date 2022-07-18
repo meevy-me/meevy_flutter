@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:objectbox/objectbox.dart';
 import 'package:soul_date/models/profile_model.dart';
 
 List<Friends> friendsFromJson(String str) =>
@@ -12,37 +13,34 @@ List<Friends> friendsFromJson(String str) =>
 String friendsToJson(List<Friends> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
+@Entity()
 class Friends {
-  Friends(
-      {required this.id,
-      required this.profile2,
-      required this.dateAdded,
-      required this.dateAccepted,
-      required this.profile1,
-      required this.match,
-      required this.accepted});
-
+  Friends({required this.id, required this.dateAdded, required this.accepted});
+  @Id(assignable: true)
   int id;
-  Profile profile2;
+  final profile2 = ToOne<Profile>();
   bool accepted;
   DateTime dateAdded;
   dynamic dateAccepted;
-  Profile profile1;
+  final profile1 = ToOne<Profile>();
   dynamic match;
 
-  factory Friends.fromJson(Map<String, dynamic> json) => Friends(
+  factory Friends.fromJson(Map<String, dynamic> json) {
+    Friends friend = Friends(
         id: json["id"],
-        profile2: Profile.fromJson(json["profile2"]),
-        accepted: json["accepted"],
         dateAdded: DateTime.parse(json["date_added"]),
-        dateAccepted: json["date_accepted"],
-        profile1: Profile.fromJson(json["profile1"]),
-        match: json["match"],
-      );
+        accepted: json["accepted"]);
+    friend.dateAccepted = json["date_accepted"];
+    friend.profile2.target = Profile.fromJson(json["profile2"]);
+    friend.profile1.target = Profile.fromJson(json["profile1"]);
+    friend.match = json["match"];
+
+    return friend;
+  }
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "profile2": profile2.toJson(),
+        // "profile2": profile2.toJson(),
         "accepted": accepted,
         "date_added": dateAdded.toIso8601String(),
         "date_accepted": dateAccepted,

@@ -44,6 +44,10 @@ class SoulController extends GetxController {
       profile.value = [
         Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)))
       ];
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setInt("profileID", profile.first.id);
+    } else {
+      log(res.body, name: "PROFILE FETCH ERROR");
     }
   }
 
@@ -171,7 +175,7 @@ class SoulController extends GetxController {
     var res = await client.delete(picturesUrl + '$id/');
     if (res.statusCode <= 210) {
       var index =
-          profile.first.images.indexWhere((element) => element['id'] == id);
+          profile.first.images.indexWhere((element) => element.id == id);
       profile.first.images.removeAt(index);
       Get.back();
       update();

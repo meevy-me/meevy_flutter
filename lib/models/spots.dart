@@ -28,7 +28,7 @@ class Spot {
       dateAdded: DateTime.parse(json["date_posted"]));
 
   Map<String, dynamic> toJson() => {
-        "profile": profile.toJson(),
+        // "profile": profile.toJson(),
         "spotifyDetails": details.toJson(),
         "date_posted": dateAdded.toIso8601String(),
         "caption": caption,
@@ -51,7 +51,7 @@ class SpotsView {
       spots: List<Spot>.from(json["spots"].map((x) => Spot.fromJson(x))));
 
   Map<String, dynamic> toJson() => {
-        "profile": profile.toJson(),
+        // "profile": profile.toJson(),
         "spots": List<dynamic>.from(spots.map((x) => x.toJson())),
       };
 

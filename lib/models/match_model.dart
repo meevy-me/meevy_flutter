@@ -45,8 +45,8 @@ class Match {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "profile": profile.toJson(),
-        "matched": matched.toJson(),
+        // "profile": profile.toJson(),
+        // "matched": matched.toJson(),
         "method": method,
         "details": List<dynamic>.from(details.map((x) => x.toJson())),
         "date_added": dateAdded.toIso8601String(),

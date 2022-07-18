@@ -75,13 +75,12 @@ class _MyImagesState extends State<MyImages> {
                                 context,
                                 MaterialPageRoute(
                                     builder: ((context) => ImageView(
-                                        imageUrl: e['image'],
-                                        imageID: e['id']))));
+                                        imageUrl: e.image, imageID: e.id))));
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
                             child: CachedNetworkImage(
-                              imageUrl: e['image'],
+                              imageUrl: e.image,
                               height: 120,
                               width: 100,
                               fit: BoxFit.cover,

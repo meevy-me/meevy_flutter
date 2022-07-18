@@ -3,8 +3,11 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:soul_date/constants/colors.dart';
 import 'package:soul_date/screens/home.dart';
+import 'package:soul_date/services/background.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeService();
   runApp(const MyApp());
 }
 

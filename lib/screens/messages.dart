@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/chat_item.dart';
@@ -8,6 +9,7 @@ import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:collection/collection.dart';
+import 'package:soul_date/models/chat_model.dart';
 import 'package:soul_date/screens/chat.dart';
 import 'package:soul_date/screens/friend_requests.dart';
 
@@ -26,7 +28,7 @@ class _MessagesPageState extends State<MessagesPage> {
   @override
   void initState() {
     spotController.fetchSpots();
-    messageController.fetchChats();
+    // messageController.fetchChats();
     super.initState();
   }
 
@@ -51,7 +53,7 @@ class _MessagesPageState extends State<MessagesPage> {
               Expanded(child: _MessagesSection(
                 onRefresh: () {
                   spotController.fetchSpots();
-                  messageController.fetchChats();
+                  // messageController.fetchChats();
                 },
               ))
             ],
@@ -191,30 +193,42 @@ class _MessagesSection extends StatelessWidget {
           onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
             onRefresh();
           }),
-          child: Obx(
-            () => ListView.separated(
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                var message = messages[index];
-                return InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultMargin / 2),
-                    child: InkWell(
-                      onTap: () {
-                        Get.to(() => ChatScreen(chat: message));
-                      },
-                      child: ChatItem(message: message, size: size),
-                    ),
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider();
-              },
-            ),
-          ),
+          child: StreamBuilder<List<Chat>>(
+              stream: messageController.getChats(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return SpinKitCircle(
+                    color: Theme.of(context).primaryColor,
+                  );
+                } else {
+                  // print(" YAAAHAHHH " +
+                  //     snapshot.data!.last.friends.target.profile1);
+                  return ListView.separated(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      var message = snapshot.data![index];
+                      return InkWell(
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: defaultMargin / 2),
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(() => ChatScreen(chat: message));
+                            },
+                            child: message.friends.target != null
+                                ? ChatItem(message: message, size: size)
+                                : const SizedBox.shrink(),
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
+                  );
+                }
+              }),
         ));
   }
 }
