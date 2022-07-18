@@ -7,6 +7,7 @@ import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/chat_model.dart';
+import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -154,12 +155,14 @@ class _MessageBody extends StatefulWidget {
 class _MessageBodyState extends State<_MessageBody> {
   final SoulController controller = Get.find<SoulController>();
 
-  // final MessageController messageController = Get.find<MessageController>();
+  final MessageController messageController = Get.find<MessageController>();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.scrollController
-          .jumpTo(widget.scrollController.position.maxScrollExtent);
+      if (widget.scrollController.hasClients) {
+        widget.scrollController
+            .jumpTo(widget.scrollController.position.maxScrollExtent);
+      }
     });
 
     super.initState();
@@ -174,18 +177,31 @@ class _MessageBodyState extends State<_MessageBody> {
           duration: const Duration(seconds: 1),
           curve: Curves.linear);
     }
-    return ListView(
-      controller: widget.scrollController,
-      padding: scaffoldPadding,
-      children: [
-        ...widget.chat.messages
-            .map((element) => ChatBox(
-                size: size,
-                mine: element.sender == controller.profile[0].id,
-                text: element.content,
-                time: DateFormat.jm().format(element.datePosted)))
-            .toList()
-      ],
-    );
+    return StreamBuilder<Chat>(
+        stream: messageController.getMessages(widget.chat),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: Text(
+                "Ooops :/ There's nothing here, say hi",
+                style: Theme.of(context).textTheme.caption,
+              ),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.messages.length,
+              itemBuilder: (context, index) {
+                var element = snapshot.data!.messages[index];
+                return ChatBox(
+                    size: size,
+                    mine: element.sender == controller.profile[0].id,
+                    text: element.content,
+                    time: DateFormat.jm().format(element.datePosted));
+              },
+              controller: widget.scrollController,
+              padding: scaffoldPadding,
+            );
+          }
+        });
   }
 }

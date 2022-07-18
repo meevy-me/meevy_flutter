@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:objectbox/objectbox.dart';
+import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/images.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/services/network.dart';
+import 'package:soul_date/services/notifications.dart';
 import 'package:soul_date/services/store.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -31,7 +33,7 @@ Future<void> initializeService() async {
 
       // auto start service
       autoStart: true,
-      isForegroundMode: true,
+      isForegroundMode: false,
     ),
     iosConfiguration: IosConfiguration(
       // auto start service
@@ -72,36 +74,32 @@ void onStart(ServiceInstance service) async {
   }
 
   service.on('stopService').listen((event) {
-    service.stopSelf();
+    // print("soetj");
+    // service.stopSelf();
   });
 
-  service.on('sendMessage').listen((event) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    int profile = preferences.getInt('profileID')!;
-    if (event != null) {
-      var id = event['chat'];
-      var content = event['message'];
-      connection!.sink.add(json.encode({"chat": id, "message": content}));
+  service.on('sendMessage').listen((event) {
+    sendMessage(event, store: store);
+  });
+}
 
-      Message message = Message(
-          id: id,
-          content: content,
-          datePosted: DateTime.now(),
-          sender: profile);
-      Chat? chat = await store.get<Chat>(id);
-      await store.insert<Message>(message);
+void sendMessage(
+  Map? event, {
+  required LocalStore store,
+}) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  int profile = preferences.getInt('profileID')!;
+  if (event != null) {
+    var id = event['chat'];
+    var content = event['message'];
+    connection!.sink.add(json.encode({"chat": id, "message": content}));
 
-      chat!.messages.add(message);
+    Message message = Message(
+        id: 0, content: content, datePosted: DateTime.now(), sender: profile);
+    Chat? chat = await store.get<Chat>(id);
+    if (chat != null) {
+      messageToStore(chat, message: message, store: store);
     }
-  });
-
-  // bring to foreground
-
-  if (service is AndroidServiceInstance) {
-    service.setForegroundNotificationInfo(
-      title: "Souldate",
-      content: "Souldate is running",
-    );
   }
 }
 
@@ -139,6 +137,16 @@ void initConnection(ServiceInstance service,
   listenConnection(service, store);
 }
 
+void messageToStore(Chat chat,
+    {required Message message, required LocalStore store}) async {
+  await store.insert<Message>(message);
+  // print(id);
+
+  chat.messages.add(message);
+  chat.dateCreated = message.datePosted;
+  await store.insert<Chat>(chat);
+}
+
 Future<Chat?> addMessage(LocalStore store, Map data,
     {required ServiceInstance service}) async {
   Chat? chat = await store.get<Chat>(data["chat"]);
@@ -149,18 +157,18 @@ Future<Chat?> addMessage(LocalStore store, Map data,
       datePosted: DateTime.parse(data['date_posted']),
       sender: data['sender'],
     );
-    var id = await store.insert<Message>(message);
-    // print(id);
+    messageToStore(chat, message: message, store: store);
 
-    chat.messages.add(message);
-    chat.dateCreated = DateTime.parse(data['date_posted']);
-    await store.insert<Chat>(chat);
-    if (service is AndroidServiceInstance) {
-      service.setForegroundNotificationInfo(
-        title: "New Message from ${chat.friends.target!.profile2.target!.name}",
-        content: message.content,
-      );
-    }
+    NotificationApi.showNotification(
+        title: "Message from ${chat.friends.target!.profile2.target!.name}",
+        body: message.formatContent,
+        payload: chat.id.toString());
+    // if (service is AndroidServiceInstance) {
+    //   service.setForegroundNotificationInfo(
+    //     title: "New Message from ${chat.friends.target!.profile2.target!.name}",
+    //     content: message.content,
+    //   );
+    // }
     return chat;
   }
   return null;
@@ -168,11 +176,13 @@ Future<Chat?> addMessage(LocalStore store, Map data,
 
 listenConnection(ServiceInstance service, LocalStore store) async {
   if (connection != null) {
-    print("Connected");
     connection!.stream.listen((event) {
-      print(event);
       var data = json.decode(event)['message'];
       addMessage(store, data, service: service);
-    });
+    },
+        onDone: () async =>
+            await retry(() async => initConnection(service, store: store)),
+        onError: (error) async =>
+            await retry(() async => initConnection(service, store: store)));
   }
 }
