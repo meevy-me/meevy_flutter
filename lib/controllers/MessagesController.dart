@@ -58,24 +58,9 @@ class MessageController extends GetxController {
     service.invoke('sendMessage', {"chat": chat.id, "message": content});
   }
 
-  // listenConnection() async {
-  //   if (connection != null) {
-  //     connection!.stream.listen((event) {
-  //       var data = json.decode(event)['message'];
-  //       var index = chats.indexWhere((element) => element.id == data['chat']);
-  //       var chat = chats[index];
-  //       var message = Message(
-  //         id: 5,
-  //         content: data['message'],
-  //         datePosted: DateTime.now(),
-  //         sender: data['sender'],
-  //       );
-  //       chats[index].messages.add(message);
-  //       chats.refresh();
-
-  //       Get.snackbar(
-  //           chat.friends.target!.profile2.target!.name, message.content);
-  //     });
-  //   }
-  // }
+  @override
+  void dispose() {
+    store.store.close();
+    super.dispose();
+  }
 }

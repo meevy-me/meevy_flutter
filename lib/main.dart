@@ -6,8 +6,6 @@ import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/services/background.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await initializeService();
   runApp(const MyApp());
 }
 

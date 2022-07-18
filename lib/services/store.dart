@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -23,6 +24,15 @@ class LocalStore {
     Directory docDir = await getApplicationDocumentsDirectory();
     final stored = Store.attach(getObjectBoxModel(), docDir.path + '/chatop');
     return LocalStore._init(stored);
+  }
+
+  static delete() async {
+    Directory docDir = await getApplicationDocumentsDirectory();
+    try {
+      Directory(docDir.path + '/chatop').delete();
+    } catch (e) {
+      log(e.toString(), name: "DELETING DB");
+    }
   }
 
   Future<T?> get<T>(int id) async {

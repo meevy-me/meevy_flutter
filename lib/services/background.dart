@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:objectbox/objectbox.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/models/friend_model.dart';
@@ -59,7 +61,14 @@ bool onIosBackground(ServiceInstance service) {
 void onStart(ServiceInstance service) async {
   // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
-  LocalStore store = await LocalStore.init();
+  late LocalStore store;
+  Directory docDir = await getApplicationDocumentsDirectory();
+
+  if (Store.isOpen(docDir.path + "/chatop")) {
+    store = await LocalStore.attach();
+  } else {
+    store = await LocalStore.init();
+  }
 
   initConnection(service, store: store);
 
@@ -74,8 +83,8 @@ void onStart(ServiceInstance service) async {
   }
 
   service.on('stopService').listen((event) {
-    // print("soetj");
-    // service.stopSelf();
+    store.store.close();
+    service.stopSelf();
   });
 
   service.on('sendMessage').listen((event) {
@@ -176,14 +185,15 @@ Future<Chat?> addMessage(LocalStore store, Map data,
 
 listenConnection(ServiceInstance service, LocalStore store) async {
   if (connection != null) {
-    connection!.stream.listen((event) {
-      var data = json.decode(event)['message'];
-      addMessage(store, data, service: service);
-    },
-        // onDone: () async =>
-        //     await retry(() async => initConnection(service, store: store)),
-        // onError: (error) async =>
-        //     await retry(() async => initConnection(service, store: store))
-            );
+    connection!.stream.listen(
+      (event) {
+        var data = json.decode(event)['message'];
+        addMessage(store, data, service: service);
+      },
+      // onDone: () async =>
+      //     await retry(() async => initConnection(service, store: store)),
+      // onError: (error) async =>
+      //     await retry(() async => initConnection(service, store: store))
+    );
   }
 }
