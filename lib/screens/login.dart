@@ -52,7 +52,7 @@ class _LoginScreenBodyState extends State<_LoginScreenBody> {
                   style: Theme.of(context).textTheme.headline2),
               Center(
                 child: Text(
-                    "Find your musical soulmate or a friend that you share the same taste. Join connect to your Spotify account",
+                    "Find your musical soulmate or a friend that you share the same taste.Connect to your Spotify account",
                     style: Theme.of(context).textTheme.bodyText2!.copyWith(
                           height: 2.0,
                         )),

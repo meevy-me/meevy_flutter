@@ -54,7 +54,8 @@ class SoulController extends GetxController {
   setSpotifyToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (preferences.getString("spotify_accesstoken") == null) {
-      Get.to(() => const LoginScreen());
+      logout();
+      // Get.to(()  => const LoginScreen());
     }
     spotify.accessToken = preferences.getString("spotify_accesstoken")!;
     spotify.accessToken = preferences.getString("spotify_refreshtoken")!;
