@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -138,7 +139,9 @@ class SpotController extends GetxController {
           spots.refresh();
           showNotification(newSpot);
         }
-      });
+      }, onError: (stack) async {
+        await retry(() => openConnection());
+      }, onDone: () async => await retry(() => openConnection()));
     }
   }
 }

@@ -45,7 +45,9 @@ class _MessagesPageState extends State<MessagesPage> {
         floatingActionButton: FloatingActionButton(
             backgroundColor: Theme.of(context).primaryColor,
             child: const Icon(FontAwesomeIcons.spotify),
-            onPressed: () async {}),
+            onPressed: () async {
+              controller.spotify.fetchCurrentPlaying(context);
+            }),
         body: SafeArea(
           child: Column(
             children: [
@@ -99,7 +101,7 @@ class _SpotSectionState extends State<_SpotSection> {
               const BackButton(color: Colors.white),
               const Expanded(
                 child: Center(
-                  child: Text("Friends & Spots",
+                  child: Text("Souls & Spots",
                       style: TextStyle(color: Colors.white, fontSize: 17)),
                 ),
               ),
@@ -127,7 +129,7 @@ class _SpotSectionState extends State<_SpotSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Recent Spots",
+                "Friend's Spots",
                 style: Theme.of(context)
                     .textTheme
                     .bodyText2!
