@@ -139,9 +139,10 @@ class SpotController extends GetxController {
           spots.refresh();
           showNotification(newSpot);
         }
-      }, onError: (stack) async {
-        await retry(() => openConnection());
-      }, onDone: () async => await retry(() => openConnection()));
+        // }, onError: (stack) async {
+        //   await retry(() => openConnection());
+        // }, onDone: () async => await retry(() => openConnection())
+      });
     }
   }
 }

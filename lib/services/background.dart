@@ -180,9 +180,10 @@ listenConnection(ServiceInstance service, LocalStore store) async {
       var data = json.decode(event)['message'];
       addMessage(store, data, service: service);
     },
-        onDone: () async =>
-            await retry(() async => initConnection(service, store: store)),
-        onError: (error) async =>
-            await retry(() async => initConnection(service, store: store)));
+        // onDone: () async =>
+        //     await retry(() async => initConnection(service, store: store)),
+        // onError: (error) async =>
+        //     await retry(() async => initConnection(service, store: store))
+            );
   }
 }
