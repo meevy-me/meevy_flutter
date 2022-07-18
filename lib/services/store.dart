@@ -19,7 +19,13 @@ class LocalStore {
     return LocalStore._init(stored);
   }
 
-  Future<T?> query<T>(int id) async {
+  static Future<LocalStore> attach() async {
+    Directory docDir = await getApplicationDocumentsDirectory();
+    final stored = Store.attach(getObjectBoxModel(), docDir.path + '/chatop');
+    return LocalStore._init(stored);
+  }
+
+  Future<T?> get<T>(int id) async {
     var box = store.box<T>();
     return box.get(id);
   }

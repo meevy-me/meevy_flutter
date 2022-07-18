@@ -44,6 +44,8 @@ class SoulController extends GetxController {
       profile.value = [
         Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)))
       ];
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setInt("profileID", profile.first.id);
     } else {
       log(res.body, name: "PROFILE FETCH ERROR");
     }

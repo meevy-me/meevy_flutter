@@ -28,7 +28,7 @@ class _MessagesPageState extends State<MessagesPage> {
   @override
   void initState() {
     spotController.fetchSpots();
-    messageController.fetchChats();
+    // messageController.fetchChats();
     super.initState();
   }
 
@@ -53,7 +53,7 @@ class _MessagesPageState extends State<MessagesPage> {
               Expanded(child: _MessagesSection(
                 onRefresh: () {
                   spotController.fetchSpots();
-                  messageController.fetchChats();
+                  // messageController.fetchChats();
                 },
               ))
             ],
