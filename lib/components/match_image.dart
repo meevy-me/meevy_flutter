@@ -6,6 +6,7 @@ import 'package:soul_date/models/match_model.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../constants/constants.dart';
+import 'cached_image_error.dart';
 
 class MatchImage extends StatelessWidget {
   const MatchImage({
@@ -36,7 +37,7 @@ class MatchImage extends StatelessWidget {
                       Colors.transparent
                     ]).createShader(bounds);
               },
-              child: CachedNetworkImage(
+              child: SoulCachedNetworkImage(
                 imageUrl: match.matched.images.last.image,
                 fit: BoxFit.cover,
                 progressIndicatorBuilder: (context, text, percentage) {

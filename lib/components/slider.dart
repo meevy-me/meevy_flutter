@@ -1,6 +1,8 @@
+import 'package:action_slider/action_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:slide_to_confirm/slide_to_confirm.dart';
+
+import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/profile_model.dart';
 
 class SlideToLike extends StatefulWidget {
@@ -12,45 +14,67 @@ class SlideToLike extends StatefulWidget {
   State<SlideToLike> createState() => _SlideToLikeState();
 }
 
-class _SlideToLikeState extends State<SlideToLike> {
+class _SlideToLikeState extends State<SlideToLike>
+    with SingleTickerProviderStateMixin {
   bool liked = false;
   bool animate = false;
+  ActionSliderController controller = ActionSliderController();
+  late AnimationController animationController;
+  Animation? _colorAnimation;
+
+  @override
+  void initState() {
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 100));
+    _colorAnimation = ColorTween(begin: Colors.white, end: primaryPink)
+        .animate(animationController);
+
+    // animationController.forward();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ConfirmationSlider(
-        shadow: BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          offset: const Offset(6.0, 6.0),
-          blurRadius: 16.0,
-        ),
-        foregroundColor: Colors.transparent,
-        width: 300,
-        height: 60,
-        text: "Slide to Pair with ${widget.match.name}",
-        textStyle: Theme.of(context).textTheme.caption,
-        onConfirmation: () {
-          Future.delayed(const Duration(microseconds: 100), () {
-            setState(() {
-              liked = true;
+    // var match = widget.match;
 
-              widget.onLiked(widget.match);
-            });
-          });
+    return AnimatedBuilder(
+      animation: animationController,
+      builder: (context, _) => ActionSlider.standard(
+        stateChangeCallback: (oldState, state, controller) {
+          if (state.slidingState.index == 0) {
+            animationController.forward();
+          } else {
+            animationController.reset();
+          }
         },
-        stickToEnd: true,
-        onTapDown: () {
-          setState(() {
-            animate = true;
-          });
+        controller: controller,
+        customOuterBackgroundBuilder: (context, state, widget) {
+          return DecoratedBox(
+              // position: DecorationPosition.foreground,
+              decoration: BoxDecoration(color: Colors.black));
         },
-        onTapUp: () {
-          setState(() {
-            animate = false;
-          });
-        },
-        sliderButtonContent: Icon(
+        icon: Icon(
           FontAwesomeIcons.heartCirclePlus,
-          color: Theme.of(context).primaryColor,
-        ));
+          color: Colors.white,
+        ),
+        backgroundBorderRadius: BorderRadius.circular(20),
+        customForegroundBuilderChild: Container(
+          padding: const EdgeInsets.all(defaultMargin),
+          width: 6,
+          height: 6,
+          color: Colors.black,
+        ),
+        customBackgroundBuilder: (context, state, widget) {
+          return Container(
+            width: 300 * state.position,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.white, _colorAnimation!.value])),
+          );
+        },
+        // backgroundColor: _colorAnimation!.value,
+      ),
+    );
   }
 }

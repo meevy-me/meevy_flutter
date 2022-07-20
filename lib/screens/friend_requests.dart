@@ -6,6 +6,7 @@ import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/friend_model.dart';
+import 'package:soul_date/models/profile_model.dart';
 
 class FriendRequestScreen extends StatefulWidget {
   const FriendRequestScreen({Key? key}) : super(key: key);
@@ -61,8 +62,18 @@ class FriendRequestCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
   Friends friend;
+
+  Profile currentProfile() {
+    if (controller.profile.first.id == friend.profile1.target!.id) {
+      return friend.profile2.target!;
+    } else {
+      return friend.profile1.target!;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var profile = currentProfile();
     return Container(
       margin: const EdgeInsets.only(bottom: defaultMargin * 2),
       width: double.infinity,
@@ -75,14 +86,13 @@ class FriendRequestCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SoulCircleAvatar(
-                    imageUrl: friend.profile2.target!.images.first.image),
+                SoulCircleAvatar(imageUrl: profile.images.first.image),
                 const SizedBox(
                   width: defaultMargin,
                 ),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(
-                    friend.profile2.target!.name,
+                    profile.name,
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ])

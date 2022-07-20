@@ -10,7 +10,7 @@ import '../constants/constants.dart';
 import 'image_circle.dart';
 
 class ChatItem extends StatefulWidget {
-  ChatItem({
+  const ChatItem({
     Key? key,
     required this.message,
     required this.size,

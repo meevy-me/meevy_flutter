@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:soul_date/components/custom_slider.dart';
 import 'package:soul_date/components/slider.dart';
 import 'package:soul_date/components/spotify_card.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -130,12 +131,21 @@ class _MatchProfile extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultMargin),
             child: Center(
-                child: SlideToLike(
-                    match: match.matched,
-                    onLiked: (value) {
-                      controller.sendRequest({'matchID': match.id.toString()},
-                          context: context);
-                    })),
+              child: SoulSlider(
+                completedWidget: const Text("You have sent a request"),
+                defaultText: "Slide to match with ${match.matched.name}",
+                onComplete: () {
+                  controller.sendRequest({'matchID': match.id.toString()},
+                      context: context);
+                },
+              ),
+              // child: SlideToLike(
+              //     match: match.matched,
+              //     onLiked: (value) {
+              //       controller.sendRequest({'matchID': match.id.toString()},
+              //           context: context);
+              //     })
+            ),
           ),
         ],
       ),
@@ -207,7 +217,7 @@ class _ScrollImageState extends State<ScrollImage> {
             height: widget.size,
             width: double.infinity,
             child: CachedNetworkImage(
-              imageUrl: widget.images[selectedIndex]['image'],
+              imageUrl: widget.images[selectedIndex].image,
               fit: BoxFit.cover,
             ),
           ),

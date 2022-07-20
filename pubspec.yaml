@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  action_slider: ^0.6.0
   animations: ^2.0.3
   build_runner: ^2.0.0
   cached_network_image: ^3.2.1

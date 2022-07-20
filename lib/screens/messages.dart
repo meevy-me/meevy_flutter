@@ -145,8 +145,8 @@ class _SpotSectionState extends State<_SpotSection> {
                         return Row(
                           children: [
                             Padding(
-                                padding: const EdgeInsets.only(
-                                    right: defaultMargin * 3),
+                                padding:
+                                    const EdgeInsets.only(right: defaultMargin),
                                 child:
                                     Obx(() => spotController.mySpots.isNotEmpty
                                         ? SpotWidget(

@@ -7,19 +7,15 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
-import 'package:soul_date/controllers/MessagesController.dart';
-import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/models/chat_model.dart';
 import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/models/spots.dart';
 import 'package:soul_date/screens/login.dart';
-import 'package:soul_date/services/background.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/services/spotify.dart';
-import 'package:soul_date/services/store.dart';
 
 class SoulController extends GetxController {
   HttpClient client = HttpClient();
@@ -35,11 +31,12 @@ class SoulController extends GetxController {
   @override
   void onInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-
+    if (await service.isRunning()) {
+      service.invoke('initService');
+    }
     setSpotifyToken();
     fetchMatches();
     getProfile();
-    await initializeService();
     super.onInit();
   }
 
@@ -62,9 +59,10 @@ class SoulController extends GetxController {
     if (preferences.getString("spotify_accesstoken") == null) {
       logout();
       // Get.to(()  => const LoginScreen());
+    } else {
+      spotify.accessToken = preferences.getString("spotify_accesstoken")!;
+      spotify.accessToken = preferences.getString("spotify_refreshtoken")!;
     }
-    spotify.accessToken = preferences.getString("spotify_accesstoken")!;
-    spotify.accessToken = preferences.getString("spotify_refreshtoken")!;
   }
 
   void fetchMatches() async {
@@ -199,11 +197,16 @@ class SoulController extends GetxController {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     if (await preferences.clear()) {
-      service.invoke('stopService');
-      Get.to(() => const LoginScreen());
-      Get.delete<SoulController>();
-      Get.delete<SpotController>();
-      Get.delete<MessageController>();
+      Get.offAll(() => const LoginScreen());
+      // Get.delete<SoulController>();
+      // Get.delete<SpotController>();
+      // Get.delete<MessageController>();
     }
+  }
+
+  @override
+  void dispose() {
+    // service.invoke('stopService', {});
+    super.dispose();
   }
 }

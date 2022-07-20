@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/objectbox.g.dart';
 import 'package:soul_date/services/store.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -23,13 +19,11 @@ class MessageController extends GetxController {
 
   @override
   void onInit() async {
-    Directory docDir = await getApplicationDocumentsDirectory();
+    // Directory docDir = await getApplicationDocumentsDirectory();
+    WidgetsFlutterBinding.ensureInitialized();
 
-    if (Store.isOpen(docDir.path + "/chatop")) {
-      store = await LocalStore.attach();
-    } else {
-      store = await LocalStore.init();
-    }
+    store = await LocalStore.attach();
+
     // Directory(docDir.path + '/souls').delete();
     // chats.bindStream(getChats());
 

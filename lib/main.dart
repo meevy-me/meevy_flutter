@@ -4,8 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:soul_date/constants/colors.dart';
 import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/services/background.dart';
+import 'package:soul_date/services/store.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeService();
+  // print(store);
   runApp(const MyApp());
 }
 

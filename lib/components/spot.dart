@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:soul_date/components/cached_image_error.dart';
+import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/spots.dart';
 import 'package:soul_date/screens/spot_screen.dart';
@@ -40,12 +42,15 @@ class SpotWidget extends StatelessWidget {
                       border: Border.all(color: spotifyGreen, width: 0.5)),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: CachedNetworkImage(
-                      imageUrl: spot.profile.images.last.image,
-                      fit: BoxFit.cover,
-                      width: 50,
-                      height: 50,
-                    ),
+                    child: spot.profile.images.isNotEmpty
+                        ? SoulCachedNetworkImage(
+                            imageUrl: spot.profile.images.last.image,
+                            fit: BoxFit.cover,
+                            width: 50,
+                            height: 50,
+                          )
+                        : const SoulCachedNetworkImage(
+                            width: 50, height: 50, imageUrl: defaultAvatarUrl),
                   ),
                 ),
               ),

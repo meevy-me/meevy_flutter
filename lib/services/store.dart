@@ -8,7 +8,7 @@ import '../models/chat_model.dart';
 
 class LocalStore {
   Store store;
-
+  static String storeName = '/chatop';
   LocalStore._init(this.store);
   // Future<Store> initStore() async {
   //   store = await openStore();
@@ -16,13 +16,15 @@ class LocalStore {
   // }
   static Future<LocalStore> init() async {
     Directory docDir = await getApplicationDocumentsDirectory();
-    final stored = await openStore(directory: docDir.path + '/chatop');
+    final stored = await openStore(directory: docDir.path + storeName);
+
     return LocalStore._init(stored);
   }
 
   static Future<LocalStore> attach() async {
     Directory docDir = await getApplicationDocumentsDirectory();
-    final stored = Store.attach(getObjectBoxModel(), docDir.path + '/chatop');
+    String storeDir = docDir.path + storeName;
+    final stored = Store.attach(getObjectBoxModel(), storeDir);
     return LocalStore._init(stored);
   }
 

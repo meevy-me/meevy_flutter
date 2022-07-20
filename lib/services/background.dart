@@ -70,8 +70,6 @@ void onStart(ServiceInstance service) async {
     store = await LocalStore.init();
   }
 
-  initConnection(service, store: store);
-
   if (service is AndroidServiceInstance) {
     service.on('setAsForeground').listen((event) {
       // service.setAsForegroundService();
@@ -85,6 +83,9 @@ void onStart(ServiceInstance service) async {
   service.on('stopService').listen((event) {
     store.store.close();
     service.stopSelf();
+  });
+  service.on('initService').listen((event) {
+    initConnection(service, store: store);
   });
 
   service.on('sendMessage').listen((event) {

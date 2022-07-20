@@ -28,3 +28,5 @@ const String requestUrl = baseUrl + 'socials/friend/request/';
 const String uploadImageUrl = baseUrl + 'users/pictures/add/';
 const String picturesUrl = baseUrl + 'users/pictures/';
 const String resetPasswordUrl = baseUrl + 'users/password/reset/';
+const String defaultAvatarUrl =
+    "https://as1.ftcdn.net/v2/jpg/03/39/45/96/1000_F_339459697_XAFacNQmwnvJRqe1Fe9VOptPWMUxlZP8.jpg";
