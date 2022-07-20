@@ -29,8 +29,11 @@ class Profile {
     );
 
     profile.user.target = User.fromJson(json["user"]);
-    profile.images.addAll(List<ProfileImages>.from(
-        json["images"].map((x) => ProfileImages.fromJson(x))));
+    profile.images.addAll(List<ProfileImages>.from(json["images"].map((x) {
+      try {
+        return ProfileImages.fromJson(x);
+      } catch (e) {}
+    })));
     return profile;
   }
 

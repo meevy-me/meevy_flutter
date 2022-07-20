@@ -30,6 +30,7 @@ class _LoginScreenBodyState extends State<_LoginScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return ListView(
       padding: scrollPadding,
       children: [
@@ -42,7 +43,8 @@ class _LoginScreenBodyState extends State<_LoginScreenBody> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-          child: Image.asset('assets/images/login hero.png', height: 300),
+          child: Image.asset('assets/images/login hero.png',
+              height: size.height * 0.3),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),

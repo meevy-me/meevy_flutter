@@ -57,7 +57,7 @@ class SoulController extends GetxController {
   setSpotifyToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (preferences.getString("spotify_accesstoken") == null) {
-      logout();
+      // logout();
       // Get.to(()  => const LoginScreen());
     } else {
       spotify.accessToken = preferences.getString("spotify_accesstoken")!;
@@ -197,6 +197,7 @@ class SoulController extends GetxController {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     if (await preferences.clear()) {
+      service.invoke('stopService');
       Get.offAll(() => const LoginScreen());
       // Get.delete<SoulController>();
       // Get.delete<SpotController>();

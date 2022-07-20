@@ -28,26 +28,30 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
           color: Colors.black, borderRadius: BorderRadius.circular(20)),
       child: Row(
         children: [
-          InkWell(
-            onTap: () {
-              setState(() {
-                selectedIndex = 0;
-                widget.onTap(0);
-              });
-            },
-            child: _BottomNavigationItem(
-              active: selectedIndex == 0 ? true : false,
-              iconData: FontAwesomeIcons.house,
+          Flexible(
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  selectedIndex = 0;
+                  widget.onTap(0);
+                });
+              },
+              child: _BottomNavigationItem(
+                active: selectedIndex == 0 ? true : false,
+                iconData: FontAwesomeIcons.house,
+              ),
             ),
           ),
-          InkWell(
-            onTap: () => setState(() {
-              selectedIndex = 1;
-              widget.onTap(1);
-            }),
-            child: _BottomNavigationItem(
-              active: selectedIndex == 1 ? true : false,
-              iconData: FontAwesomeIcons.userLarge,
+          Flexible(
+            child: InkWell(
+              onTap: () => setState(() {
+                selectedIndex = 1;
+                widget.onTap(1);
+              }),
+              child: _BottomNavigationItem(
+                active: selectedIndex == 1 ? true : false,
+                iconData: FontAwesomeIcons.userLarge,
+              ),
             ),
           ),
         ],
@@ -75,7 +79,6 @@ class _BottomNavigationItemState extends State<_BottomNavigationItem> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return AnimatedContainer(
-      width: widget.active ? size.width / 2 : (size.width / 2.83),
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(

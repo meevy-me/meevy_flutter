@@ -3,6 +3,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/objectbox.g.dart';
+import 'package:soul_date/services/background.dart';
 import 'package:soul_date/services/store.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../models/chat_model.dart';
@@ -21,6 +22,9 @@ class MessageController extends GetxController {
   void onInit() async {
     // Directory docDir = await getApplicationDocumentsDirectory();
     WidgetsFlutterBinding.ensureInitialized();
+    if (!await service.isRunning()) {
+      await initializeService();
+    }
 
     store = await LocalStore.attach();
 
