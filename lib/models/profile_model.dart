@@ -30,9 +30,7 @@ class Profile {
 
     profile.user.target = User.fromJson(json["user"]);
     profile.images.addAll(List<ProfileImages>.from(json["images"].map((x) {
-      try {
-        return ProfileImages.fromJson(x);
-      } catch (e) {}
+      return ProfileImages.fromJson(x);
     })));
     return profile;
   }
@@ -45,5 +43,9 @@ class Profile {
   @override
   String toString() {
     return name;
+  }
+
+  List<ProfileImages> get validImages {
+    return images.takeWhile((element) => !element.isDefault).toList();
   }
 }

@@ -71,7 +71,7 @@ class _MyImagesState extends State<MyImages> {
                           child: const Icon(FontAwesomeIcons.fileCirclePlus),
                         ),
                       ),
-                      ...controller.profile!.images.map((e) => InkWell(
+                      ...controller.profile!.validImages.map((e) => InkWell(
                             onTap: () {
                               Navigator.push(
                                   context,

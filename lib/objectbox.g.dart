@@ -165,7 +165,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(5, 5261969142082156847),
       name: 'ProfileImages',
-      lastPropertyId: const IdUid(2, 2065621413627115192),
+      lastPropertyId: const IdUid(3, 8076147544019440437),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -177,6 +177,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(2, 2065621413627115192),
             name: 'image',
             type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 8076147544019440437),
+            name: 'isDefault',
+            type: 1,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -386,9 +391,10 @@ ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (ProfileImages object, fb.Builder fbb) {
           final imageOffset = fbb.writeString(object.image);
-          fbb.startTable(3);
+          fbb.startTable(4);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, imageOffset);
+          fbb.addBool(2, object.isDefault);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -399,7 +405,9 @@ ModelDefinition getObjectBoxModel() {
           final object = ProfileImages(
               image: const fb.StringReader(asciiOptimization: true)
                   .vTableGet(buffer, rootOffset, 6, ''),
-              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0));
+              id: const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0),
+              isDefault: const fb.BoolReader()
+                  .vTableGet(buffer, rootOffset, 8, false));
 
           return object;
         }),
@@ -527,6 +535,10 @@ class ProfileImages_ {
   /// see [ProfileImages.image]
   static final image =
       QueryStringProperty<ProfileImages>(_entities[4].properties[1]);
+
+  /// see [ProfileImages.isDefault]
+  static final isDefault =
+      QueryBooleanProperty<ProfileImages>(_entities[4].properties[2]);
 }
 
 /// [User] entity fields to define ObjectBox queries.

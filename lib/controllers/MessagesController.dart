@@ -3,8 +3,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/objectbox.g.dart';
-import 'package:soul_date/services/background.dart';
-import 'package:soul_date/services/store.dart';
+
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../models/chat_model.dart';
 import '../services/network.dart';
@@ -13,7 +12,6 @@ class MessageController extends GetxController {
   RxList<Chat> chats = <Chat>[].obs;
   WebSocketChannel? connection;
   HttpClient client = HttpClient();
-  late LocalStore store;
   final service = FlutterBackgroundService();
 
   SoulController controller = Get.find<SoulController>();
@@ -21,12 +19,6 @@ class MessageController extends GetxController {
   @override
   void onInit() async {
     // Directory docDir = await getApplicationDocumentsDirectory();
-    WidgetsFlutterBinding.ensureInitialized();
-    if (!await service.isRunning()) {
-      await initializeService();
-    }
-
-    store = await LocalStore.attach();
 
     // Directory(docDir.path + '/souls').delete();
     // chats.bindStream(getChats());
@@ -35,7 +27,9 @@ class MessageController extends GetxController {
   }
 
   Stream<List<Chat>> getChats() {
-    final QueryBuilder<Chat> queryBuilder = store.store.box<Chat>().query()
+    final QueryBuilder<Chat> queryBuilder = controller.store.store
+        .box<Chat>()
+        .query()
       ..order(Chat_.dateCreated, flags: Order.descending);
     return queryBuilder
         .watch(triggerImmediately: true)
@@ -43,7 +37,7 @@ class MessageController extends GetxController {
   }
 
   Stream<Chat> getMessages(Chat chat) {
-    return store.store
+    return controller.store.store
         .box<Chat>()
         .query(Chat_.id.equals(chat.id))
         .watch(triggerImmediately: true)
@@ -58,7 +52,7 @@ class MessageController extends GetxController {
 
   @override
   void dispose() {
-    store.store.close();
+    controller.store.store.close();
     super.dispose();
   }
 }

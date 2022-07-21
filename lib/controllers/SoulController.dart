@@ -13,9 +13,11 @@ import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/models/spots.dart';
 import 'package:soul_date/screens/login.dart';
+import 'package:soul_date/services/background.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/services/spotify.dart';
+import 'package:soul_date/services/store.dart';
 
 class SoulController extends GetxController {
   HttpClient client = HttpClient();
@@ -28,13 +30,16 @@ class SoulController extends GetxController {
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
   final service = FlutterBackgroundService();
+  late LocalStore store;
 
   @override
   void onInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-    if (await service.isRunning()) {
-      service.invoke('initService');
+    if (!await service.isRunning()) {
+      await initializeService();
     }
+    store = await LocalStore.attach();
+
     setSpotifyToken();
     fetchMatches();
     getProfile();
@@ -83,13 +88,6 @@ class SoulController extends GetxController {
       log(res.body, name: "SPOTS ERROR");
     }
   }
-
-  // void fetchMessages() async {
-  //   http.Response res = await client.get(fetchMessagesUrl);
-  //   if (res.statusCode <= 210) {
-  //     messages.value = messagesFromJson(utf8.decode(res.bodyBytes));
-  //   }
-  // }
 
   void fetchChats() async {
     http.Response res = await client.get(fetchChatsUrl);
@@ -198,6 +196,7 @@ class SoulController extends GetxController {
 
     if (await preferences.clear()) {
       service.invoke('stopService');
+      LocalStore.delete();
       Get.offAll(() => const LoginScreen());
       // Get.delete<SoulController>();
       // Get.delete<SpotController>();

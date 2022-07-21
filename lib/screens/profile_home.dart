@@ -98,7 +98,7 @@ class _ProfileHomeState extends State<ProfileHome> {
                           },
                           icon: FontAwesomeIcons.images,
                           buttonLabel:
-                              controller.profile!.images.length.toString(),
+                              controller.profile!.validImages.length.toString(),
                         ),
                         ProfileButtons(
                           label: "My Spotify",
