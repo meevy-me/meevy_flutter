@@ -23,7 +23,8 @@ class SoulController extends GetxController {
   RxList<SpotsView> spots = <SpotsView>[].obs;
   RxList<SpotsView> mySpots = <SpotsView>[].obs;
   RxList<Chat> chats = <Chat>[].obs;
-  RxList<Profile> profile = <Profile>[].obs;
+  Profile? profile;
+  // RxList<Profile> profile = <Profile>[].obs;
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
   final service = FlutterBackgroundService();
@@ -44,11 +45,11 @@ class SoulController extends GetxController {
     var res = await client.get(profileMeUrl);
 
     if (res.statusCode <= 210) {
-      profile.value = [
-        Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)))
-      ];
+      profile = Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)));
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      preferences.setInt("profileID", profile.first.id);
+      preferences.setInt("profileID", profile!.id);
+      update(['profile']);
     } else {
       log(res.body, name: "PROFILE FETCH ERROR");
     }
@@ -165,7 +166,7 @@ class SoulController extends GetxController {
 
   uploadImage(XFile file, {required BuildContext context}) async {
     http.Response res = await client.post(uploadImageUrl,
-        body: {'profile': profile.first.id.toString()}, file: file);
+        body: {'profile': profile!.id.toString()}, file: file);
     if (res.statusCode <= 210) {
       getProfile();
       Get.back();
@@ -179,9 +180,8 @@ class SoulController extends GetxController {
   deleteImage(int id, {required BuildContext context}) async {
     var res = await client.delete(picturesUrl + '$id/');
     if (res.statusCode <= 210) {
-      var index =
-          profile.first.images.indexWhere((element) => element.id == id);
-      profile.first.images.removeAt(index);
+      var index = profile!.images.indexWhere((element) => element.id == id);
+      profile!.images.removeAt(index);
       Get.back();
       update();
       ScaffoldMessenger.of(context).showSnackBar(

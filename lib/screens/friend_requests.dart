@@ -64,7 +64,7 @@ class FriendRequestCard extends StatelessWidget {
   Friends friend;
 
   Profile currentProfile() {
-    if (controller.profile.first.id == friend.profile1.target!.id) {
+    if (controller.profile!.id == friend.profile1.target!.id) {
       return friend.profile2.target!;
     } else {
       return friend.profile1.target!;

@@ -26,7 +26,7 @@ class _ChatScreenState extends State<ChatScreen> {
   late Profile profile;
 
   Profile currentProfile() {
-    if (controller.profile.first.id ==
+    if (controller.profile!.id ==
         widget.chat.friends.target!.profile1.target!.id) {
       return widget.chat.friends.target!.profile2.target!;
     } else {
@@ -194,7 +194,7 @@ class _MessageBodyState extends State<_MessageBody> {
                 var element = snapshot.data!.messages[index];
                 return ChatBox(
                     size: size,
-                    mine: element.sender == controller.profile[0].id,
+                    mine: element.sender == controller.profile!.id,
                     text: element.content,
                     time: DateFormat.jm().format(element.datePosted));
               },

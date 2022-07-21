@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:soul_date/components/custom_slider.dart';
 import 'package:soul_date/components/image_circle.dart';
-import 'package:soul_date/components/slider.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/profile_model.dart';
@@ -44,12 +44,13 @@ class SearchProfileDialog extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
-              child: SlideToLike(
-                  match: profile,
-                  onLiked: (profile) {
+              child: SoulSlider(
+                  onComplete: () {
                     controller.sendRequest({'profile2': profile.id.toString()},
                         context: context);
-                  }),
+                  },
+                  defaultText: "Send Pair Request",
+                  completedWidget: const Text("You have sent a request")),
             )
           ],
         ),

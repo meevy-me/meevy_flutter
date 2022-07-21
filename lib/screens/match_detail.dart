@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/custom_slider.dart';
-import 'package:soul_date/components/slider.dart';
 import 'package:soul_date/components/spotify_card.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';

@@ -44,9 +44,9 @@ class __ProfileEditBodyState extends State<_ProfileEditBody> {
 
   @override
   void initState() {
-    names.text = soulController.profile.first.name;
-    bio.text = soulController.profile.first.bio;
-    selectedDate = soulController.profile.first.dateOfBirth.toString();
+    names.text = soulController.profile!.name;
+    bio.text = soulController.profile!.bio;
+    selectedDate = soulController.profile!.dateOfBirth.toString();
     super.initState();
   }
 
@@ -99,7 +99,7 @@ class __ProfileEditBodyState extends State<_ProfileEditBody> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: defaultMargin),
                 child: DateTimeFormField(
-                  initialValue: soulController.profile.first.dateOfBirth,
+                  initialValue: soulController.profile!.dateOfBirth,
                   initialDate: DateTime.tryParse(selectedDate),
                   initialDatePickerMode: DatePickerMode.year,
                   validator: (DateTime? selected) {
