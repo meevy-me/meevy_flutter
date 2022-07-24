@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/bottom_navigation.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/screens/match.dart';
+import 'package:soul_date/services/store.dart';
 
 import 'profile_home.dart';
 import 'settings_home.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.store}) : super(key: key);
+  final LocalStore store;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  final SoulController controller = Get.put(SoulController());
+  SoulController controller = Get.find<SoulController>();
   final SpotController spotController = Get.put(SpotController());
   final MessageController msgController = Get.put(MessageController());
   final PageController _pageController = PageController();
   int selectedIndex = 0;
   List<Widget> pages = const [MatchScreen(), ProfileHome(), SettingsHome()];
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

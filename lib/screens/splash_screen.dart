@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/screens/login.dart';
-import 'package:soul_date/services/background.dart';
+import 'package:soul_date/services/background_handle.dart';
 import 'package:soul_date/services/store.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -16,26 +18,36 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    checkLogin();
+    Future.delayed(const Duration(seconds: 2), () async {
+      checkLogin();
+    });
     super.initState();
   }
 
   void checkLogin() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    late LocalStore store;
+    // final service = FlutterBackgroundService();
     if (preferences.getString("spotify_accesstoken") == null) {
       Get.offAll(() => const LoginScreen());
     } else {
-      // LocalStore.init();
+      try {
+        store = await LocalStore.init();
+      } catch (e) {
+        store = await LocalStore.attach();
+      }
+      Get.put(SoulController(store), permanent: true);
 
-      WidgetsFlutterBinding.ensureInitialized();
-      await initializeService();
-      Get.offAll(() => const HomePage());
+      Get.offAll(() => HomePage(
+            store: store,
+          ));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Image.asset(
           'assets/images/splash_icon.png',

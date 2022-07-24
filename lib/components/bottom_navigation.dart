@@ -77,7 +77,6 @@ class _BottomNavigationItem extends StatefulWidget {
 class _BottomNavigationItemState extends State<_BottomNavigationItem> {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,

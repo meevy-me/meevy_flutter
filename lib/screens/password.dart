@@ -47,6 +47,12 @@ class _PasswordScreenBodyState extends State<_PasswordScreenBody> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   SpotifyController spotifyController = Get.find<SpotifyController>();
   @override
+  void initState() {
+    spotifyController.errors = "";
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView(
       padding: scaffoldPadding,

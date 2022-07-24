@@ -178,37 +178,35 @@ class _SpotScreenState extends State<SpotScreen> {
               )
             ]),
           ),
-          Expanded(
-            child: Container(
-              color: Colors.black,
-              padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Sync To Spot",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Colors.white),
-                  ),
-                  ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                          primary: Theme.of(context).primaryColor,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20))),
-                      onPressed: () {
-                        controller.spotify
-                            .playTrack(spot.details.item.uri, context: context);
-                      },
-                      icon: const Icon(
-                        FontAwesomeIcons.spotify,
-                        color: Colors.white,
-                      ),
-                      label: const Text("Sync"))
-                ],
-              ),
+          Container(
+            color: Colors.black,
+            padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Sync To Spot",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: Colors.white),
+                ),
+                ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                        primary: Theme.of(context).primaryColor,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20))),
+                    onPressed: () {
+                      controller.spotify
+                          .playTrack(spot.details.item.uri, context: context);
+                    },
+                    icon: const Icon(
+                      FontAwesomeIcons.spotify,
+                      color: Colors.white,
+                    ),
+                    label: const Text("Sync"))
+              ],
             ),
           )
         ],

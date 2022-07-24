@@ -117,7 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               shape: const CircleBorder()),
                           onPressed: () {
                             if (text.text.trim().isNotEmpty) {
-                              messageController.addMessage(text.text,
+                              messageController.addMessageSocket(text.text,
                                   chat: widget.chat,
                                   scrollController: scrollController);
                               text.clear();

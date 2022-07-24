@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:soul_date/constants/colors.dart';
-import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/screens/splash_screen.dart';
-import 'package:soul_date/services/background.dart';
-import 'package:soul_date/services/store.dart';
 
 void main() async {
   // WidgetsFlutterBinding.ensureInitialized();

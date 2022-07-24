@@ -1,11 +1,20 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/objectbox.g.dart';
+import 'package:soul_date/services/notifications.dart';
+import 'package:soul_date/services/store.dart';
+import 'package:web_socket_channel/io.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
+import '../constants/constants.dart';
 import '../models/chat_model.dart';
+import '../models/models.dart';
 import '../services/network.dart';
 
 class MessageController extends GetxController {
@@ -18,12 +27,72 @@ class MessageController extends GetxController {
 
   @override
   void onInit() async {
-    // Directory docDir = await getApplicationDocumentsDirectory();
-
-    // Directory(docDir.path + '/souls').delete();
-    // chats.bindStream(getChats());
+    openConnection();
 
     super.onInit();
+  }
+
+  void openConnection() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String token = preferences.getString("token")!;
+    connection = IOWebSocketChannel.connect(messagesWs,
+        headers: {'authorization': "Token $token"});
+    listenConnection(controller.store);
+    fetchChats(controller.store);
+  }
+
+  void messageToStore(Chat chat,
+      {required Message message, required LocalStore store}) async {
+    await store.insert<Message>(message);
+    // print(id);
+
+    chat.messages.add(message);
+    chat.dateCreated = message.datePosted;
+    await store.insert<Chat>(chat);
+  }
+
+  Future<Chat?> addMessage(
+    LocalStore store,
+    Map data,
+  ) async {
+    Chat? chat = await store.get<Chat>(data["chat"]);
+    if (chat != null) {
+      var message = Message(
+        id: 0,
+        content: data['content'],
+        datePosted: DateTime.parse(data['date_posted']),
+        sender: data['sender'],
+      );
+      messageToStore(chat, message: message, store: store);
+
+      NotificationApi.showNotification(
+          title: "Message from ${chat.friends.target!.profile2.target!.name}",
+          body: message.formatContent,
+          payload: chat.id.toString());
+      // if (service is AndroidServiceInstance) {
+      //   service.setForegroundNotificationInfo(
+      //     title: "New Message from ${chat.friends.target!.profile2.target!.name}",
+      //     content: message.content,
+      //   );
+      // }
+      return chat;
+    }
+    return null;
+  }
+
+  listenConnection(LocalStore store) async {
+    if (connection != null) {
+      connection!.stream.listen(
+        (event) {
+          var data = json.decode(event)['message'];
+          addMessage(store, data);
+        },
+        // onDone: () async =>
+        //     await retry(() async => initConnection(service, store: store)),
+        // onError: (error) async =>
+        //     await retry(() async => initConnection(service, store: store))
+      );
+    }
   }
 
   Stream<List<Chat>> getChats() {
@@ -36,6 +105,10 @@ class MessageController extends GetxController {
         .map((event) => event.find());
   }
 
+  void refreshChats() {
+    service.invoke('refreshChats');
+  }
+
   Stream<Chat> getMessages(Chat chat) {
     return controller.store.store
         .box<Chat>()
@@ -44,10 +117,58 @@ class MessageController extends GetxController {
         .map((event) => event.findFirst()!);
   }
 
-  addMessage(String content,
+  addMessageSocket(String content,
       {required Chat chat, required ScrollController scrollController}) async {
+    sendMessage({"chat": chat.id, "message": content}, store: controller.store);
     // var isRunning = await service.isRunning();
-    service.invoke('sendMessage', {"chat": chat.id, "message": content});
+  }
+
+  void sendMessage(
+    Map? event, {
+    required LocalStore store,
+  }) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    int profile = preferences.getInt('profileID')!;
+    if (event != null) {
+      var id = event['chat'];
+      var content = event['message'];
+      connection!.sink.add(json.encode({"chat": id, "message": content}));
+
+      Message message = Message(
+          id: 0, content: content, datePosted: DateTime.now(), sender: profile);
+      Chat? chat = await store.get<Chat>(id);
+      if (chat != null) {
+        messageToStore(chat, message: message, store: store);
+      }
+    }
+  }
+
+  void fetchChats(LocalStore store) async {
+    var res = await client.get(fetchChatsUrl);
+    if (res.statusCode <= 210) {
+      var chatList = chatFromJson(utf8.decode(res.bodyBytes));
+      for (var element in chatList) {
+        store.store.box<Friends>().put(element.friends.target!);
+        store.store
+            .box<ProfileImages>()
+            .putMany(element.friends.target!.profile1.target!.images);
+        store.store
+            .box<ProfileImages>()
+            .putMany(element.friends.target!.profile2.target!.images);
+        store.store
+            .box<Profile>()
+            .put(element.friends.target!.profile2.target!);
+        store.store
+            .box<Profile>()
+            .put(element.friends.target!.profile1.target!);
+
+        store.store.box<Message>().putMany(element.messages);
+      }
+      store.insertList<Chat>(chatList);
+      // chats.value = chatList;
+    } else {
+      log(res.body, name: "CHATS ERROR");
+    }
   }
 
   @override

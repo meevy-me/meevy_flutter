@@ -12,8 +12,9 @@ import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/models/spots.dart';
+import 'package:soul_date/objectbox.g.dart';
 import 'package:soul_date/screens/login.dart';
-import 'package:soul_date/services/background.dart';
+import 'package:soul_date/services/background_handle.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/services/spotify.dart';
@@ -30,16 +31,16 @@ class SoulController extends GetxController {
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
   final service = FlutterBackgroundService();
-  late LocalStore store;
+  final LocalStore store;
+
+  SoulController(this.store);
 
   @override
   void onInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-    if (!await service.isRunning()) {
-      await initializeService();
-    }
-    store = await LocalStore.attach();
-
+    // if (!await service.isRunning()) {
+    //   await initializeService(store);
+    // }
     setSpotifyToken();
     fetchMatches();
     getProfile();
@@ -195,10 +196,11 @@ class SoulController extends GetxController {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     if (await preferences.clear()) {
+      store.store.close();
       service.invoke('stopService');
       LocalStore.delete();
       Get.offAll(() => const LoginScreen());
-      // Get.delete<SoulController>();
+      Get.delete<SoulController>();
       // Get.delete<SpotController>();
       // Get.delete<MessageController>();
     }
