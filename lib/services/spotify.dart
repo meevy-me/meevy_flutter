@@ -130,6 +130,7 @@ class Spotify {
       await refreshAccessToken();
       playTrack(uri, context: context);
     } else {
+      showSnackBar(context, "An error has occured");
       log(res.body, name: "SPOTIFY ERROR");
     }
   }

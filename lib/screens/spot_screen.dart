@@ -133,34 +133,20 @@ class _SpotScreenState extends State<SpotScreen> {
                                         Icons.close,
                                         color: Colors.white,
                                       )),
-                                  PopupMenuButton(
-                                      elevation: 0,
-                                      icon: const Icon(
-                                        Icons.more_horiz_sharp,
-                                        color: Colors.white,
-                                      ),
-                                      color: Colors.white.withOpacity(0.7),
-                                      itemBuilder: (context) {
-                                        return [
-                                          PopupMenuItem(
-                                              onTap: () {
-                                                spotController
-                                                    .deleteSpot(spot.id);
-                                              },
-                                              child: Row(
-                                                children: const [
-                                                  Icon(
-                                                    Icons.delete,
-                                                    color: Colors.red,
-                                                  ),
-                                                  SizedBox(
-                                                    width: defaultPadding,
-                                                  ),
-                                                  Text("Delete")
-                                                ],
-                                              ))
-                                        ];
-                                      })
+                                  const SizedBox(
+                                    width: defaultPadding,
+                                  ),
+                                  widget.spots.profile.id ==
+                                          controller.profile!.id
+                                      ? IconButton(
+                                          onPressed: () {
+                                            spotController.deleteSpot(spot.id);
+                                          },
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                          ))
+                                      : const SizedBox.shrink(),
                                 ],
                               )
                             ],

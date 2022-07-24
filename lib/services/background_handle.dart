@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/models.dart';
-import 'package:soul_date/objectbox.g.dart';
 
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/notifications.dart';
