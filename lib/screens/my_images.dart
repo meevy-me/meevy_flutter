@@ -23,75 +23,78 @@ class _MyImagesState extends State<MyImages> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          elevation: 0,
-          centerTitle: true,
-          leading: const BackButton(
-            color: Colors.black,
-          ),
-          title: Text(
-            "My Images",
-            style: Theme.of(context).textTheme.headline6,
-          ),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 0,
+        centerTitle: true,
+        leading: const BackButton(
+          color: Colors.black,
         ),
-        body: SafeArea(
-          child: Padding(
-            padding: scaffoldPadding,
-            child: SingleChildScrollView(
-              child: Obx(
-                () => Wrap(
-                  // runAlignment: WrapAlignment.spaceBetween,
-                  // alignment: WrapAlignment.spaceBetween,
-                  spacing: defaultMargin,
-                  runSpacing: defaultMargin,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () async {
-                        _file = await ImagePicker()
-                            .pickImage(source: ImageSource.gallery);
-                        if (_file != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ImageView(
-                                        fileUploaded: _file,
-                                      )));
-                        }
-                      },
-                      child: Container(
-                        height: 120,
-                        width: 100,
-                        decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: const Icon(FontAwesomeIcons.fileCirclePlus),
-                      ),
-                    ),
-                    ...controller.profile.first.images.map((e) => InkWell(
-                          onTap: () {
+        title: Text(
+          "My Images",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: scaffoldPadding,
+          child: SingleChildScrollView(
+            child: GetBuilder<SoulController>(
+                id: 'profile',
+                builder: (controller) {
+                  return Wrap(
+                    // runAlignment: WrapAlignment.spaceBetween,
+                    // alignment: WrapAlignment.spaceBetween,
+                    spacing: defaultMargin,
+                    runSpacing: defaultMargin,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          _file = await ImagePicker()
+                              .pickImage(source: ImageSource.gallery);
+                          if (_file != null) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: ((context) => ImageView(
-                                        imageUrl: e.image, imageID: e.id))));
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: CachedNetworkImage(
-                              imageUrl: e.image,
-                              height: 120,
-                              width: 100,
-                              fit: BoxFit.cover,
+                                    builder: (context) => ImageView(
+                                          fileUploaded: _file,
+                                        )));
+                          }
+                        },
+                        child: Container(
+                          height: 120,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: const Icon(FontAwesomeIcons.fileCirclePlus),
+                        ),
+                      ),
+                      ...controller.profile!.validImages.map((e) => InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) => ImageView(
+                                          imageUrl: e.image, imageID: e.id))));
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: CachedNetworkImage(
+                                imageUrl: e.image,
+                                height: 120,
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          ),
-                        ))
-                  ],
-                ),
-              ),
-            ),
+                          ))
+                    ],
+                  );
+                }),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

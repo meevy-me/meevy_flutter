@@ -12,10 +12,13 @@ import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/models/spots.dart';
+import 'package:soul_date/objectbox.g.dart';
 import 'package:soul_date/screens/login.dart';
+import 'package:soul_date/services/background_handle.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/services/spotify.dart';
+import 'package:soul_date/services/store.dart';
 
 class SoulController extends GetxController {
   HttpClient client = HttpClient();
@@ -23,17 +26,21 @@ class SoulController extends GetxController {
   RxList<SpotsView> spots = <SpotsView>[].obs;
   RxList<SpotsView> mySpots = <SpotsView>[].obs;
   RxList<Chat> chats = <Chat>[].obs;
-  RxList<Profile> profile = <Profile>[].obs;
+  Profile? profile;
+  // RxList<Profile> profile = <Profile>[].obs;
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
   final service = FlutterBackgroundService();
+  final LocalStore store;
+
+  SoulController(this.store);
 
   @override
   void onInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-    if (await service.isRunning()) {
-      service.invoke('initService');
-    }
+    // if (!await service.isRunning()) {
+    //   await initializeService(store);
+    // }
     setSpotifyToken();
     fetchMatches();
     getProfile();
@@ -44,11 +51,11 @@ class SoulController extends GetxController {
     var res = await client.get(profileMeUrl);
 
     if (res.statusCode <= 210) {
-      profile.value = [
-        Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)))
-      ];
+      profile = Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)));
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      preferences.setInt("profileID", profile.first.id);
+      preferences.setInt("profileID", profile!.id);
+      update(['profile']);
     } else {
       log(res.body, name: "PROFILE FETCH ERROR");
     }
@@ -57,7 +64,7 @@ class SoulController extends GetxController {
   setSpotifyToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (preferences.getString("spotify_accesstoken") == null) {
-      logout();
+      // logout();
       // Get.to(()  => const LoginScreen());
     } else {
       spotify.accessToken = preferences.getString("spotify_accesstoken")!;
@@ -82,13 +89,6 @@ class SoulController extends GetxController {
       log(res.body, name: "SPOTS ERROR");
     }
   }
-
-  // void fetchMessages() async {
-  //   http.Response res = await client.get(fetchMessagesUrl);
-  //   if (res.statusCode <= 210) {
-  //     messages.value = messagesFromJson(utf8.decode(res.bodyBytes));
-  //   }
-  // }
 
   void fetchChats() async {
     http.Response res = await client.get(fetchChatsUrl);
@@ -165,7 +165,7 @@ class SoulController extends GetxController {
 
   uploadImage(XFile file, {required BuildContext context}) async {
     http.Response res = await client.post(uploadImageUrl,
-        body: {'profile': profile.first.id.toString()}, file: file);
+        body: {'profile': profile!.id.toString()}, file: file);
     if (res.statusCode <= 210) {
       getProfile();
       Get.back();
@@ -179,9 +179,8 @@ class SoulController extends GetxController {
   deleteImage(int id, {required BuildContext context}) async {
     var res = await client.delete(picturesUrl + '$id/');
     if (res.statusCode <= 210) {
-      var index =
-          profile.first.images.indexWhere((element) => element.id == id);
-      profile.first.images.removeAt(index);
+      var index = profile!.images.indexWhere((element) => element.id == id);
+      profile!.images.removeAt(index);
       Get.back();
       update();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -197,8 +196,11 @@ class SoulController extends GetxController {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     if (await preferences.clear()) {
+      store.store.close();
+      service.invoke('stopService');
+      LocalStore.delete();
       Get.offAll(() => const LoginScreen());
-      // Get.delete<SoulController>();
+      Get.delete<SoulController>();
       // Get.delete<SpotController>();
       // Get.delete<MessageController>();
     }

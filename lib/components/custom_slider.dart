@@ -1,9 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lottie/lottie.dart';
 import 'package:soul_date/constants/constants.dart';
 
 class SoulSlider extends StatefulWidget {
@@ -66,7 +62,7 @@ class _SoulSliderState extends State<SoulSlider>
                       ]),
                 ),
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   height: widget.height ?? 60,
                   child: Center(
                     child: Text(widget.defaultText,

@@ -11,6 +11,7 @@ import 'package:soul_date/screens/datafetch.dart';
 import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/screens/profile.dart';
 import 'package:soul_date/screens/reset_code_Screen.dart';
+import 'package:soul_date/screens/splash_screen.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/spotify.dart';
 
@@ -130,9 +131,9 @@ class SpotifyController extends GetxController {
       'refresh_token': spotify.refreshToken
     });
     if (response.statusCode <= 210) {
-      Get.to(() => const HomePage());
+      Get.to(() => const SplashScreen());
     } else if (response.statusCode <= 500) {
-      Get.to(() => const HomePage());
+      Get.to(() => const SplashScreen());
     } else {
       log(response.body, name: "ERROR");
     }

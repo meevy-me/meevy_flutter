@@ -29,7 +29,8 @@ class _SpotScreenState extends State<SpotScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Column(
+      body: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
           GestureDetector(
             onTapDown: (details) {
@@ -224,6 +225,7 @@ class _SongWithImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -236,8 +238,8 @@ class _SongWithImage extends StatelessWidget {
                   spot.profile.id.toString(),
               child: CachedNetworkImage(
                 imageUrl: spot.details.item.album.images[0].url,
-                height: 300,
-                width: 300,
+                height: size.height * 0.4,
+                width: size.height * 0.4,
                 fit: BoxFit.cover,
               ),
             ),
@@ -352,7 +354,7 @@ class SpotScreenBackground extends StatelessWidget {
           borderRadius:
               const BorderRadius.vertical(bottom: Radius.circular(20)),
           child: SizedBox(
-            height: size.height * 0.9,
+            height: size.height,
             width: size.width,
             child: Container(
               color: Colors.black.withOpacity(0),

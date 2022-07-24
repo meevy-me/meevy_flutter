@@ -1,31 +1,30 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
+import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
-import 'package:objectbox/objectbox.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soul_date/models/friend_model.dart';
-import 'package:soul_date/models/images.dart';
-import 'package:soul_date/models/messages.dart';
-import 'package:soul_date/models/profile_model.dart';
+import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/models/models.dart';
+import 'package:soul_date/objectbox.g.dart';
+
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/notifications.dart';
+
 import 'package:soul_date/services/store.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-import '../constants/constants.dart';
-import '../models/chat_model.dart';
-
+LocalStore? store;
 WebSocketChannel? connection;
 HttpClient client = HttpClient();
-Future<void> initializeService() async {
+
+initializeService(LocalStore stored) async {
+  store = stored;
+  print(stored);
   final service = FlutterBackgroundService();
 
   await service.configure(
@@ -48,6 +47,7 @@ Future<void> initializeService() async {
       onBackground: onIosBackground,
     ),
   );
+
   service.startService();
 }
 
@@ -59,16 +59,9 @@ bool onIosBackground(ServiceInstance service) {
 }
 
 void onStart(ServiceInstance service) async {
-  // Only available for flutter 3.0.0 and later
   DartPluginRegistrant.ensureInitialized();
-  late LocalStore store;
-  Directory docDir = await getApplicationDocumentsDirectory();
 
-  if (Store.isOpen(docDir.path + "/chatop")) {
-    store = await LocalStore.attach();
-  } else {
-    store = await LocalStore.init();
-  }
+  // final ReceivePort receivePort = ReceivePort();
 
   if (service is AndroidServiceInstance) {
     service.on('setAsForeground').listen((event) {
@@ -81,16 +74,26 @@ void onStart(ServiceInstance service) async {
   }
 
   service.on('stopService').listen((event) {
-    store.store.close();
+    // LocalStore store = event['store'];
+
+    store!.store.close();
     service.stopSelf();
   });
   service.on('initService').listen((event) {
-    initConnection(service, store: store);
+    initConnection(service, store: store!);
+
+    // store!.store.close();
+    // service.stopSelf();
+  });
+
+  service.on('refreshChats').listen((event) {
+    fetchChats(store!);
   });
 
   service.on('sendMessage').listen((event) {
-    sendMessage(event, store: store);
+    sendMessage(event, store: store!);
   });
+  initConnection(service, store: store!);
 }
 
 void sendMessage(

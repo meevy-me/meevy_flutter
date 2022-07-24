@@ -150,7 +150,7 @@
     },
     {
       "id": "5:5261969142082156847",
-      "lastPropertyId": "2:2065621413627115192",
+      "lastPropertyId": "3:8076147544019440437",
       "name": "ProfileImages",
       "properties": [
         {
@@ -163,6 +163,11 @@
           "id": "2:2065621413627115192",
           "name": "image",
           "type": 9
+        },
+        {
+          "id": "3:8076147544019440437",
+          "name": "isDefault",
+          "type": 1
         }
       ],
       "relations": []

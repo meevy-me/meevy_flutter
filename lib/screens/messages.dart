@@ -55,7 +55,7 @@ class _MessagesPageState extends State<MessagesPage> {
               Expanded(child: _MessagesSection(
                 onRefresh: () {
                   spotController.fetchSpots();
-                  // messageController.fetchChats();
+                  messageController.refreshChats();
                 },
               ))
             ],

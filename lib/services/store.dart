@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:soul_date/objectbox.g.dart';
 
@@ -28,10 +29,15 @@ class LocalStore {
     return LocalStore._init(stored);
   }
 
+  static LocalStore fromReference(ByteData ref) {
+    final stored = Store.fromReference(getObjectBoxModel(), ref);
+    return LocalStore._init(stored);
+  }
+
   static delete() async {
     Directory docDir = await getApplicationDocumentsDirectory();
     try {
-      Directory(docDir.path + '/chatop').delete();
+      Directory(docDir.path + '/chatop').delete(recursive: true);
     } catch (e) {
       log(e.toString(), name: "DELETING DB");
     }
