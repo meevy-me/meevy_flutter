@@ -13,7 +13,6 @@ import 'package:web_socket_channel/io.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../constants/constants.dart';
-import '../models/chat_model.dart';
 import '../models/models.dart';
 import '../services/network.dart';
 
@@ -106,7 +105,10 @@ class MessageController extends GetxController {
   }
 
   void refreshChats() {
-    service.invoke('refreshChats');
+    if (connection == null) {
+      openConnection();
+    }
+    fetchChats(controller.store);
   }
 
   Stream<Chat> getMessages(Chat chat) {

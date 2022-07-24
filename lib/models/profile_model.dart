@@ -48,4 +48,8 @@ class Profile {
   List<ProfileImages> get validImages {
     return images.takeWhile((element) => !element.isDefault).toList();
   }
+
+  ProfileImages get profilePicture {
+    return images.last;
+  }
 }

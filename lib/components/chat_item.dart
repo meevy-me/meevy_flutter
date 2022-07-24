@@ -46,7 +46,7 @@ class _ChatItemState extends State<ChatItem> {
             return Row(
               children: [
                 SoulCircleAvatar(
-                  imageUrl: profile.images.first.image,
+                  imageUrl: profile.images.last.image,
                   radius: 25,
                 ),
                 Padding(
