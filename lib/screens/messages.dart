@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -34,31 +35,34 @@ class _MessagesPageState extends State<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Theme.of(context).primaryColor, primaryDark])),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        floatingActionButton: FloatingActionButton(
-            backgroundColor: Theme.of(context).primaryColor,
-            child: const Icon(FontAwesomeIcons.spotify),
-            onPressed: () async {
-              controller.spotify.fetchCurrentPlaying(context);
-            }),
-        body: SafeArea(
-          child: Column(
-            children: [
-              const _SpotSection(),
-              Expanded(child: _MessagesSection(
-                onRefresh: () {
-                  spotController.fetchSpots();
-                  messageController.refreshChats();
-                },
-              ))
-            ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Theme.of(context).primaryColor, primaryDark])),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          floatingActionButton: FloatingActionButton(
+              backgroundColor: Theme.of(context).primaryColor,
+              child: const Icon(FontAwesomeIcons.spotify),
+              onPressed: () async {
+                controller.spotify.fetchCurrentPlaying(context);
+              }),
+          body: SafeArea(
+            child: Column(
+              children: [
+                const _SpotSection(),
+                Expanded(child: _MessagesSection(
+                  onRefresh: () {
+                    spotController.fetchSpots();
+                    messageController.refreshChats();
+                  },
+                ))
+              ],
+            ),
           ),
         ),
       ),
@@ -182,7 +186,6 @@ class _MessagesSection extends StatelessWidget {
   final MessageController messageController = Get.find<MessageController>();
   @override
   Widget build(BuildContext context) {
-    var messages = messageController.chats;
     Size size = MediaQuery.of(context).size;
     const Radius radius = Radius.circular(30);
     return Container(
