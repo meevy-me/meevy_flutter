@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/bottom_navigation.dart';
+import 'package:soul_date/controllers/FirebaseController.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
@@ -22,6 +23,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   SoulController controller = Get.find<SoulController>();
   final SpotController spotController = Get.put(SpotController());
+  final FirebaseController firebaseController = Get.put(FirebaseController());
   final MessageController msgController = Get.put(MessageController());
   final PageController _pageController = PageController();
   int selectedIndex = 0;

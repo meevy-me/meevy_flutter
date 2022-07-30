@@ -13,7 +13,7 @@ class NotificationApi {
         android: AndroidNotificationDetails(
           'soul id',
           'soul name',
-          color: spotifyGreen,
+          setAsGroupSummary: true,
           enableVibration: true,
         ),
         iOS: IOSNotificationDetails());

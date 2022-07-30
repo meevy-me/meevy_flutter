@@ -113,6 +113,7 @@ class SoulController extends GetxController {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Friend Request accepted")));
       friendRequest.remove(friend);
+      fetchRequests();
     }
   }
 

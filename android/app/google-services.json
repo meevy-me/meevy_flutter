@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "762432045224",
+    "firebase_url": "https://souldate-5d68c-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "souldate-5d68c",
+    "storage_bucket": "souldate-5d68c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762432045224:android:eb5848b2e9006488f4429d",
+        "android_client_info": {
+          "package_name": "com.central.souldate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "762432045224-aebkbrl1tvvgp60ko7m08pnqk5r2oata.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xDY1oFUhwju0I_Ahv2zAdVcn6zy8pKo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "762432045224-aebkbrl1tvvgp60ko7m08pnqk5r2oata.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -117,6 +117,10 @@ class Spotify {
   }
 
   playTrack(String uri, {required BuildContext context}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    accessToken = preferences.getString("spotify_accesstoken")!;
+    refreshToken = preferences.getString("spotify_refreshtoken")!;
     http.Response res = await client.post(queueUrl,
         body: {},
         parameters: {"uri": uri},
