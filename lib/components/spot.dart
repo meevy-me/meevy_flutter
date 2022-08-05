@@ -53,13 +53,13 @@ class SpotWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              CircleAvatar(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.white,
-                radius: 10,
-                foregroundImage: CachedNetworkImageProvider(
-                    spot.details.item.album.images[0].url),
-              )
+              // CircleAvatar(
+              //   foregroundColor: Colors.white,
+              //   backgroundColor: Colors.white,
+              //   radius: 10,
+              //   foregroundImage: CachedNetworkImageProvider(
+              //       spot.details.item.album.images[0].url),
+              // )
             ],
           ),
         ),

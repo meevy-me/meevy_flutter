@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/components/spot_screen_background.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/models/spotify_spot_details.dart';
@@ -32,7 +33,7 @@ class _MySpotScreenState extends State<MySpotScreen> {
       body: ListView(
         children: [
           Stack(children: [
-            SpotScreenBackground(
+            MySpotScreenBackground(
               size: size,
               details: widget.details,
             ),
@@ -229,7 +230,8 @@ class _BottomSection extends StatelessWidget {
                 );
               },
               icon: const Icon(
-                FontAwesomeIcons.spotify,
+                FontAwesomeIcons.circlePlus,
+                size: 18,
                 color: Colors.white,
               ),
               label: const Text("Post"))
@@ -337,46 +339,6 @@ class _SongDetails extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class SpotScreenBackground extends StatelessWidget {
-  const SpotScreenBackground({
-    Key? key,
-    required this.size,
-    required this.details,
-  }) : super(key: key);
-
-  final Size size;
-  final SpotifyDetails details;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius:
-              const BorderRadius.vertical(bottom: Radius.circular(20)),
-          child: SizedBox(
-            height: size.height * 0.9,
-            width: size.width,
-            child: Container(
-              color: Colors.black.withOpacity(0),
-              child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: details.item.album.images[0].url),
-            ),
-          ),
-        ),
-        Positioned.fill(
-            child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            color: Colors.black.withOpacity(0.3),
-          ),
-        ))
-      ],
     );
   }
 }

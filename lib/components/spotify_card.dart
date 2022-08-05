@@ -17,7 +17,9 @@ class SpotifyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        launchUrlString(details.spotifyLink!);
+        if (details.href != null) {
+          launchUrlString(details.href!);
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
@@ -28,11 +30,7 @@ class SpotifyCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: defaultMargin),
           child: Row(
             children: [
-              CircleAvatar(
-                  backgroundColor: Colors.white,
-                  backgroundImage:
-                      CachedNetworkImageProvider(details.detailImage),
-                  radius: 20),
+              CachedNetworkImage(imageUrl: details.detailImage),
               const SizedBox(
                 width: defaultMargin,
               ),
@@ -41,14 +39,14 @@ class SpotifyCard extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .bodyText2!
-                    .copyWith(color: spotifyGreen),
+                    .copyWith(color: Colors.white),
               ),
               const SizedBox(
                 width: defaultMargin,
               ),
-              Icon(
+              const Icon(
                 FontAwesomeIcons.spotify,
-                color: Colors.grey.withOpacity(0.6),
+                color: spotifyGreen,
                 size: 10,
               ),
             ],

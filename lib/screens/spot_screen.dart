@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/components/spot_screen_background.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
@@ -192,10 +193,8 @@ class _SpotScreenState extends State<SpotScreen> {
                         controller.spotify
                             .playTrack(spot.details.item.uri, context: context);
                       },
-                      icon: const Icon(
-                        FontAwesomeIcons.spotify,
-                        color: Colors.white,
-                      ),
+                      icon: const Icon(FontAwesomeIcons.spotify,
+                          size: 18, color: Colors.white),
                       label: const Text("Sync"))
                 ],
               ),
@@ -223,17 +222,14 @@ class _SongWithImage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Hero(
-              tag: spot.details.item.album.images[0].url +
-                  spot.profile.id.toString(),
-              child: CachedNetworkImage(
-                imageUrl: spot.details.item.album.images[0].url,
-                height: size.height * 0.4,
-                width: size.height * 0.4,
-                fit: BoxFit.cover,
-              ),
+          child: Hero(
+            tag: spot.details.item.album.images[0].url +
+                spot.profile.id.toString(),
+            child: CachedNetworkImage(
+              imageUrl: spot.details.item.album.images[0].url,
+              height: size.height * 0.4,
+              width: size.height * 0.4,
+              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -323,46 +319,6 @@ class _SongDetails extends StatelessWidget {
             ),
           ),
         ),
-      ],
-    );
-  }
-}
-
-class SpotScreenBackground extends StatelessWidget {
-  const SpotScreenBackground({
-    Key? key,
-    required this.size,
-    required this.spot,
-  }) : super(key: key);
-
-  final Size size;
-  final Spot spot;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius:
-              const BorderRadius.vertical(bottom: Radius.circular(20)),
-          child: SizedBox(
-            height: size.height,
-            width: size.width,
-            child: Container(
-              color: Colors.black.withOpacity(0),
-              child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: spot.details.item.album.images[0].url),
-            ),
-          ),
-        ),
-        Positioned.fill(
-            child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            color: Colors.black.withOpacity(0.3),
-          ),
-        ))
       ],
     );
   }
