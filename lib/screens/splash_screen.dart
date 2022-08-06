@@ -34,6 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
       try {
         store = await LocalStore.init();
       } catch (e) {
+        print(e);
         store = await LocalStore.attach();
       }
       Get.put(SoulController(store), permanent: true);

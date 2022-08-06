@@ -17,8 +17,8 @@ class SpotifyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        if (details.href != null) {
-          launchUrlString(details.href!);
+        if (details.spotify != null) {
+          launchUrlString(details.spotify!);
         }
       },
       child: Container(

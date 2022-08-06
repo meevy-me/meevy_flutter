@@ -256,14 +256,11 @@ class _SongWithImage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: CachedNetworkImage(
-              imageUrl: details.item.album.images[0].url,
-              height: 300,
-              width: 300,
-              fit: BoxFit.cover,
-            ),
+          child: CachedNetworkImage(
+            imageUrl: details.item.album.images[0].url,
+            height: 300,
+            width: 300,
+            fit: BoxFit.cover,
           ),
         ),
         Padding(

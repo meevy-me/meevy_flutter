@@ -199,8 +199,9 @@ class SoulController extends GetxController {
       store.store.close();
       service.invoke('stopService');
       LocalStore.delete();
+      Get.delete<SoulController>(force: true);
+
       Get.offAll(() => const LoginScreen());
-      Get.delete<SoulController>();
       // Get.delete<SpotController>();
       // Get.delete<MessageController>();
     }
