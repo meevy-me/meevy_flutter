@@ -1,14 +1,62 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:soul_date/constants/colors.dart';
 import 'package:soul_date/screens/splash_screen.dart';
+import 'package:soul_date/services/notifications.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  if (message.notification!.title == 'Request') {
+    NotificationApi.showNotification(
+        id: message.notification.hashCode,
+        title: "Soul Request Accepted",
+        body: message.notification!.body);
+  }
+  if (message.notification!.title == 'Message') {
+    NotificationApi.showNotification(
+        id: message.notification.hashCode,
+        title: "You have a new message",
+        body: message.notification!.body);
+  }
+}
+
+late AndroidNotificationChannel channel;
+
+/// Initialize the [FlutterLocalNotificationsPlugin] package.
+late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await initializeService();
-  // print(store);
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  if (!kIsWeb) {
+    channel = const AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      description:
+          'This channel is used for important notifications.', // description
+      importance: Importance.high,
+    );
+
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    // print(store);
+    runApp(const MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {
