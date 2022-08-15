@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
@@ -42,9 +43,25 @@ class SoulController extends GetxController {
     //   await initializeService(store);
     // }
     setSpotifyToken();
+    registerDevice();
     fetchMatches();
     getProfile();
     super.onInit();
+  }
+
+  registerDevice() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    if (preferences.containsKey('firebaseRegistered') &&
+        preferences.getBool('firebaseRegistered')!) {
+    } else {
+      var fireToken = await FirebaseMessaging.instance.getToken();
+      //firebase_token
+      http.Response response = await client
+          .post(registerDeviceUrl, body: {'firebase_token': fireToken!});
+      if (response.statusCode <= 210) {
+        preferences.setBool('firebaseRegistered', true);
+      }
+    }
   }
 
   getProfile() async {
