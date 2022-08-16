@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,22 @@ class _MyImagesState extends State<MyImages> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            _file = await ImagePicker().pickImage(source: ImageSource.gallery);
+            if (_file != null) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ImageView(
+                            fileUploaded: _file,
+                          )));
+            }
+          },
+          child: const Icon(
+            FontAwesomeIcons.fileCirclePlus,
+            size: 20,
+          )),
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
@@ -42,54 +59,32 @@ class _MyImagesState extends State<MyImages> {
             child: GetBuilder<SoulController>(
                 id: 'profile',
                 builder: (controller) {
-                  return Wrap(
-                    // runAlignment: WrapAlignment.spaceBetween,
-                    // alignment: WrapAlignment.spaceBetween,
-                    spacing: defaultMargin,
-                    runSpacing: defaultMargin,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: () async {
-                          _file = await ImagePicker()
-                              .pickImage(source: ImageSource.gallery);
-                          if (_file != null) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ImageView(
-                                          fileUploaded: _file,
-                                        )));
-                          }
-                        },
-                        child: Container(
-                          height: 120,
-                          width: 100,
-                          decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20)),
-                          child: const Icon(FontAwesomeIcons.fileCirclePlus),
+                  return GridView.custom(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    gridDelegate: SliverWovenGridDelegate.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 1,
+                      crossAxisSpacing: 1,
+                      pattern: [
+                        const WovenGridTile(1),
+                        const WovenGridTile(
+                          5 / 7,
+                          crossAxisRatio: 0.9,
+                          alignment: AlignmentDirectional.centerEnd,
                         ),
-                      ),
-                      ...controller.profile!.validImages.map((e) => InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: ((context) => ImageView(
-                                          imageUrl: e.image, imageID: e.id))));
-                            },
-                            child: ClipRRect(
+                      ],
+                    ),
+                    childrenDelegate: SliverChildBuilderDelegate(
+                        (context, index) => ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: CachedNetworkImage(
-                                imageUrl: e.image,
-                                height: 120,
-                                width: 100,
+                                imageUrl: controller
+                                    .profile!.validImages[index].image,
                                 fit: BoxFit.cover,
                               ),
                             ),
-                          ))
-                    ],
+                        childCount: controller.profile!.validImages.length),
                   );
                 }),
           ),

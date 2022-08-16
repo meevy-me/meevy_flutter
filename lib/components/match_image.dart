@@ -91,48 +91,9 @@ class MatchImage extends StatelessWidget {
                   // )
                 ],
               ),
-              IconButton(
-                  onPressed: () async {
-                    launchUrlString(
-                        "https://open.spotify.com/user/${match.matched.user.target!.spotifyId}");
-                  },
-                  icon: const Icon(
-                    FontAwesomeIcons.spotify,
-                    color: Colors.white,
-                    size: 35,
-                  ))
             ],
           ),
         ),
-        // Positioned(
-        //   top: defaultMargin,
-        //   left: defaultMargin,
-        //   child: Container(
-        //     padding: const EdgeInsets.all(defaultMargin),
-        //     decoration: BoxDecoration(
-        //         color: Colors.black, borderRadius: BorderRadius.circular(20)),
-        //     child: Row(
-        //       children: [
-        //         Container(
-        //           height: 10,
-        //           width: 10,
-        //           decoration: const BoxDecoration(
-        //               shape: BoxShape.circle, color: spotifyGreen),
-        //         ),
-        //         const SizedBox(
-        //           width: defaultMargin,
-        //         ),
-        //         Text(
-        //           match.matchMethod,
-        //           style: Theme.of(context)
-        //               .textTheme
-        //               .bodyText2!
-        //               .copyWith(color: Colors.white, fontSize: 12),
-        //         )
-        //       ],
-        //     ),
-        //   ),
-        // )
       ],
     );
   }

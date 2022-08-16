@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/screens/my_images.dart';
 import 'package:soul_date/screens/profile_edit.dart';
 import 'package:soul_date/screens/spotify_details.dart';
