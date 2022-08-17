@@ -2,6 +2,7 @@ const String baseUrl = 'https://souldate.herokuapp.com/';
 const String callbackUrl = baseUrl + 'users/callback/';
 const String spotifyMeEndpoint = "https://api.spotify.com/v1/me";
 const String spotifyTokenEndpoint = "https://accounts.spotify.com/api/token";
+const String spotifySearchEndpoint = "https://api.spotify.com/v1/search";
 const String checkUserUrl = baseUrl + 'users/exists/';
 const String loginUrl = baseUrl + 'users/login/';
 const String registerUrl = baseUrl + 'users/register/';
@@ -31,3 +32,4 @@ const String resetPasswordUrl = baseUrl + 'users/password/reset/';
 const String defaultAvatarUrl =
     "https://as1.ftcdn.net/v2/jpg/03/39/45/96/1000_F_339459697_XAFacNQmwnvJRqe1Fe9VOptPWMUxlZP8.jpg";
 const String registerDeviceUrl = baseUrl + "users/firebase/register/";
+const String myFavouriteUrl = baseUrl + "users/me/favourite/";

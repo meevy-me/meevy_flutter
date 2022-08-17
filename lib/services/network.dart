@@ -3,16 +3,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HttpClient {
-  String _formatEndpoint(String endpoint, Map? parameters) {
+  String _formatEndpoint(String endpoint, Map<String, String>? parameters) {
     if (parameters == null || parameters == {}) {
       return endpoint;
     } else {
-      parameters.forEach((key, value) {
-        String temp = "?$key=$value";
-        endpoint += temp;
-      });
-
-      return endpoint;
+      return Uri.parse(endpoint)
+          .replace(queryParameters: parameters)
+          .toString();
     }
   }
 
@@ -22,7 +19,7 @@ class HttpClient {
   }
 
   Future<http.Response> get(String endpoint,
-      {Map? parameters,
+      {Map<String, String>? parameters,
       Map<String, String>? headers,
       bool useToken = true}) async {
     String? token = await getToken();

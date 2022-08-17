@@ -8,14 +8,12 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
-import 'package:soul_date/models/chat_model.dart';
-import 'package:soul_date/models/friend_model.dart';
-import 'package:soul_date/models/match_model.dart';
-import 'package:soul_date/models/profile_model.dart';
-import 'package:soul_date/models/spots.dart';
-import 'package:soul_date/objectbox.g.dart';
+import 'package:soul_date/models/SpotifySearch/spotify_search.dart'
+    as spotifySearch;
+import 'package:soul_date/models/models.dart';
+
 import 'package:soul_date/screens/login.dart';
-import 'package:soul_date/services/background_handle.dart';
+
 import 'package:soul_date/services/network.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/services/spotify.dart';
@@ -28,6 +26,7 @@ class SoulController extends GetxController {
   RxList<SpotsView> mySpots = <SpotsView>[].obs;
   RxList<Chat> chats = <Chat>[].obs;
   Profile? profile;
+  Map<String, dynamic> keyDb = {};
   // RxList<Profile> profile = <Profile>[].obs;
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
@@ -224,9 +223,13 @@ class SoulController extends GetxController {
     }
   }
 
-  @override
-  void dispose() {
-    // service.invoke('stopService', {});
-    super.dispose();
+  Future<bool> updateFavourites(spotifySearch.Item item,
+      {String type = 'track'}) async {
+    http.Response res = await client.post(myFavouriteUrl,
+        body: {"type": type, "details": jsonEncode(item).toString()});
+    if (res.statusCode <= 210) {
+      return true;
+    }
+    return false;
   }
 }

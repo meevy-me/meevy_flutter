@@ -12,6 +12,7 @@ import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/models/Spotify/playlist_model.dart';
 import 'package:soul_date/models/Spotify/track_model.dart';
 import 'package:soul_date/models/Spotify/user_model.dart';
+import 'package:soul_date/models/SpotifySearch/spotify_search.dart';
 import 'package:soul_date/models/spotify_spot_details.dart';
 import 'package:soul_date/models/spotifyuser.dart';
 import 'package:soul_date/screens/my_spot_screen.dart';
@@ -204,5 +205,35 @@ class Spotify {
       log(res.body, name: "SPOTIFY ERROR");
     }
     return null;
+  }
+
+  Future<http.Response> _searchItem(String query, {String? type}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var spotToken = preferences.getString("spotify_accesstoken");
+
+    http.Response res = await client.get(spotifySearchEndpoint,
+        useToken: false,
+        headers: {'Authorization': "Bearer $spotToken"},
+        parameters: {'q': query, 'type': type ?? 'track', 'limit': '5'});
+
+    if (res.statusCode <= 210) {
+      return res;
+    } else if (res.statusCode == 401 &&
+        json.decode(res.body)['error']['message'] ==
+            "The access token expired") {
+      await refreshAccessToken();
+      _searchItem(query, type: type);
+    }
+
+    return res;
+  }
+
+  Future<SpotifySearch?> searchItem(String query, {String? type}) async {
+    http.Response response = await _searchItem(query, type: type);
+    if (response.statusCode <= 210) {
+      return SpotifySearch.fromJson(json.decode(response.body));
+    } else {
+      return null;
+    }
   }
 }

@@ -10,6 +10,7 @@ class SoulField extends StatefulWidget {
     this.keyboardType,
     Key? key,
     required this.hintText,
+    this.onChanged,
   }) : super(key: key);
   final String hintText;
   final TextEditingController? controller;
@@ -18,6 +19,7 @@ class SoulField extends StatefulWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final Color activeColor;
+  final Function(String value)? onChanged;
 
   @override
   State<SoulField> createState() => _SoulFieldState();
@@ -34,6 +36,11 @@ class _SoulFieldState extends State<SoulField> {
       child: TextFormField(
         keyboardType: widget.keyboardType,
         autocorrect: true,
+        onChanged: (value) {
+          if (widget.onChanged != null) {
+            widget.onChanged!(value);
+          }
+        },
         autovalidateMode: AutovalidateMode.always,
         validator: widget.validator,
         controller: widget.controller,

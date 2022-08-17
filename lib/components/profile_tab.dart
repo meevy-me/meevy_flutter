@@ -2,9 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:soul_date/components/profile_action_button.dart';
 import 'package:soul_date/components/profile_tab_button.dart';
+import 'package:soul_date/screens/favourite_song.dart';
 import 'package:soul_date/screens/my_images.dart';
 import 'package:soul_date/screens/profile_edit.dart';
 
@@ -69,7 +69,7 @@ class _ProfileTabViewState extends State<ProfileTabView> {
                       size: iconSize,
                       color: defaultGrey,
                     ),
-                    activeIcon: Icon(
+                    activeIcon: const Icon(
                       CupertinoIcons.heart_fill,
                       size: iconSize,
                       color: spotifyGreen,
@@ -138,7 +138,9 @@ class _FavouriteDetails extends StatelessWidget {
             color: spotifyGreen,
             iconData: FontAwesomeIcons.recordVinyl,
             title: "Song",
-            onTap: () {},
+            onTap: () {
+              Get.to(() => const FavouriteSongScreen());
+            },
             subtitle: "All The Lies - Alok, Felix Jaehn"),
         ProfileActionButton(
             color: spotifyGreen,

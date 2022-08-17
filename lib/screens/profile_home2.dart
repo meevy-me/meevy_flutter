@@ -32,7 +32,7 @@ class MyProfileScreen extends StatelessWidget {
                 IconButton(
                     onPressed: () {},
                     iconSize: 25,
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.settings_outlined,
                       size: 25,
                     ))
@@ -63,8 +63,8 @@ class MyProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: defaultMargin),
               child: ProfileTabView(),
             )
           ],

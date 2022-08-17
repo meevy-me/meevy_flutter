@@ -10,7 +10,6 @@ import 'package:soul_date/screens/match.dart';
 import 'package:soul_date/screens/profile_home2.dart';
 import 'package:soul_date/services/store.dart';
 
-import 'profile_home.dart';
 import 'settings_home.dart';
 
 class HomePage extends StatefulWidget {
