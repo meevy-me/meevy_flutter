@@ -25,7 +25,7 @@ class MySpotifyPlaylists {
   });
 
   String href;
-  List<Item> items;
+  List<PlaylistItem> items;
   int limit;
   String? next;
   int offset;
@@ -35,7 +35,8 @@ class MySpotifyPlaylists {
   factory MySpotifyPlaylists.fromJson(Map<String, dynamic> json) =>
       MySpotifyPlaylists(
         href: json["href"],
-        items: List<Item>.from(json["items"].map((x) => Item.fromJson(x))),
+        items: List<PlaylistItem>.from(
+            json["items"].map((x) => PlaylistItem.fromJson(x))),
         limit: json["limit"],
         next: json["next"],
         offset: json["offset"],
@@ -54,8 +55,8 @@ class MySpotifyPlaylists {
       };
 }
 
-class Item extends SpotifyFavouriteItem {
-  Item({
+class PlaylistItem extends SpotifyFavouriteItem {
+  PlaylistItem({
     required this.collaborative,
     required this.description,
     required this.externalUrls,
@@ -87,7 +88,7 @@ class Item extends SpotifyFavouriteItem {
   String type;
   String uri;
 
-  factory Item.fromJson(Map<String, dynamic> json) => Item(
+  factory PlaylistItem.fromJson(Map<String, dynamic> json) => PlaylistItem(
         collaborative: json["collaborative"],
         description: json["description"],
         externalUrls: ExternalUrls.fromJson(json["external_urls"]),

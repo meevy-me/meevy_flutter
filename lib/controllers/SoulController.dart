@@ -8,9 +8,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/models/SpotifySearch/my_spotify_playlists.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_search.dart'
     as spotifySearch;
+import 'package:soul_date/models/favourite_model.dart';
 import 'package:soul_date/models/models.dart';
 
 import 'package:soul_date/screens/login.dart';
@@ -29,6 +31,8 @@ class SoulController extends GetxController {
   Profile? profile;
   Map<String, dynamic> keyDb = {};
   // RxList<Profile> profile = <Profile>[].obs;
+  FavouriteTrack? favouriteTrack;
+  List<FavouritePlaylist?> favouritePlaylist = [];
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
   final service = FlutterBackgroundService();
@@ -233,5 +237,30 @@ class SoulController extends GetxController {
     }
     log(res.body);
     return false;
+  }
+
+  Future<FavouriteTrack?> getFavouriteSong() async {
+    http.Response res = await client.get(myFavouriteUrl);
+    if (res.statusCode <= 210) {
+      Map<String, dynamic> data = json.decode(res.body)[0];
+      favouriteTrack = FavouriteTrack(
+          data['id'], spotifySearch.SongItem.fromJson(data['details']));
+
+      update();
+    }
+    return null;
+  }
+
+  Future<FavouritePlaylist?> getFavouritePlaylist() async {
+    http.Response res =
+        await client.get(myFavouriteUrl, parameters: {"type": 'playlist'});
+    if (res.statusCode <= 210) {
+      var data = json.decode(res.body);
+      data as List;
+      favouritePlaylist = List<FavouritePlaylist>.from(data.map((e) =>
+          FavouritePlaylist(e['id'], PlaylistItem.fromJson(e['details']))));
+      update();
+    }
+    return null;
   }
 }

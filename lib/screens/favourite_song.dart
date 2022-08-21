@@ -26,6 +26,14 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
   }
 
   @override
+  void initState() {
+    if (controller.favouriteTrack != null) {
+      selected[0] = controller.favouriteTrack!.details;
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
