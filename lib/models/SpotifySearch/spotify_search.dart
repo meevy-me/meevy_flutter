@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:intl/intl.dart';
+import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';
 
 SpotifySearch spotifySearchFromJson(String str) =>
     SpotifySearch.fromJson(json.decode(str));
@@ -67,7 +68,7 @@ class Tracks {
       };
 }
 
-class Item {
+class Item extends SpotifyFavouriteItem {
   Item({
     required this.album,
     required this.artists,
@@ -97,6 +98,7 @@ class Item {
   ExternalIds externalIds;
   ExternalUrls externalUrls;
   String href;
+  @override
   String id;
   bool isLocal;
   String name;
@@ -152,6 +154,18 @@ class Item {
   String toString() {
     return name;
   }
+
+  @override
+  String get caption => album.name;
+
+  @override
+  String get imageUrl => album.images.first.url;
+
+  @override
+  String get subTitle => artists.join(", ");
+
+  @override
+  String get title => name;
 }
 
 class Album {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_search.dart';
 
 class SpotifyTrackResult extends StatefulWidget {
@@ -13,9 +14,9 @@ class SpotifyTrackResult extends StatefulWidget {
       required this.onDeselect,
       this.disabled = false})
       : super(key: key);
-  final Item result;
-  final Function(Item item) onSelected;
-  final Function(Item item) onDeselect;
+  final SpotifyFavouriteItem result;
+  final Function(SpotifyFavouriteItem item) onSelected;
+  final Function(SpotifyFavouriteItem item) onDeselect;
   final bool disabled;
 
   @override
@@ -43,7 +44,7 @@ class _SpotifyTrackResultState extends State<SpotifyTrackResult>
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: CachedNetworkImage(
-              imageUrl: widget.result.album.images.first.url,
+              imageUrl: widget.result.imageUrl,
               width: 60,
               height: 60,
             ),
@@ -56,14 +57,14 @@ class _SpotifyTrackResultState extends State<SpotifyTrackResult>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.result.name,
+                    widget.result.title,
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(vertical: defaultMargin / 2),
                     child: Text(
-                      widget.result.artists.join(", "),
+                      widget.result.caption,
                       style: Theme.of(context)
                           .textTheme
                           .bodyText1!

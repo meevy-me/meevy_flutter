@@ -1,16 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/inputfield.dart';
 import 'package:soul_date/components/spotify_favourite.dart';
 import 'package:soul_date/components/spotify_search_result.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_search.dart';
 
 class FavouriteSongScreen extends StatefulWidget {
@@ -23,9 +19,9 @@ class FavouriteSongScreen extends StatefulWidget {
 class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
   final SoulController controller = Get.find<SoulController>();
   SpotifySearch? results;
-  List<Item?> selected = List.generate(1, (index) => null);
+  List<SpotifyFavouriteItem?> selected = List.generate(1, (index) => null);
 
-  Future<bool> updateItem(Item item) async {
+  Future<bool> updateItem(SpotifyFavouriteItem item) async {
     return await controller.updateFavourites(item);
   }
 

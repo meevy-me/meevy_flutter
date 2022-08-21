@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_search.dart'
     as spotifySearch;
 import 'package:soul_date/models/models.dart';
@@ -223,13 +224,14 @@ class SoulController extends GetxController {
     }
   }
 
-  Future<bool> updateFavourites(spotifySearch.Item item,
+  Future<bool> updateFavourites(SpotifyFavouriteItem item,
       {String type = 'track'}) async {
     http.Response res = await client.post(myFavouriteUrl,
         body: {"type": type, "details": jsonEncode(item).toString()});
     if (res.statusCode <= 210) {
       return true;
     }
+    log(res.body);
     return false;
   }
 }

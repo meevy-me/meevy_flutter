@@ -33,3 +33,4 @@ const String defaultAvatarUrl =
     "https://as1.ftcdn.net/v2/jpg/03/39/45/96/1000_F_339459697_XAFacNQmwnvJRqe1Fe9VOptPWMUxlZP8.jpg";
 const String registerDeviceUrl = baseUrl + "users/firebase/register/";
 const String myFavouriteUrl = baseUrl + "users/me/favourite/";
+const String favouritePlaylistsUrl = "https://api.spotify.com/v1/me/playlists";

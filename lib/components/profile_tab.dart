@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/profile_action_button.dart';
 import 'package:soul_date/components/profile_tab_button.dart';
+import 'package:soul_date/screens/favourite_playlists.dart';
 import 'package:soul_date/screens/favourite_song.dart';
 import 'package:soul_date/screens/my_images.dart';
 import 'package:soul_date/screens/profile_edit.dart';
@@ -146,7 +147,9 @@ class _FavouriteDetails extends StatelessWidget {
             color: spotifyGreen,
             iconData: CupertinoIcons.music_albums_fill,
             title: "Playlists",
-            onTap: () {},
+            onTap: () {
+              Get.to(() => const FavouritePlaylistScreen());
+            },
             subtitle: "Hearts Desire, Voice of melancholy and more")
       ],
     );
