@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:soul_date/components/Chat/profile_status.dart';
 import 'package:soul_date/components/chatbox.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -41,6 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
   }
 
+  Message? replyTo;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -51,10 +53,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
-        title: Text(
-          profile.name,
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
+        title: ProfileStatus(profile: profile),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: defaultMargin),
@@ -72,10 +71,16 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Stack(
           children: [
             SizedBox(
-              height: size.height * 0.8 -
-                  MediaQuery.of(context).viewInsets.bottom -
-                  10,
+              height: (size.height * 0.8 -
+                      MediaQuery.of(context).viewInsets.bottom -
+                      10) -
+                  (replyTo != null ? 70 : 0),
               child: _MessageBody(
+                onReplyTo: ((message) {
+                  setState(() {
+                    replyTo = message;
+                  });
+                }),
                 chat: widget.chat,
                 scrollController: scrollController,
               ),
@@ -85,49 +90,73 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: defaultMargin, vertical: defaultMargin),
-                child: SizedBox(
-                  width: size.width,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: defaultMargin),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Flexible(
-                          child: Padding(
-                        padding: const EdgeInsets.only(right: defaultMargin),
-                        child: TextFormField(
-                          controller: text,
-                          maxLines: null,
-                          style: Theme.of(context).textTheme.bodyText2,
-                          decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.grey.withOpacity(0.4),
-                              hintText: "Type Message",
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  borderSide: BorderSide.none),
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide.none,
-                                  borderRadius: BorderRadius.circular(20)),
-                              hintStyle: Theme.of(context).textTheme.caption),
-                        ),
-                      )),
-                      ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              elevation: 0,
-                              primary: Theme.of(context).primaryColor,
-                              shape: const CircleBorder()),
-                          onPressed: () {
-                            if (text.text.trim().isNotEmpty) {
-                              messageController.addMessageSocket(text.text,
-                                  chat: widget.chat,
-                                  scrollController: scrollController);
-                              text.clear();
-                            }
+                      if (replyTo != null)
+                        ReplyChatBox(
+                          message: replyTo!,
+                          profile: profile,
+                          width: size.width * 0.8,
+                          height: 100,
+                          onClose: () {
+                            setState(() {
+                              replyTo = null;
+                            });
                           },
-                          child: const Center(
-                              child: Icon(
-                            Icons.send,
-                            size: 15,
-                          )))
+                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                                minWidth: size.width * 0.8,
+                                maxWidth: size.width * 0.8,
+                                minHeight: 50),
+                            child: TextFormField(
+                              cursorHeight: 1,
+                              controller: text,
+                              maxLines: null,
+                              style: Theme.of(context).textTheme.bodyText2,
+                              decoration: InputDecoration(
+                                  isDense: true,
+                                  filled: true,
+                                  fillColor: Colors.grey.withOpacity(0.4),
+                                  hintText: "Type Message",
+                                  focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                      borderSide: BorderSide.none),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide.none,
+                                      borderRadius: BorderRadius.circular(20)),
+                                  hintStyle:
+                                      Theme.of(context).textTheme.caption),
+                            ),
+                          ),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  primary: Theme.of(context).primaryColor,
+                                  shape: const CircleBorder()),
+                              onPressed: () {
+                                if (text.text.trim().isNotEmpty) {
+                                  messageController.addMessageSocket(text.text,
+                                      reply:
+                                          replyTo != null ? replyTo!.id : null,
+                                      chat: widget.chat,
+                                      scrollController: scrollController);
+                                  text.clear();
+                                }
+                              },
+                              child: const Center(
+                                  child: Icon(
+                                Icons.send,
+                                size: 15,
+                              )))
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -145,9 +174,11 @@ class _MessageBody extends StatefulWidget {
     Key? key,
     required this.chat,
     required this.scrollController,
+    required this.onReplyTo,
   }) : super(key: key);
   final Chat chat;
   final ScrollController scrollController;
+  final Function(Message message) onReplyTo;
   @override
   State<_MessageBody> createState() => _MessageBodyState();
 }
@@ -156,6 +187,7 @@ class _MessageBodyState extends State<_MessageBody> {
   final SoulController controller = Get.find<SoulController>();
 
   final MessageController messageController = Get.find<MessageController>();
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -193,10 +225,13 @@ class _MessageBodyState extends State<_MessageBody> {
               itemBuilder: (context, index) {
                 var element = snapshot.data!.messages[index];
                 return ChatBox(
-                    size: size,
-                    mine: element.sender == controller.profile!.id,
-                    text: element.content,
-                    time: DateFormat.jm().format(element.datePosted));
+                  message: element,
+                  width: size.width * 0.65,
+                  mine: element.sender == controller.profile!.id,
+                  onSwipe: ((message) {
+                    widget.onReplyTo(message);
+                  }),
+                );
               },
               controller: widget.scrollController,
               padding: scaffoldPadding,

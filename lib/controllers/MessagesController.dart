@@ -120,8 +120,15 @@ class MessageController extends GetxController {
   }
 
   addMessageSocket(String content,
-      {required Chat chat, required ScrollController scrollController}) async {
-    sendMessage({"chat": chat.id, "message": content}, store: controller.store);
+      {required Chat chat,
+      required ScrollController scrollController,
+      int? reply}) async {
+    var payload = {"chat": chat.id, "message": content};
+    if (reply != null) {
+      payload['reply_to'] = reply;
+    }
+    print(payload);
+    sendMessage(payload, store: controller.store);
     // var isRunning = await service.isRunning();
   }
 

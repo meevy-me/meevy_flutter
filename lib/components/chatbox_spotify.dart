@@ -24,7 +24,7 @@ class ChatSpotify extends StatelessWidget {
         launchUrlString(spotifyData!.url);
       }),
       child: SizedBox(
-        width: widget.size.width * 0.5,
+        width: widget.width,
         child: Column(
           children: [
             ClipRRect(
