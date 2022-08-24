@@ -270,24 +270,6 @@ class _MatchDetails extends StatelessWidget {
                       .copyWith(color: Colors.white),
                 ),
               ),
-              Row(
-                children: [
-                  const Icon(
-                    FontAwesomeIcons.locationCrosshairs,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(
-                    width: defaultPadding,
-                  ),
-                  Text(
-                    "Nairobi, Kenya",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Colors.white),
-                  )
-                ],
-              )
             ],
           ),
           IconButton(

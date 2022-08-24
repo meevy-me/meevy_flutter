@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
+import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/objectbox.g.dart';
@@ -57,17 +58,19 @@ class MessageController extends GetxController {
     Chat? chat = await store.get<Chat>(data["chat"]);
     if (chat != null) {
       var message = Message(
-        id: 0,
+        id: data['id'],
+        replyTo: data['reply_to'],
         content: data['content'],
         datePosted: DateTime.parse(data['date_posted']),
         sender: data['sender'],
       );
+      chat.dateCreated = DateTime.parse(data['date_posted']);
       messageToStore(chat, message: message, store: store);
 
-      NotificationApi.showNotification(
-          title: "Message from ${chat.friends.target!.profile2.target!.name}",
-          body: message.formatContent,
-          payload: chat.id.toString());
+      // NotificationApi.showNotification(
+      //     title: "Message from ${chat.friends.target!.profile2.target!.name}",
+      //     body: message.formatContent,
+      //     payload: chat.id.toString());
       // if (service is AndroidServiceInstance) {
       //   service.setForegroundNotificationInfo(
       //     title: "New Message from ${chat.friends.target!.profile2.target!.name}",
@@ -81,16 +84,12 @@ class MessageController extends GetxController {
 
   listenConnection(LocalStore store) async {
     if (connection != null) {
-      connection!.stream.listen(
-        (event) {
-          var data = json.decode(event)['message'];
-          addMessage(store, data);
-        },
-        // onDone: () async =>
-        //     await retry(() async => initConnection(service, store: store)),
-        // onError: (error) async =>
-        //     await retry(() async => initConnection(service, store: store))
-      );
+      connection!.stream.listen((event) {
+        var data = json.decode(event)['message'];
+        addMessage(store, data);
+      },
+          onDone: () async => await retry(() async => openConnection()),
+          onError: (error) async => await retry(() async => openConnection()));
     }
   }
 
@@ -125,30 +124,28 @@ class MessageController extends GetxController {
       int? reply}) async {
     var payload = {"chat": chat.id, "message": content};
     if (reply != null) {
-      payload['reply_to'] = reply;
+      payload["reply_to"] = reply;
     }
-    print(payload);
+
     sendMessage(payload, store: controller.store);
     // var isRunning = await service.isRunning();
   }
 
   void sendMessage(
-    Map? event, {
+    Map? payload, {
     required LocalStore store,
   }) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    int profile = preferences.getInt('profileID')!;
-    if (event != null) {
-      var id = event['chat'];
-      var content = event['message'];
-      connection!.sink.add(json.encode({"chat": id, "message": content}));
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
+    // int profile = preferences.getInt('profileID')!;
+    if (payload != null) {
+      connection!.sink.add(json.encode(payload));
 
-      Message message = Message(
-          id: 0, content: content, datePosted: DateTime.now(), sender: profile);
-      Chat? chat = await store.get<Chat>(id);
-      if (chat != null) {
-        messageToStore(chat, message: message, store: store);
-      }
+      // Message message = Message(
+      //     id: 0, content: content, datePosted: DateTime.now(), sender: profile);
+      // Chat? chat = await store.get<Chat>(id);
+      // if (chat != null) {
+      //   messageToStore(chat, message: message, store: store);
+      // }
     }
   }
 

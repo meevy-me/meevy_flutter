@@ -95,7 +95,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(3, 2253509713044817841),
       name: 'Message',
-      lastPropertyId: const IdUid(4, 8062422024160714380),
+      lastPropertyId: const IdUid(5, 8407581455342477169),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -116,6 +116,11 @@ final _entities = <ModelEntity>[
         ModelProperty(
             id: const IdUid(4, 8062422024160714380),
             name: 'sender',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 8407581455342477169),
+            name: 'replyTo',
             type: 6,
             flags: 0)
       ],
@@ -318,11 +323,12 @@ ModelDefinition getObjectBoxModel() {
         },
         objectToFB: (Message object, fb.Builder fbb) {
           final contentOffset = fbb.writeString(object.content);
-          fbb.startTable(5);
+          fbb.startTable(6);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, contentOffset);
           fbb.addInt64(2, object.datePosted.millisecondsSinceEpoch);
           fbb.addInt64(3, object.sender);
+          fbb.addInt64(4, object.replyTo);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -337,7 +343,9 @@ ModelDefinition getObjectBoxModel() {
               datePosted: DateTime.fromMillisecondsSinceEpoch(
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0)),
               sender:
-                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
+                  const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
+              replyTo: const fb.Int64Reader()
+                  .vTableGetNullable(buffer, rootOffset, 12));
 
           return object;
         }),
@@ -500,6 +508,10 @@ class Message_ {
   /// see [Message.sender]
   static final sender =
       QueryIntegerProperty<Message>(_entities[2].properties[3]);
+
+  /// see [Message.replyTo]
+  static final replyTo =
+      QueryIntegerProperty<Message>(_entities[2].properties[4]);
 }
 
 /// [Profile] entity fields to define ObjectBox queries.

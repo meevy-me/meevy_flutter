@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:objectbox/objectbox.dart';
+import 'package:soul_date/services/store.dart';
 
 List<Message> messageFromJson(String str) =>
     List<Message>.from(json.decode(str).map((x) => Message.fromJson(x)));
@@ -12,6 +13,7 @@ class Message {
     required this.content,
     required this.datePosted,
     required this.sender,
+    this.replyTo,
     // required this.spot,
   });
   @Id(assignable: true)
@@ -19,14 +21,16 @@ class Message {
   String content;
   DateTime datePosted;
   int sender;
+  int? replyTo;
   // dynamic spot;
 
   factory Message.fromJson(Map<String, dynamic> json) => Message(
-        id: json["id"],
-        content: json["content"],
-        datePosted: DateTime.parse(json["date_posted"]),
-        sender: json["sender"],
-        // spot: json["spot"],
+      id: json["id"],
+      content: json["content"],
+      datePosted: DateTime.parse(json["date_posted"]),
+      sender: json["sender"],
+      replyTo: json['reply_to']
+      // spot: json["spot"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -42,5 +46,18 @@ class Message {
       return "Sent a spotify item";
     }
     return content;
+  }
+
+  @override
+  String toString() {
+    return content;
+  }
+
+  Future<Message?> repliedMessage(LocalStore store) async {
+    Message? msg;
+    if (replyTo != null) {
+      msg = await store.get<Message>(replyTo!);
+    }
+    return msg;
   }
 }

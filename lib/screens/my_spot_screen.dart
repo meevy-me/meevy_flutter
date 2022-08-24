@@ -11,6 +11,8 @@ import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/models/spotify_spot_details.dart';
 
+import '../controllers/SoulController.dart';
+
 class MySpotScreen extends StatefulWidget {
   const MySpotScreen({Key? key, required this.details}) : super(key: key);
   final SpotifyDetails details;
@@ -22,6 +24,7 @@ class MySpotScreen extends StatefulWidget {
 class _MySpotScreenState extends State<MySpotScreen> {
   final TextEditingController caption = TextEditingController();
   final SpotController controller = Get.find<SpotController>();
+  final SoulController soulController = Get.find<SoulController>();
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +57,9 @@ class _MySpotScreenState extends State<MySpotScreen> {
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                         color: Theme.of(context).primaryColor)),
-                                child: const SoulCircleAvatar(
-                                  imageUrl: defaultGirlUrl,
+                                child: SoulCircleAvatar(
+                                  imageUrl: soulController
+                                      .profile!.validImages.last.image,
                                   radius: 18,
                                 ),
                               ),

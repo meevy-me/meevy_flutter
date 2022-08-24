@@ -25,6 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController scrollController = ScrollController();
   final SoulController controller = Get.find<SoulController>();
   late Profile profile;
+  FocusNode focus = FocusNode();
 
   Profile currentProfile() {
     if (controller.profile!.id ==
@@ -76,9 +77,11 @@ class _ChatScreenState extends State<ChatScreen> {
                       10) -
                   (replyTo != null ? 70 : 0),
               child: _MessageBody(
+                profile: profile,
                 onReplyTo: ((message) {
                   setState(() {
                     replyTo = message;
+                    focus.requestFocus();
                   });
                 }),
                 chat: widget.chat,
@@ -116,9 +119,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                 maxWidth: size.width * 0.8,
                                 minHeight: 50),
                             child: TextFormField(
+                              focusNode: focus,
                               cursorHeight: 1,
                               controller: text,
                               maxLines: null,
+                              textCapitalization: TextCapitalization.sentences,
                               style: Theme.of(context).textTheme.bodyText2,
                               decoration: InputDecoration(
                                   isDense: true,
@@ -148,6 +153,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                       chat: widget.chat,
                                       scrollController: scrollController);
                                   text.clear();
+                                  setState(() {
+                                    replyTo = null;
+                                  });
                                 }
                               },
                               child: const Center(
@@ -175,10 +183,12 @@ class _MessageBody extends StatefulWidget {
     required this.chat,
     required this.scrollController,
     required this.onReplyTo,
+    required this.profile,
   }) : super(key: key);
   final Chat chat;
   final ScrollController scrollController;
   final Function(Message message) onReplyTo;
+  final Profile profile;
   @override
   State<_MessageBody> createState() => _MessageBodyState();
 }
@@ -225,9 +235,9 @@ class _MessageBodyState extends State<_MessageBody> {
               itemBuilder: (context, index) {
                 var element = snapshot.data!.messages[index];
                 return ChatBox(
+                  profile: widget.profile,
                   message: element,
                   width: size.width * 0.65,
-                  mine: element.sender == controller.profile!.id,
                   onSwipe: ((message) {
                     widget.onReplyTo(message);
                   }),
