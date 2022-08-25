@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/chat_item.dart';
+import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/components/spot.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
@@ -204,6 +205,10 @@ class _MessagesSection extends StatelessWidget {
                 if (!snapshot.hasData) {
                   return SpinKitCircle(
                     color: Theme.of(context).primaryColor,
+                  );
+                } else if (snapshot.data!.isEmpty) {
+                  return const EmptyWidget(
+                    text: "No chats yet",
                   );
                 } else {
                   // print(" YAAAHAHHH " +

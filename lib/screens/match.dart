@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/appbar_home.dart';
+import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/components/inputfield.dart';
 import 'package:soul_date/components/loading.dart';
 import 'package:soul_date/components/match_card.dart';
@@ -115,7 +116,9 @@ class _MatchScreenBody extends StatelessWidget {
                                 ),
                               ))
                           .toList())
-                  : const Loading()))
+                  : const EmptyWidget(
+                      text: "No matches currently :/",
+                    )))
         ],
       ),
     );

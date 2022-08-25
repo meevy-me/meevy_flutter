@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/buttons.dart';
+import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
@@ -50,7 +51,10 @@ class _FriendRequestScreenState extends State<FriendRequestScreen> {
                 itemCount: controller.friendRequest.length,
               )
             : const Center(
-                child: Text("You have no requests"),
+                child: EmptyWidget(
+                  assetString: "assets/images/lottie_empty2.json",
+                  text: "No new requests yet :/",
+                ),
               )));
   }
 }

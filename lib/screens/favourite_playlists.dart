@@ -97,7 +97,7 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
                       }
                     }
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: const Text(":) Favourite Playlists updated")));
+                        content: Text(":) Favourite Playlists updated")));
                   }
                 },
                 child: const Text("Update")),
@@ -117,17 +117,12 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
               padding: const EdgeInsets.symmetric(vertical: defaultMargin),
               child: Column(
                 children: [
-                  GridView.builder(
+                  ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 2,
-                            crossAxisSpacing: defaultMargin,
-                            mainAxisSpacing: defaultMargin),
                     itemCount: 4,
                     itemBuilder: ((context, index) => SpotifyFavouriteWidget(
+                          height: 95,
                           item: selected.get(index),
                           onRemove: (item) {
                             setState(() {

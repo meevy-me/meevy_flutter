@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:soul_date/components/Chat/profile_status.dart';
+import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/spotify_favourite.dart';
 import 'package:soul_date/controllers/SoulController.dart';
@@ -98,9 +97,16 @@ class _ProfileDetailFavouriteState extends State<_ProfileDetailFavourite> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-          child: SpotifyFavouriteWidget(
-              onRemove: null,
-              item: favouriteTrack == null ? null : favouriteTrack!.details),
+          child: favouriteTrack != null
+              ? SpotifyFavouriteWidget(
+                  onRemove: null,
+                  item: favouriteTrack == null ? null : favouriteTrack!.details)
+              : const Center(
+                  child: EmptyWidget(
+                    text: "Nothing over here",
+                    height: 100,
+                  ),
+                ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: defaultMargin),
@@ -118,6 +124,12 @@ class _ProfileDetailFavouriteState extends State<_ProfileDetailFavourite> {
                           item: e?.details,
                         ))
                     .toList()
+              else
+                const Center(
+                    child: EmptyWidget(
+                  text: "No favourite playlist yet",
+                  height: 150,
+                ))
             ],
           ),
         ),

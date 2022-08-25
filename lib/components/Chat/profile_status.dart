@@ -25,12 +25,18 @@ class _ProfileStatusState extends State<ProfileStatus> {
       if (event.snapshot.value != null) {
         final val = event.snapshot.value! as Map;
         if (val['status'] == 'online') {
-          setState(() {
-            online = true;
-            lastSeen = DateTime.parse(val['last_updated']);
-          });
+          if (mounted) {
+            setState(() {
+              online = true;
+              lastSeen = DateTime.parse(val['last_updated']);
+            });
+          }
         } else {
-          online = false;
+          if (mounted) {
+            setState(() {
+              online = false;
+            });
+          }
         }
       }
     });

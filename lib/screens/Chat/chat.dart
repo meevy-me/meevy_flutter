@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:soul_date/components/Chat/profile_status.dart';
 import 'package:soul_date/components/chatbox.dart';
+import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
@@ -237,6 +238,11 @@ class _MessageBodyState extends State<_MessageBody> {
                 style: Theme.of(context).textTheme.caption,
               ),
             );
+          } else if (snapshot.data!.messages.isEmpty) {
+            return const Center(
+                child: EmptyWidget(
+              text: "There's nothing here, say Hi",
+            ));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.messages.length,
