@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/controllers/FirebaseController.dart';
-import 'package:soul_date/screens/messages.dart';
+import 'package:soul_date/screens/Chat/messages.dart';
 
 import 'logo.dart';
 

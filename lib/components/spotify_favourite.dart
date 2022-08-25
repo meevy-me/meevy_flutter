@@ -8,7 +8,7 @@ class SpotifyFavouriteWidget extends StatelessWidget {
       {Key? key, this.item, required this.onRemove, this.height = 120})
       : super(key: key);
   final SpotifyFavouriteItem? item;
-  final Function(SpotifyFavouriteItem item) onRemove;
+  final Function(SpotifyFavouriteItem item)? onRemove;
   final double height;
 
   @override

@@ -263,4 +263,38 @@ class SoulController extends GetxController {
     }
     return null;
   }
+
+  Future<FavouriteTrack?> getFriendFavouriteTrack(int id) async {
+    http.Response res =
+        await client.get("${baseUrl}socials/friend/${id}/favourite/");
+
+    if (res.statusCode <= 210) {
+      try {
+        Map<String, dynamic> data = json.decode(res.body)[0];
+        favouriteTrack = FavouriteTrack(
+            data['id'], spotifySearch.SongItem.fromJson(data['details']));
+
+        return favouriteTrack;
+      } catch (e) {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  Future<List<FavouritePlaylist?>?> getFriendFavouritePlaylist(int id) async {
+    http.Response res = await client.get(
+        "${baseUrl}socials/friend/$id/favourite/",
+        parameters: {"type": 'playlist'});
+    if (res.statusCode <= 210) {
+      var data = json.decode(res.body);
+      data as List;
+      favouritePlaylist = List<FavouritePlaylist>.from(data.map((e) =>
+          FavouritePlaylist(e['id'], PlaylistItem.fromJson(e['details']))));
+      update();
+      return favouritePlaylist;
+    }
+    return null;
+  }
 }

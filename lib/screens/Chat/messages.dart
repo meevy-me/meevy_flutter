@@ -11,7 +11,7 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:collection/collection.dart';
 import 'package:soul_date/models/chat_model.dart';
-import 'package:soul_date/screens/chat.dart';
+import 'package:soul_date/screens/Chat/chat.dart';
 import 'package:soul_date/screens/friend_requests.dart';
 
 class MessagesPage extends StatefulWidget {

@@ -10,6 +10,7 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/chat_model.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
+import 'package:soul_date/screens/Chat/profile_details.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.chat}) : super(key: key);
@@ -58,9 +59,16 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: defaultMargin),
-            child: SoulCircleAvatar(
-              imageUrl: profile.images.first.image,
-              radius: 15,
+            child: InkWell(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ChatProfileScreen(profile: profile))),
+              child: SoulCircleAvatar(
+                imageUrl: profile.validImages.last.image,
+                radius: 15,
+              ),
             ),
           )
         ],
