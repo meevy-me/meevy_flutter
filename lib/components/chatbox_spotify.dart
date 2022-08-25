@@ -6,7 +6,6 @@ import 'package:soul_date/components/chatbox.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class ChatSpotify extends StatelessWidget {
   const ChatSpotify({

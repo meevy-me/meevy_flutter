@@ -17,7 +17,7 @@ class ResetCodeScreen extends StatefulWidget {
 class _ResetCodeScreenState extends State<ResetCodeScreen> {
   final TextEditingController code = TextEditingController();
   final SpotifyController spotifyController = Get.find<SpotifyController>();
-  String? error = null;
+  String? error;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

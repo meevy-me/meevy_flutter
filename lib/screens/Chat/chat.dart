@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:soul_date/components/Chat/profile_status.dart';
 import 'package:soul_date/components/chatbox.dart';
 import 'package:soul_date/components/empty_widget.dart';

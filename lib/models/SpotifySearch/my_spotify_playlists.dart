@@ -76,7 +76,9 @@ class PlaylistItem extends SpotifyFavouriteItem {
   bool collaborative;
   String description;
   ExternalUrls externalUrls;
+  @override
   String href;
+  @override
   String id;
   List<Image> images;
   String name;
@@ -86,6 +88,7 @@ class PlaylistItem extends SpotifyFavouriteItem {
   String snapshotId;
   Tracks tracks;
   String type;
+  @override
   String uri;
 
   factory PlaylistItem.fromJson(Map<String, dynamic> json) => PlaylistItem(
@@ -105,6 +108,7 @@ class PlaylistItem extends SpotifyFavouriteItem {
         uri: json["uri"],
       );
 
+  @override
   Map<String, dynamic> toJson() => {
         "collaborative": collaborative,
         "description": description,

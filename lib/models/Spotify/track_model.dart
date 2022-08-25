@@ -50,6 +50,7 @@ class SpotifyTrack extends SpotifyData {
   int trackNumber;
   @override
   String type;
+  @override
   String uri;
 
   factory SpotifyTrack.fromJson(Map<String, dynamic> json) => SpotifyTrack(

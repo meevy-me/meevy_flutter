@@ -22,7 +22,6 @@ HttpClient client = HttpClient();
 
 initializeService(LocalStore stored) async {
   store = stored;
-  print(stored);
   final service = FlutterBackgroundService();
 
   await service.configure(

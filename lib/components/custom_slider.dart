@@ -27,12 +27,9 @@ class _SoulSliderState extends State<SoulSlider>
     with SingleTickerProviderStateMixin {
   Offset horizontalPosition = const Offset(defaultPadding, 0);
   bool slideComplete = false;
-  late AnimationController _animationController;
   Tween<double> opacity = Tween(begin: 0, end: 1);
   @override
   void initState() {
-    _animationController = AnimationController(vsync: this);
-
     super.initState();
   }
 

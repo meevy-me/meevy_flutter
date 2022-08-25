@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:soul_date/components/appbar_home.dart';
 import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/components/inputfield.dart';
-import 'package:soul_date/components/loading.dart';
 import 'package:soul_date/components/match_card.dart';
 import 'package:soul_date/components/search_profile_dialog.dart';
 import 'package:soul_date/constants/constants.dart';

@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:intl/intl.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';
 
 SpotifySearch spotifySearchFromJson(String str) =>
@@ -98,6 +97,7 @@ class SongItem extends SpotifyFavouriteItem {
   bool explicit;
   ExternalIds externalIds;
   ExternalUrls externalUrls;
+  @override
   String href;
   @override
   String id;
@@ -107,6 +107,7 @@ class SongItem extends SpotifyFavouriteItem {
   dynamic previewUrl;
   int trackNumber;
   String type;
+  @override
   String uri;
 
   factory SongItem.fromJson(Map<String, dynamic> json) => SongItem(
@@ -131,6 +132,7 @@ class SongItem extends SpotifyFavouriteItem {
         uri: json["uri"],
       );
 
+  @override
   Map<String, dynamic> toJson() => {
         "album": album.toJson(),
         "artists": List<dynamic>.from(artists.map((x) => x.toJson())),

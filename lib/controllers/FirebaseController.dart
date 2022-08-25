@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:get/get.dart';
 import 'package:soul_date/services/notice_handle.dart';
-import 'package:soul_date/services/notifications.dart';
 
 class FirebaseController extends GetxController {
   @override

@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/screens/datafetch.dart';
-import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/screens/profile.dart';
 import 'package:soul_date/screens/reset_code_Screen.dart';
 import 'package:soul_date/screens/splash_screen.dart';
@@ -75,7 +74,6 @@ class SpotifyController extends GetxController {
     http.Response response = await client.post(endpoint, body: body);
     if (response.statusCode <= 210) {
       Map json = jsonDecode(response.body);
-      log(json.toString());
       SharedPreferences preferences = await SharedPreferences.getInstance();
 
       preferences.setString('token', json['token']);
@@ -159,7 +157,6 @@ class SpotifyController extends GetxController {
 
     http.Response response =
         await client.post(resetPasswordUrl + 'validate/', body: body);
-    log(response.body);
     if (response.statusCode <= 210) {
       return json.decode(response.body)['grant_token'];
     } else {
@@ -171,7 +168,6 @@ class SpotifyController extends GetxController {
     http.Response response =
         await client.post(resetPasswordUrl + '$grant/', body: body);
 
-    log(response.body);
     if (response.statusCode <= 210) {
       return null;
     } else {

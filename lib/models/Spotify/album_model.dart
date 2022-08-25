@@ -49,6 +49,7 @@ class SpotifyAlbum extends SpotifyData {
   Tracks tracks;
   @override
   String type;
+  @override
   String uri;
 
   factory SpotifyAlbum.fromJson(Map<String, dynamic> json) => SpotifyAlbum(

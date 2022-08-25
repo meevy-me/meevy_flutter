@@ -33,6 +33,7 @@ class Spotifyuser extends SpotifyData {
   List<dynamic> images;
   @override
   String type;
+  @override
   String uri;
 
   factory Spotifyuser.fromJson(Map<String, dynamic> json) => Spotifyuser(

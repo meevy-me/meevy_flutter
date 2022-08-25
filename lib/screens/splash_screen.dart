@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/screens/login.dart';
-import 'package:soul_date/services/background_handle.dart';
 import 'package:soul_date/services/store.dart';
 
 class SplashScreen extends StatefulWidget {

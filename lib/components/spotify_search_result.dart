@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';
-import 'package:soul_date/models/SpotifySearch/spotify_search.dart';
 
 class SpotifyTrackResult extends StatefulWidget {
   const SpotifyTrackResult(

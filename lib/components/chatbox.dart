@@ -1,4 +1,3 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,6 @@ import 'package:soul_date/components/chatbox_spotify.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
-import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:swipe_to/swipe_to.dart';
 

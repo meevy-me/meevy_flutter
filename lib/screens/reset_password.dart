@@ -70,6 +70,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           if (pass1.text != value) {
                             return "Passwords dont match";
                           }
+                          return null;
                         },
                       ),
                     ),

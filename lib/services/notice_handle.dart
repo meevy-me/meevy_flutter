@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';

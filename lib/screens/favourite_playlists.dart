@@ -68,7 +68,6 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(

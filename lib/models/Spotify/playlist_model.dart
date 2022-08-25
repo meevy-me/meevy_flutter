@@ -38,6 +38,7 @@ class SpotifyPlaylist extends SpotifyData {
   // String snapshotId;
   // Tracks tracks;
   // String type;
+  @override
   String uri;
 
   factory SpotifyPlaylist.fromJson(Map<String, dynamic> json) =>

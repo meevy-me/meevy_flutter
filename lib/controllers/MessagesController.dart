@@ -8,7 +8,6 @@ import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/objectbox.g.dart';
-import 'package:soul_date/services/notifications.dart';
 import 'package:soul_date/services/store.dart';
 import 'package:web_socket_channel/io.dart';
 

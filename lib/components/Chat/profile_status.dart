@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+// ignore: unused_import
 import 'package:intl/intl.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/profile_model.dart';

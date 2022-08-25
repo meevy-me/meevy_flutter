@@ -36,6 +36,7 @@ class SpotifyArtist extends SpotifyData {
   int popularity;
   @override
   String type;
+  @override
   String uri;
 
   factory SpotifyArtist.fromJson(Map<String, dynamic> json) => SpotifyArtist(

@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:soul_date/objectbox.g.dart';
 
-import '../models/chat_model.dart';
-
 class LocalStore {
   Store store;
   static String storeName = '/chatop';
