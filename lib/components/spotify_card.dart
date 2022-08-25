@@ -1,23 +1,27 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/details_model.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SpotifyCard extends StatelessWidget {
-  const SpotifyCard({
+  SpotifyCard({
     Key? key,
     required this.details,
   }) : super(key: key);
 
   final Details details;
+  final SoulController controller = Get.find<SoulController>();
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        launchUrlString(details.spotifyLink!);
+        controller.spotify.openSpotify(details.uri, details.spotifyLink!);
+        // launchUrlString(details.spotifyLink!);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: defaultMargin),

@@ -4,4 +4,5 @@ abstract class SpotifyData {
   String get caption;
   String get type;
   String get url;
+  String get uri;
 }

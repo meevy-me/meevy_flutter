@@ -11,6 +11,7 @@ import 'package:soul_date/screens/my_images.dart';
 import 'package:soul_date/screens/profile_edit.dart';
 
 import '../constants/constants.dart';
+import 'buttons.dart';
 
 class ProfileTabView extends StatefulWidget {
   const ProfileTabView({
@@ -107,33 +108,91 @@ class _ProfileDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ProfileActionButton(
-          iconData: CupertinoIcons.person,
-          title: "Profile",
-          subtitle: "Manage your profile",
-          onTap: () {
-            Get.to(() => const ProfileEdit());
-          },
-        ),
-        ProfileActionButton(
-          iconData: CupertinoIcons.photo,
-          title: "Images",
-          subtitle: "View and manage your public images",
-          onTap: () {
-            Get.to(() => const MyImages());
-          },
-        ),
-        ProfileActionButton(
-          iconData: CupertinoIcons.waveform,
-          title: "Songs & Artists",
-          subtitle: "Top artists and tracks according to spotify",
-          onTap: () {},
-        ),
-      ],
-    );
+    return GetBuilder<SoulController>(builder: (controller) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ProfileActionButton(
+            iconData: CupertinoIcons.person,
+            title: "Profile",
+            subtitle: "Manage your profile",
+            onTap: () {
+              Get.to(() => const ProfileEdit());
+            },
+          ),
+          ProfileActionButton(
+            iconData: CupertinoIcons.photo,
+            title: "Images",
+            subtitle: "View and manage your public images",
+            onTap: () {
+              Get.to(() => const MyImages());
+            },
+          ),
+          ProfileActionButton(
+            iconData: Icons.logout,
+            title: "Logout",
+            subtitle: "Logout from app",
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                        child: SizedBox(
+                          height: 100,
+                          child: Padding(
+                            padding: scaffoldPadding,
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Do you want to logout?",
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                                const SizedBox(
+                                  height: defaultMargin,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    InkWell(
+                                      onTap: () => Get.back(),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.close,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(
+                                            width: defaultPadding,
+                                          ),
+                                          Text(
+                                            "Cancel",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText2!
+                                                .copyWith(color: Colors.grey),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: defaultMargin * 2,
+                                    ),
+                                    PrimaryButton(
+                                        onPress: () {
+                                          controller.logout();
+                                        },
+                                        text: "Logout")
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ));
+            },
+          ),
+        ],
+      );
+    });
   }
 }
 
@@ -164,7 +223,7 @@ class _FavouriteDetails extends StatelessWidget {
               },
               subtitle: controller.favouritePlaylist.isEmpty
                   ? "No favourite Playlist. :("
-                  : controller.favouritePlaylist.first!.details.name)
+                  : controller.favouritePlaylist.first!.details!.name)
         ],
       );
     });

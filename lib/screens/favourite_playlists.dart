@@ -23,8 +23,8 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
   SoulQueue<SpotifyFavouriteItem?> selected =
       SoulQueue.fromList(List.generate(4, (index) => null, growable: false));
   ScrollController scrollController = ScrollController();
-  Future<bool> updateItem(SpotifyFavouriteItem item) async {
-    return await controller.updateFavourites(item, type: 'playlist');
+  Future<bool> updateItem(List<SpotifyFavouriteItem?> items) async {
+    return await controller.updateFavouritesPlaylist(items);
   }
 
   @override
@@ -91,11 +91,7 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
                     primary: Theme.of(context).primaryColor),
                 onPressed: () {
                   if (selected.isNotEmpty) {
-                    for (var element in selected) {
-                      if (element != null) {
-                        updateItem(element);
-                      }
-                    }
+                    updateItem(selected.items);
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text(":) Favourite Playlists updated")));
                   }

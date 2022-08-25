@@ -3,7 +3,7 @@ class SoulQueue<T> extends Iterable {
   final List<T?> items;
   int top;
   SoulQueue({required this.arraySize, required this.items, this.top = -1});
-  factory SoulQueue.fromList(List<T> items) =>
+  factory SoulQueue.fromList(List<T?> items) =>
       SoulQueue(arraySize: items.length, items: items, top: items.length - 1);
 
   void add(T item) {
@@ -38,8 +38,7 @@ class SoulQueue<T> extends Iterable {
   }
 
   void removeWhere(bool Function(T? item) test, {bool realign = true}) {
-    var index = items.indexWhere(test);
-
+    int index = items.indexWhere(test);
     if (index != -1) {
       items[index] = null;
     }

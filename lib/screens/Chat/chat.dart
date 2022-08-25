@@ -67,7 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       builder: (context) =>
                           ChatProfileScreen(profile: profile))),
               child: SoulCircleAvatar(
-                imageUrl: profile.validImages.last.image,
+                imageUrl: profile.profilePicture.image,
                 radius: 15,
               ),
             ),

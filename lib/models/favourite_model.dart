@@ -10,7 +10,7 @@ class FavouriteTrack {
 
 class FavouritePlaylist {
   final int id;
-  final PlaylistItem details;
+  final PlaylistItem? details;
 
   FavouritePlaylist(this.id, this.details);
 }

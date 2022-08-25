@@ -25,10 +25,7 @@ class MyProfileScreen extends StatelessWidget {
                 IconButton(
                     onPressed: () {},
                     iconSize: 25,
-                    icon: SvgPicture.asset(
-                      'assets/images/bell.svg',
-                      height: 25,
-                    )),
+                    icon: const SizedBox.shrink()),
                 IconButton(
                     onPressed: () {},
                     iconSize: 25,

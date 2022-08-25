@@ -228,14 +228,23 @@ class SoulController extends GetxController {
     }
   }
 
-  Future<bool> updateFavourites(SpotifyFavouriteItem item,
+  Future<bool> updateFavouritesTrack(SpotifyFavouriteItem item,
       {String type = 'track'}) async {
     http.Response res = await client.post(myFavouriteUrl,
         body: {"type": type, "details": jsonEncode(item).toString()});
     if (res.statusCode <= 210) {
       return true;
     }
-    log(res.body);
+    return false;
+  }
+
+  updateFavouritesPlaylist(List<SpotifyFavouriteItem?> items) async {
+    http.Response res = await client.post(myFavouriteUrl,
+        body: {"type": 'playlist', "details": jsonEncode(items).toString()});
+
+    if (res.statusCode <= 210) {
+      return true;
+    }
     return false;
   }
 

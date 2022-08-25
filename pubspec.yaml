@@ -28,11 +28,13 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   action_slider: ^0.6.0
+  android_intent: ^2.0.2
   animations: ^2.0.3
   build_runner: ^2.0.0
   cached_network_image: ^3.2.1
   cupertino_icons: ^1.0.2
   date_field: ^3.0.1
+  device_apps: ^2.2.0
   dotted_border: ^2.0.0+2
   firebase_core: ^1.20.0
   firebase_database: ^9.1.2
@@ -55,6 +57,7 @@ dependencies:
   objectbox: ^1.6.0
   objectbox_flutter_libs: ^1.6.0
   objectbox_generator: any
+  package_info_plus: ^1.4.3+1
   path: ^1.8.1
   path_provider: ^2.0.11
   pinput: ^2.2.11

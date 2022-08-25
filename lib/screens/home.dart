@@ -7,7 +7,7 @@ import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/screens/match.dart';
-import 'package:soul_date/screens/profile_home2.dart';
+import 'package:soul_date/screens/profile_home.dart';
 import 'package:soul_date/services/store.dart';
 
 import 'settings_home.dart';

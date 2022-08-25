@@ -289,59 +289,74 @@ class _SongDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 100,
-      child: Row(
-        children: [
-          Container(
-            width: 5,
-            height: 100,
-            decoration: BoxDecoration(
-                color: spotifyGreen, borderRadius: BorderRadius.circular(20)),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Flexible(
-                    child: Text(
-                      details.item.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6!
-                          .copyWith(color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: defaultMargin / 2,
-                  ),
-                  Text(
-                    details.item.artists.join(", "),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Colors.white),
-                  ),
-                  const SizedBox(
-                    height: defaultMargin,
-                  ),
-                  Text(
-                    details.item.album.name,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Colors.white),
-                  )
-                ],
+    return GetBuilder<SoulController>(builder: (controller) {
+      return InkWell(
+        onTap: () =>
+            controller.spotify.openSpotify(details.item.uri, details.item.href),
+        child: SizedBox(
+          height: 100,
+          child: Row(
+            children: [
+              const Icon(
+                FontAwesomeIcons.spotify,
+                color: spotifyGreen,
               ),
-            ),
+              const SizedBox(
+                width: defaultMargin,
+              ),
+              Container(
+                width: 5,
+                height: 100,
+                decoration: BoxDecoration(
+                    color: spotifyGreen,
+                    borderRadius: BorderRadius.circular(20)),
+              ),
+              Expanded(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: defaultMargin),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          details.item.name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6!
+                              .copyWith(color: Colors.white),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: defaultMargin / 2,
+                      ),
+                      Text(
+                        details.item.artists.join(", "),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Colors.white),
+                      ),
+                      const SizedBox(
+                        height: defaultMargin,
+                      ),
+                      Text(
+                        details.item.album.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Colors.white),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 }
 

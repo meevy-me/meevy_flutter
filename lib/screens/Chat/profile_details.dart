@@ -103,7 +103,7 @@ class _ProfileDetailFavouriteState extends State<_ProfileDetailFavourite> {
                   item: favouriteTrack == null ? null : favouriteTrack!.details)
               : const Center(
                   child: EmptyWidget(
-                    text: "Nothing over here",
+                    text: "No Favourite Track",
                     height: 100,
                   ),
                 ),
@@ -117,7 +117,7 @@ class _ProfileDetailFavouriteState extends State<_ProfileDetailFavourite> {
           padding: const EdgeInsets.symmetric(vertical: defaultMargin),
           child: Column(
             children: [
-              if (favouritePlaylists != null)
+              if (favouritePlaylists != null && favouritePlaylists!.isNotEmpty)
                 ...favouritePlaylists!
                     .map((e) => SpotifyFavouriteWidget(
                           onRemove: null,
@@ -265,26 +265,32 @@ class _ProfileDetailsTab extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                FontAwesomeIcons.spotify,
-                color: spotifyGreen,
-                size: 30,
-              ),
-              const SizedBox(
-                width: defaultMargin,
-              ),
-              Text(
-                "${profile.name}'s Spotify",
-                style: GoogleFonts.poppins(
+          child: GetBuilder<SoulController>(builder: (controller) {
+            return InkWell(
+              onTap: () => controller.spotify
+                  .openSpotify("spotify:user:${profile.user.target!.id}", ""),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    FontAwesomeIcons.spotify,
                     color: spotifyGreen,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16),
-              )
-            ],
-          ),
+                    size: 30,
+                  ),
+                  const SizedBox(
+                    width: defaultMargin,
+                  ),
+                  Text(
+                    "${profile.name}'s Spotify",
+                    style: GoogleFonts.poppins(
+                        color: spotifyGreen,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16),
+                  )
+                ],
+              ),
+            );
+          }),
         )
       ],
     );

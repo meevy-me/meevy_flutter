@@ -22,7 +22,7 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
   List<SpotifyFavouriteItem?> selected = List.generate(1, (index) => null);
 
   Future<bool> updateItem(SpotifyFavouriteItem item) async {
-    return await controller.updateFavourites(item);
+    return await controller.updateFavouritesTrack(item);
   }
 
   @override

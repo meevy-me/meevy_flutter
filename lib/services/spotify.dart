@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:android_intent/android_intent.dart';
+import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/Spotify/album_model.dart';
@@ -19,6 +22,7 @@ import 'package:soul_date/models/spotifyuser.dart';
 import 'package:soul_date/screens/my_spot_screen.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/notifications.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Spotify {
   late String accessToken;
@@ -261,5 +265,22 @@ class Spotify {
       return MySpotifyPlaylists.fromJson(json.decode(response.body));
     }
     return null;
+  }
+
+  openSpotify(String? href, String url) async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    bool isInstalled = await DeviceApps.isAppInstalled("com.spotify.music");
+    if (isInstalled) {
+      AndroidIntent intent = AndroidIntent(
+          action: 'action_view',
+          data: href,
+          arguments: {
+            "EXTRA_REFERRER": "android:app//${packageInfo.packageName}"
+          });
+
+      intent.launch();
+    } else {
+      launchUrlString(url);
+    }
   }
 }

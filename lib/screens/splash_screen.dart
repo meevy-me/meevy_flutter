@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/home.dart';
@@ -48,12 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Image.asset(
-          'assets/images/splash_icon.png',
-          width: 200,
-        ),
-      ),
+      body: Center(child: Lottie.asset('assets/images/lottie_loading.json')),
     );
   }
 }

@@ -36,34 +36,33 @@ class _MessagesPageState extends State<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
-      child: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Theme.of(context).primaryColor, primaryDark])),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          floatingActionButton: FloatingActionButton(
-              backgroundColor: Theme.of(context).primaryColor,
-              child: const Icon(FontAwesomeIcons.spotify),
-              onPressed: () async {
-                controller.spotify.fetchCurrentPlaying(context);
-              }),
-          body: SafeArea(
-            child: Column(
-              children: [
-                const _SpotSection(),
-                Expanded(child: _MessagesSection(
-                  onRefresh: () {
-                    spotController.fetchSpots();
-                    messageController.refreshChats();
-                  },
-                ))
-              ],
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        // gradient: LinearGradient(
+        //     begin: Alignment.topCenter,
+        //     end: Alignment.bottomCenter,
+        //     colors: [Theme.of(context).primaryColor, primaryDark])
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        floatingActionButton: FloatingActionButton(
+            backgroundColor: Theme.of(context).primaryColor,
+            child: const Icon(FontAwesomeIcons.spotify),
+            onPressed: () async {
+              controller.spotify.fetchCurrentPlaying(context);
+            }),
+        body: SafeArea(
+          child: Column(
+            children: [
+              const _SpotSection(),
+              Expanded(child: _MessagesSection(
+                onRefresh: () {
+                  spotController.fetchSpots();
+                  messageController.refreshChats();
+                },
+              ))
+            ],
           ),
         ),
       ),
@@ -103,11 +102,11 @@ class _SpotSectionState extends State<_SpotSection> {
           padding: const EdgeInsets.only(top: defaultMargin),
           child: Row(
             children: [
-              const BackButton(color: Colors.white),
-              const Expanded(
+              const BackButton(),
+              Expanded(
                 child: Center(
                   child: Text("Souls & Spots",
-                      style: TextStyle(color: Colors.white, fontSize: 17)),
+                      style: Theme.of(context).textTheme.headline6),
                 ),
               ),
               Padding(
@@ -119,7 +118,6 @@ class _SpotSectionState extends State<_SpotSection> {
                   },
                   icon: const Icon(
                     FontAwesomeIcons.userGroup,
-                    color: Colors.white,
                     size: 20,
                   ),
                 ),
@@ -137,8 +135,8 @@ class _SpotSectionState extends State<_SpotSection> {
                 "Friend's Spots",
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText2!
-                    .copyWith(color: Colors.white, fontSize: 15),
+                    .bodyText1!
+                    .copyWith(fontSize: 15),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: defaultMargin),
@@ -172,6 +170,16 @@ class _SpotSectionState extends State<_SpotSection> {
                         );
                       }),
                     )),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: defaultMargin),
+                child: Text(
+                  "Your Messages",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(fontSize: 15),
+                ),
               )
             ],
           ),
@@ -191,7 +199,7 @@ class _MessagesSection extends StatelessWidget {
     const Radius radius = Radius.circular(30);
     return Container(
         padding: const EdgeInsets.fromLTRB(
-            defaultMargin, defaultMargin * 2, defaultMargin, 0),
+            defaultMargin, defaultMargin, defaultMargin, 0),
         decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: radius)),
