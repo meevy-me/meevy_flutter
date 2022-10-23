@@ -26,16 +26,10 @@ class ProfileActionButton extends StatelessWidget {
             onTap: () => onTap(),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(defaultMargin),
-                  decoration: BoxDecoration(
-                      color: color ?? Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Icon(
-                    iconData,
-                    size: 25,
-                    color: Colors.white,
-                  ),
+                Icon(
+                  iconData,
+                  size: 27,
+                  color: color ?? Theme.of(context).primaryColor,
                 ),
                 const SizedBox(
                   width: defaultMargin * 2,

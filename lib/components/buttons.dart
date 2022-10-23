@@ -16,12 +16,12 @@ class PrimaryButton extends StatelessWidget {
             elevation: 0,
             primary: Theme.of(context).primaryColor,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20))),
+                borderRadius: BorderRadius.circular(10))),
         onPressed: () {
           onPress();
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: defaultPadding * 2),
+          padding: const EdgeInsets.symmetric(vertical: defaultPadding * 3),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

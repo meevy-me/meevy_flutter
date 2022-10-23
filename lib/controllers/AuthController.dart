@@ -25,7 +25,7 @@ class SpotifyController extends GetxController {
       'redirect_uri': 'souldate:/',
       'show_dialog': 'true',
       'scope':
-          'user-read-private user-read-email user-read-recently-played playlist-read-private user-library-read user-top-read user-read-playback-state user-modify-playback-state'
+          'user-read-private user-read-recently-played playlist-read-private user-library-read user-top-read user-modify-playback-state user-read-currently-playing'
     });
 
     final result = await FlutterWebAuth.authenticate(

@@ -71,8 +71,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primaryColor: primaryPink,
-          colorScheme:
-              ColorScheme.fromSwatch().copyWith(secondary: primaryDark),
+          colorScheme: ColorScheme.fromSwatch()
+              .copyWith(secondary: primaryDark, outline: primaryLight),
           textTheme: GoogleFonts.poppinsTextTheme(const TextTheme(
               headline1: TextStyle(
                   fontSize: 26,

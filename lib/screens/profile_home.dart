@@ -5,6 +5,8 @@ import 'package:soul_date/components/profile_tab.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 
+import '../components/buttons.dart';
+
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({Key? key}) : super(key: key);
 
@@ -21,14 +23,74 @@ class MyProfileScreen extends StatelessWidget {
                 IconButton(
                     onPressed: () {},
                     iconSize: 25,
-                    icon: const SizedBox.shrink()),
-                IconButton(
-                    onPressed: () {},
-                    iconSize: 25,
                     icon: const Icon(
                       Icons.settings_outlined,
                       size: 25,
-                    ))
+                    )),
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => Dialog(
+                                child: SizedBox(
+                                  height: 100,
+                                  child: Padding(
+                                    padding: scaffoldPadding,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          "Do you want to logout?",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                        ),
+                                        const SizedBox(
+                                          height: defaultMargin,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            InkWell(
+                                              onTap: () => Get.back(),
+                                              child: Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.close,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: defaultPadding,
+                                                  ),
+                                                  Text(
+                                                    "Cancel",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText2!
+                                                        .copyWith(
+                                                            color: Colors.grey),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: defaultMargin * 2,
+                                            ),
+                                            PrimaryButton(
+                                                onPress: () {
+                                                  controller.logout();
+                                                },
+                                                text: "Logout")
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ));
+                    },
+                    iconSize: 25,
+                    icon: const Icon(Icons.logout))
               ],
             ),
             Column(

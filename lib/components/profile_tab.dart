@@ -121,7 +121,7 @@ class _ProfileDetails extends StatelessWidget {
             },
           ),
           ProfileActionButton(
-            iconData: CupertinoIcons.photo,
+            iconData: CupertinoIcons.photo_on_rectangle,
             title: "Images",
             subtitle: "View and manage your public images",
             onTap: () {
@@ -129,66 +129,10 @@ class _ProfileDetails extends StatelessWidget {
             },
           ),
           ProfileActionButton(
-            iconData: Icons.logout,
-            title: "Logout",
-            subtitle: "Logout from app",
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) => Dialog(
-                        child: SizedBox(
-                          height: 100,
-                          child: Padding(
-                            padding: scaffoldPadding,
-                            child: Column(
-                              children: [
-                                Text(
-                                  "Do you want to logout?",
-                                  style: Theme.of(context).textTheme.bodyText1,
-                                ),
-                                const SizedBox(
-                                  height: defaultMargin,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    InkWell(
-                                      onTap: () => Get.back(),
-                                      child: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.close,
-                                            color: Colors.grey,
-                                          ),
-                                          const SizedBox(
-                                            width: defaultPadding,
-                                          ),
-                                          Text(
-                                            "Cancel",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2!
-                                                .copyWith(color: Colors.grey),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      width: defaultMargin * 2,
-                                    ),
-                                    PrimaryButton(
-                                        onPress: () {
-                                          controller.logout();
-                                        },
-                                        text: "Logout")
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ));
-            },
+            iconData: CupertinoIcons.staroflife,
+            title: "Top Items",
+            subtitle: "Top songs & artists",
+            onTap: () {},
           ),
         ],
       );
@@ -206,8 +150,8 @@ class _FavouriteDetails extends StatelessWidget {
         children: [
           ProfileActionButton(
               color: spotifyGreen,
-              iconData: FontAwesomeIcons.recordVinyl,
-              title: "Song",
+              iconData: CupertinoIcons.music_mic,
+              title: "Songs",
               onTap: () {
                 Get.to(() => const FavouriteSongScreen());
               },
@@ -216,7 +160,7 @@ class _FavouriteDetails extends StatelessWidget {
                   : "${controller.favouriteTrack!.details.name} - ${controller.favouriteTrack!.details.artists.join(', ')}"),
           ProfileActionButton(
               color: spotifyGreen,
-              iconData: CupertinoIcons.music_albums_fill,
+              iconData: CupertinoIcons.music_albums,
               title: "Playlists",
               onTap: () {
                 Get.to(() => const FavouritePlaylistScreen());

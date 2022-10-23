@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:soul_date/models/images.dart';
 import 'package:soul_date/models/user_model.dart';
@@ -38,6 +39,10 @@ class Profile {
   int get age {
     var today = DateTime.now();
     return today.year - dateOfBirth.year;
+  }
+
+  String get birthday {
+    return DateFormat("dd-MM-yyy").format(dateOfBirth);
   }
 
   @override

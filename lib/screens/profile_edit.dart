@@ -10,6 +10,7 @@ import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/spotifyuser.dart';
+import 'package:soul_date/screens/profile_edit2.dart';
 
 class ProfileEdit extends StatelessWidget {
   const ProfileEdit({
@@ -17,12 +18,7 @@ class ProfileEdit extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: const SafeArea(
-        child: _ProfileEditBody(),
-      ),
-      appBar: buildAppBar(context),
-    );
+    return ProfileUpdate();
   }
 }
 

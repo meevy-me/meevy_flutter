@@ -1,3 +1,5 @@
+import 'dart:developer';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -5,11 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/models/spots.dart';
+import 'package:widgets_to_image/widgets_to_image.dart';
 
 class SpotScreen extends StatefulWidget {
   const SpotScreen({Key? key, required this.spots}) : super(key: key);
@@ -22,6 +27,25 @@ class SpotScreen extends StatefulWidget {
 class _SpotScreenState extends State<SpotScreen> {
   final SoulController controller = Get.find<SoulController>();
   final SpotController spotController = Get.find<SpotController>();
+  final WidgetsToImageController imageController = WidgetsToImageController();
+  Uint8List? bytes;
+  void exportSpot() async {
+    bytes = await imageController.capture();
+    try {
+      if (bytes != null) {
+        XFile file = XFile.fromData(
+          bytes!,
+        );
+        ShareResult result = await Share.shareXFiles([file]);
+        if (result.status == ShareResultStatus.success) {
+          //TODO: On share success
+        }
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -140,6 +164,14 @@ class _SpotScreenState extends State<SpotScreen> {
                                     const SizedBox(
                                       width: defaultPadding,
                                     ),
+                                    IconButton(
+                                        onPressed: () {
+                                          exportSpot();
+                                        },
+                                        icon: const Icon(
+                                          Icons.share,
+                                          color: Colors.white,
+                                        )),
                                     widget.spots.profile.id ==
                                             controller.profile!.id
                                         ? IconButton(
@@ -151,7 +183,7 @@ class _SpotScreenState extends State<SpotScreen> {
                                               Icons.delete,
                                               color: Colors.white,
                                             ))
-                                        : const SizedBox.shrink(),
+                                        : const SizedBox.shrink()
                                   ],
                                 )
                               ],
@@ -159,7 +191,10 @@ class _SpotScreenState extends State<SpotScreen> {
                           ),
                           Expanded(
                             child: Center(
-                              child: _SongWithImage(spot: spot),
+                              child: _SongWithImage(
+                                spot: spot,
+                                imageController: imageController,
+                              ),
                             ),
                           )
                         ],
@@ -211,58 +246,60 @@ class _SongWithImage extends StatelessWidget {
   const _SongWithImage({
     Key? key,
     required this.spot,
+    required this.imageController,
   }) : super(key: key);
 
   final Spot spot;
-
+  final WidgetsToImageController imageController;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Hero(
-              tag: spot.details.item.album.images[0].url +
-                  spot.profile.id.toString(),
-              child: CachedNetworkImage(
-                imageUrl: spot.details.item.album.images[0].url,
-                height: size.height * 0.4,
-                width: size.height * 0.4,
-                fit: BoxFit.cover,
+    return WidgetsToImage(
+      controller: imageController,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Hero(
+                tag: spot.details.item.album.images[0].url +
+                    spot.profile.id.toString(),
+                child: CachedNetworkImage(
+                  imageUrl: spot.details.item.album.images[0].url,
+                  height: size.height * 0.4,
+                  width: size.height * 0.4,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
-          child: _SongDetails(spot: spot),
-        ),
-        Center(
-          child: Column(
-            children: [
-              Container(
-                height: 5,
-                margin: const EdgeInsets.only(bottom: defaultPadding),
-                width: 30,
-                decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(20)),
-              ),
-              Text(
-                spot.caption,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText2!
-                    .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
+            child: _SongDetails(spot: spot),
           ),
-        )
-      ],
+          Center(
+            child: Column(
+              children: [
+                Container(
+                  height: 5,
+                  margin: const EdgeInsets.only(bottom: defaultPadding),
+                  width: 30,
+                  decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+                Text(
+                  spot.caption,
+                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      color: Colors.white, fontWeight: FontWeight.w500),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
