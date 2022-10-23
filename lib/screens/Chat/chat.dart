@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/Chat/profile_status.dart';
 import 'package:soul_date/components/chatbox.dart';
@@ -60,16 +61,11 @@ class _ChatScreenState extends State<ChatScreen> {
           Padding(
             padding: const EdgeInsets.only(right: defaultMargin),
             child: InkWell(
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ChatProfileScreen(profile: profile))),
-              child: SoulCircleAvatar(
-                imageUrl: profile.profilePicture.image,
-                radius: 15,
-              ),
-            ),
+                onTap: () => {},
+                child: SvgPicture.asset(
+                  'assets/images/vinyl.svg',
+                  width: 25,
+                )),
           )
         ],
         centerTitle: true,

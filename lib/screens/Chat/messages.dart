@@ -105,7 +105,7 @@ class _SpotSectionState extends State<_SpotSection> {
               Expanded(
                 child: Center(
                   child: Text("Souls & Spots",
-                      style: Theme.of(context).textTheme.headline6),
+                      style: Theme.of(context).textTheme.bodyText1),
                 ),
               ),
               Padding(
@@ -117,7 +117,7 @@ class _SpotSectionState extends State<_SpotSection> {
                   },
                   icon: const Icon(
                     FontAwesomeIcons.userGroup,
-                    size: 20,
+                    size: 18,
                   ),
                 ),
               )

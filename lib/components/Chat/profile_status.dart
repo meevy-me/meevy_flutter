@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/profile_model.dart';
+import 'package:soul_date/screens/Chat/profile_details.dart';
 
 class ProfileStatus extends StatefulWidget {
   const ProfileStatus({
@@ -49,33 +50,42 @@ class _ProfileStatusState extends State<ProfileStatus> {
   DateTime? lastSeen;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ChatProfileScreen(profile: widget.profile)));
+      },
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.profile.name,
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              const SizedBox(
+                width: defaultMargin,
+              ),
+              Container(
+                height: 10,
+                width: 10,
+                decoration: BoxDecoration(
+                    color: online ? Colors.green : Colors.grey,
+                    shape: BoxShape.circle),
+              )
+            ],
+          ),
+          if (lastSeen != null)
             Text(
-              widget.profile.name,
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            const SizedBox(
-              width: defaultMargin,
-            ),
-            Container(
-              height: 10,
-              width: 10,
-              decoration: BoxDecoration(
-                  color: online ? Colors.green : Colors.grey,
-                  shape: BoxShape.circle),
+              "For ${DateTime.now().difference(lastSeen!).inMinutes} minutes",
+              style: Theme.of(context).textTheme.caption,
             )
-          ],
-        ),
-        if (lastSeen != null)
-          Text(
-            "For ${DateTime.now().difference(lastSeen!).inMinutes} minutes",
-            style: Theme.of(context).textTheme.caption,
-          )
-      ],
+        ],
+      ),
     );
   }
 }

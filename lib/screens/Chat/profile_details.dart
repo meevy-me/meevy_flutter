@@ -176,7 +176,7 @@ class _ProfileDetailsTab extends StatelessWidget {
               height: defaultMargin,
             ),
             SizedBox(
-              height: size.height * 0.3,
+              height: profile.validImages.isNotEmpty ? size.height * 0.3 : 10,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: profile.validImages.length,
@@ -395,7 +395,7 @@ Widget _buildCustomAppbar(Profile profile, BuildContext context) {
             ),
           ],
         ),
-        SoulCircleAvatar(imageUrl: profile.validImages.last.image)
+        SoulCircleAvatar(imageUrl: profile.profilePicture.image)
       ],
     ),
   );

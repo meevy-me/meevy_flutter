@@ -51,7 +51,11 @@ class Profile {
   }
 
   List<ProfileImages> get validImages {
-    return images.takeWhile((element) => !element.isDefault).toList();
+    if (images.isNotEmpty) {
+      return images.takeWhile((element) => !element.isDefault).toList();
+    } else {
+      return images.toList();
+    }
   }
 
   ProfileImages get profilePicture {

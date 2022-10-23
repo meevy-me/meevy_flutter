@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -7,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
@@ -29,17 +30,22 @@ class _SpotScreenState extends State<SpotScreen> {
   final SpotController spotController = Get.find<SpotController>();
   final WidgetsToImageController imageController = WidgetsToImageController();
   Uint8List? bytes;
-  void exportSpot() async {
+  void exportSpot(BuildContext context, Spot spot) async {
     bytes = await imageController.capture();
     try {
       if (bytes != null) {
-        XFile file = XFile.fromData(
-          bytes!,
-        );
-        ShareResult result = await Share.shareXFiles([file]);
-        if (result.status == ShareResultStatus.success) {
-          //TODO: On share success
+        var tempDir = await getApplicationDocumentsDirectory();
+        String filePath = '${tempDir.path}/spot.png';
+
+        File file = File(filePath);
+        if (!file.existsSync()) {
+          file.create(recursive: true);
         }
+        File image = await file.writeAsBytes(bytes!.toList());
+        final box = context.findRenderObject() as RenderBox?;
+        ShareExtend.share(image.path, "image",
+            subject: spot.details.item.name,
+            sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
       }
     } catch (e) {
       log(e.toString());
@@ -89,22 +95,24 @@ class _SpotScreenState extends State<SpotScreen> {
                       padding: scaffoldPadding,
                       child: Column(
                         children: [
-                          Row(
-                            children: List<Widget>.generate(
-                                widget.spots.spots.length,
-                                (index) => Flexible(
-                                      child: Container(
-                                        height: 5,
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 1),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            color: index == currentIndex
-                                                ? Colors.white70
-                                                : Colors.grey),
-                                      ),
-                                    )),
+                          Visibility(
+                            child: Row(
+                              children: List<Widget>.generate(
+                                  widget.spots.spots.length,
+                                  (index) => Flexible(
+                                        child: Container(
+                                          height: 5,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 1),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: index == currentIndex
+                                                  ? Colors.white70
+                                                  : Colors.grey),
+                                        ),
+                                      )),
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: defaultMargin),
@@ -164,14 +172,14 @@ class _SpotScreenState extends State<SpotScreen> {
                                     const SizedBox(
                                       width: defaultPadding,
                                     ),
-                                    IconButton(
-                                        onPressed: () {
-                                          exportSpot();
-                                        },
-                                        icon: const Icon(
-                                          Icons.share,
-                                          color: Colors.white,
-                                        )),
+                                    // IconButton(
+                                    //     onPressed: () {
+                                    //       exportSpot(context, spot);
+                                    //     },
+                                    //     icon: const Icon(
+                                    //       Icons.share,
+                                    //       color: Colors.white,
+                                    //     )),
                                     widget.spots.profile.id ==
                                             controller.profile!.id
                                         ? IconButton(
@@ -189,17 +197,14 @@ class _SpotScreenState extends State<SpotScreen> {
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: Center(
-                              child: _SongWithImage(
-                                spot: spot,
-                                imageController: imageController,
-                              ),
-                            ),
-                          )
                         ],
                       ),
                     ),
+                  ),
+                ),
+                Center(
+                  child: _SongWithImage(
+                    spot: spot,
                   ),
                 )
               ]),
@@ -246,60 +251,57 @@ class _SongWithImage extends StatelessWidget {
   const _SongWithImage({
     Key? key,
     required this.spot,
-    required this.imageController,
   }) : super(key: key);
 
   final Spot spot;
-  final WidgetsToImageController imageController;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return WidgetsToImage(
-      controller: imageController,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Hero(
-                tag: spot.details.item.album.images[0].url +
-                    spot.profile.id.toString(),
-                child: CachedNetworkImage(
-                  imageUrl: spot.details.item.album.images[0].url,
-                  height: size.height * 0.4,
-                  width: size.height * 0.4,
-                  fit: BoxFit.cover,
-                ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Hero(
+              tag: spot.details.item.album.images[0].url +
+                  spot.profile.id.toString(),
+              child: CachedNetworkImage(
+                imageUrl: spot.details.item.album.images[0].url,
+                height: size.height * 0.4,
+                width: size.height * 0.4,
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
-            child: _SongDetails(spot: spot),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
+          child: _SongDetails(spot: spot),
+        ),
+        Center(
+          child: Column(
+            children: [
+              Container(
+                height: 5,
+                margin: const EdgeInsets.only(bottom: defaultPadding),
+                width: 30,
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(20)),
+              ),
+              Text(
+                spot.caption,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText2!
+                    .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
+              ),
+            ],
           ),
-          Center(
-            child: Column(
-              children: [
-                Container(
-                  height: 5,
-                  margin: const EdgeInsets.only(bottom: defaultPadding),
-                  width: 30,
-                  decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(20)),
-                ),
-                Text(
-                  spot.caption,
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                      color: Colors.white, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+        )
+      ],
     );
   }
 }
