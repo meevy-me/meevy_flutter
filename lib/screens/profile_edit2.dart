@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
@@ -29,6 +30,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   void initState() {
     name.text = soulController.profile!.name;
     bio.text = soulController.profile!.bio;
+    selectedDate = soulController.profile!.dateOfBirth;
     super.initState();
   }
 
@@ -105,7 +107,15 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               height: defaultMargin * 4,
             ),
             PrimaryButton(
-              onPress: () {},
+              onPress: () {
+                Map<String, String> body = {
+                  "bio": bio.text,
+                  "name": name.text,
+                  "date_of_birth":
+                      DateFormat("yyyy-MM-d").format(selectedDate!).toString()
+                };
+                soulController.updateProfile(body, context: context);
+              },
               text: "Update",
               icon: const Icon(Icons.sync),
             )
