@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/buttons.dart';
@@ -29,94 +30,98 @@ class _MySpotScreenState extends State<MySpotScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.black,
-      resizeToAvoidBottomInset: false,
-      body: ListView(
-        children: [
-          Stack(children: [
-            SpotScreenBackground(
-              size: size,
-              details: widget.details,
-            ),
-            SafeArea(
-              child: SizedBox(
-                height: size.height * 0.9,
-                child: Padding(
-                  padding: scaffoldPadding,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(1),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: Theme.of(context).primaryColor)),
-                                child: SoulCircleAvatar(
-                                  imageUrl: soulController
-                                      .profile!.validImages.last.image,
-                                  radius: 18,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: defaultMargin,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "My Spot",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .copyWith(color: Colors.white),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        resizeToAvoidBottomInset: false,
+        body: ListView(
+          children: [
+            Stack(children: [
+              SpotScreenBackground(
+                size: size,
+                details: widget.details,
+              ),
+              SafeArea(
+                child: SizedBox(
+                  height: size.height * 0.9,
+                  child: Padding(
+                    padding: scaffoldPadding,
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(1),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color:
+                                              Theme.of(context).primaryColor)),
+                                  child: SoulCircleAvatar(
+                                    imageUrl: soulController
+                                        .profile!.validImages.last.image,
+                                    radius: 18,
                                   ),
-                                  // Text(
-                                  //   "${DateTime.now().difference(spot.dateAdded).inHours} Hrs ago.",
-                                  //   style: Theme.of(context)
-                                  //       .textTheme
-                                  //       .caption!
-                                  //       .copyWith(color: Colors.white),
-                                  // )
-                                ],
-                              )
-                            ],
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                Get.back();
-                              },
-                              icon: const Icon(
-                                Icons.close,
-                                color: Colors.white,
-                              ))
-                        ],
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: _SongWithImage(
-                            details: widget.details,
-                            controller: caption,
-                          ),
+                                ),
+                                const SizedBox(
+                                  width: defaultMargin,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "My Spot",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(color: Colors.white),
+                                    ),
+                                    // Text(
+                                    //   "${DateTime.now().difference(spot.dateAdded).inHours} Hrs ago.",
+                                    //   style: Theme.of(context)
+                                    //       .textTheme
+                                    //       .caption!
+                                    //       .copyWith(color: Colors.white),
+                                    // )
+                                  ],
+                                )
+                              ],
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                ))
+                          ],
                         ),
-                      )
-                    ],
+                        Expanded(
+                          child: Center(
+                            child: _SongWithImage(
+                              details: widget.details,
+                              controller: caption,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              )
+            ]),
+            _BottomSection(
+              controller: caption,
+              details: widget.details,
+              spotController: controller,
             )
-          ]),
-          _BottomSection(
-            controller: caption,
-            details: widget.details,
-            spotController: controller,
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

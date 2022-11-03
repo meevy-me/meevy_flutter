@@ -128,12 +128,12 @@ class _ProfileDetails extends StatelessWidget {
               Get.to(() => const MyImages());
             },
           ),
-          ProfileActionButton(
-            iconData: CupertinoIcons.staroflife,
-            title: "Top Items",
-            subtitle: "Top songs & artists",
-            onTap: () {},
-          ),
+          // ProfileActionButton(
+          //   iconData: CupertinoIcons.staroflife,
+          //   title: "Top Items",
+          //   subtitle: "Top songs & artists",
+          //   onTap: () {},
+          // ),
         ],
       );
     });

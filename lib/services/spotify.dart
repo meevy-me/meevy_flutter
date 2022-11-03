@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:android_intent/android_intent.dart';
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -267,7 +267,7 @@ class Spotify {
     return null;
   }
 
-  openSpotify(String? href, String url) async {
+  openSpotify(String? href, String? url) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     bool isInstalled = await DeviceApps.isAppInstalled("com.spotify.music");
     if (isInstalled) {
@@ -280,7 +280,9 @@ class Spotify {
 
       intent.launch();
     } else {
-      launchUrlString(url);
+      if (url != null) {
+        launchUrlString(url);
+      }
     }
   }
 }

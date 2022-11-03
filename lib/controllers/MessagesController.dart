@@ -83,12 +83,12 @@ class MessageController extends GetxController {
 
   listenConnection(LocalStore store) async {
     if (connection != null) {
-      connection!.stream.listen((event) {
-        var data = json.decode(event)['message'];
-        addMessage(store, data);
-      },
-          onDone: () async => await retry(() async => openConnection()),
-          onError: (error) async => await retry(() async => openConnection()));
+      connection!.stream.listen(
+        (event) {
+          var data = json.decode(event)['message'];
+          addMessage(store, data);
+        },
+      );
     }
   }
 

@@ -4,11 +4,16 @@ import 'package:soul_date/constants/constants.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton(
-      {Key? key, required this.onPress, this.icon, required this.text})
+      {Key? key,
+      required this.onPress,
+      this.icon,
+      required this.text,
+      this.padding = const EdgeInsets.symmetric(vertical: defaultPadding * 3)})
       : super(key: key);
   final Function onPress;
   final Icon? icon;
   final String text;
+  final EdgeInsets padding;
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -21,7 +26,7 @@ class PrimaryButton extends StatelessWidget {
           onPress();
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: defaultPadding * 3),
+          padding: padding,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -29,7 +34,13 @@ class PrimaryButton extends StatelessWidget {
               const SizedBox(
                 width: defaultPadding,
               ),
-              Text(text)
+              Text(
+                text,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(color: Colors.white),
+              )
             ],
           ),
         ));

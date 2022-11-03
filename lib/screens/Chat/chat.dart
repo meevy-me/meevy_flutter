@@ -4,14 +4,13 @@ import 'package:get/get.dart';
 import 'package:soul_date/components/Chat/profile_status.dart';
 import 'package:soul_date/components/chatbox.dart';
 import 'package:soul_date/components/empty_widget.dart';
-import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/chat_model.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
-import 'package:soul_date/screens/Chat/profile_details.dart';
+import 'package:soul_date/screens/vinyls.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.chat}) : super(key: key);
@@ -61,7 +60,12 @@ class _ChatScreenState extends State<ChatScreen> {
           Padding(
             padding: const EdgeInsets.only(right: defaultMargin),
             child: InkWell(
-                onTap: () => {},
+                onTap: () => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => const VinylScreen())))
+                    },
                 child: SvgPicture.asset(
                   'assets/images/vinyl.svg',
                   width: 25,

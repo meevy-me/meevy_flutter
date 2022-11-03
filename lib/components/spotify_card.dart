@@ -19,7 +19,7 @@ class SpotifyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        controller.spotify.openSpotify(details.uri, details.spotifyLink!);
+        controller.spotify.openSpotify(details.uri, details.spotifyLink);
         // launchUrlString(details.spotifyLink!);
       },
       child: Container(

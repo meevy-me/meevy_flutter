@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:get/get.dart';
@@ -75,10 +76,12 @@ class SpotifyController extends GetxController {
     if (response.statusCode <= 210) {
       Map json = jsonDecode(response.body);
       SharedPreferences preferences = await SharedPreferences.getInstance();
-
+      String firebase_token = json['firebase_token'];
       preferences.setString('token', json['token']);
+      preferences.setString('firebase_token', json['firebase_token']);
       preferences.setString('spotify_accesstoken', spotify.accessToken);
       preferences.setString('spotify_refreshtoken', spotify.refreshToken);
+      await FirebaseAuth.instance.signInWithCustomToken(firebase_token);
 
       if (body.containsKey('email')) {
         if (context != null) _showSnackBar("Success. Create Profile", context);

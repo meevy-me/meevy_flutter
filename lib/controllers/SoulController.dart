@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -305,5 +306,12 @@ class SoulController extends GetxController {
       return favouritePlaylist;
     }
     return null;
+  }
+
+  feedbackPush(List comments) {
+    final CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection('feedback');
+    Map<String, dynamic> data = {'profile': profile!.id, 'comments': comments};
+    collectionReference.add(data);
   }
 }
