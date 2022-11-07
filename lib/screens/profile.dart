@@ -37,6 +37,7 @@ class __ProfileCreatePageBodyState extends State<_ProfileCreatePageBody> {
   TextEditingController names = TextEditingController();
   TextEditingController bio = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  String selectedGender = 'M';
   @override
   Widget build(BuildContext context) {
     SpotifyUser? user = spotifyController.spotify.currentUser;
@@ -83,6 +84,51 @@ class __ProfileCreatePageBodyState extends State<_ProfileCreatePageBody> {
                   }
                   return null;
                 },
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: defaultMargin * 2),
+                child: Column(
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Audience",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    const SizedBox(
+                      height: defaultMargin,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GenderButton(
+                            text: "Male",
+                            active: selectedGender == 'M',
+                            onPress: () {
+                              setState(() {
+                                selectedGender = 'M';
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          width: defaultMargin,
+                        ),
+                        Expanded(
+                          child: GenderButton(
+                            text: "Female",
+                            active: selectedGender == 'F',
+                            onPress: () {
+                              setState(() {
+                                selectedGender = 'F';
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: defaultMargin),
@@ -133,8 +179,10 @@ class __ProfileCreatePageBodyState extends State<_ProfileCreatePageBody> {
                 Map<String, String> body = {
                   "bio": bio.text,
                   "name": names.text,
-                  "date_of_birth": selectedDate
+                  "date_of_birth": selectedDate,
+                  'looking_for': selectedGender,
                 };
+
                 spotifyController.createProfile(body, context: context);
               }
             },
@@ -143,6 +191,35 @@ class __ProfileCreatePageBodyState extends State<_ProfileCreatePageBody> {
           ),
         )
       ],
+    );
+  }
+}
+
+class GenderButton extends StatelessWidget {
+  const GenderButton({
+    Key? key,
+    required this.text,
+    required this.onPress,
+    this.active = false,
+  }) : super(key: key);
+  final String text;
+  final void Function() onPress;
+  final bool active;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPress,
+      child: AnimatedContainer(
+          height: 40,
+          duration: const Duration(milliseconds: 300),
+          decoration: BoxDecoration(
+              color: active ? Theme.of(context).primaryColor : Colors.grey,
+              borderRadius: BorderRadius.circular(10)),
+          child: Center(
+              child: Text(
+            text,
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+          ))),
     );
   }
 }

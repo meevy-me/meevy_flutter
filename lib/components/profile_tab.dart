@@ -8,6 +8,7 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/favourite_playlists.dart';
 import 'package:soul_date/screens/favourite_song.dart';
 import 'package:soul_date/screens/my_images.dart';
+import 'package:soul_date/screens/profile.dart';
 import 'package:soul_date/screens/profile_edit.dart';
 
 import '../constants/constants.dart';

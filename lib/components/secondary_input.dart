@@ -49,7 +49,7 @@ class SecondaryTextInput extends StatelessWidget {
   }) : super(key: key);
   final String label;
   final TextEditingController? controller;
-  final String Function(String? value)? validator;
+  final String? Function(String? value)? validator;
   final TextInputType? textInputType;
   final Color? labelColor;
   final int? maxLines;
