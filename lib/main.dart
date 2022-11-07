@@ -3,11 +3,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/colors.dart';
+import 'package:soul_date/screens/home.dart';
+import 'package:soul_date/screens/login.dart';
 import 'package:soul_date/screens/splash_screen.dart';
 import 'package:soul_date/services/notifications.dart';
+import 'package:soul_date/services/store.dart';
+
+import 'controllers/SoulController.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -30,7 +37,8 @@ late AndroidNotificationChannel channel;
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   if (!kIsWeb) {
@@ -59,10 +67,43 @@ void main() async {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  void checkLogin() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    late LocalStore store;
+    // final service = FlutterBackgroundService();
+    if (preferences.getString("spotify_accesstoken") == null) {
+      FlutterNativeSplash.remove();
+      Get.offAll(() => const LoginScreen());
+    } else {
+      try {
+        store = await LocalStore.init();
+      } catch (e) {
+        store = await LocalStore.attach();
+      }
+      Get.put(SoulController(store), permanent: true);
+
+      Get.offAll(() => HomePage(
+            store: store,
+          ));
+
+      FlutterNativeSplash.remove();
+    }
+  }
+
+  @override
+  void initState() {
+    checkLogin();
+    super.initState();
+  } // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
