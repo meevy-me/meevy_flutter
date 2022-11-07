@@ -269,8 +269,8 @@ class Spotify {
 
   openSpotify(String? href, String? url) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    bool isInstalled = await DeviceApps.isAppInstalled("com.spotify.music");
-    if (isInstalled) {
+    // bool isInstalled = await DeviceApps.isAppInstalled("com.spotify.music");
+    try {
       AndroidIntent intent = AndroidIntent(
           action: 'action_view',
           data: href,
@@ -279,7 +279,7 @@ class Spotify {
           });
 
       intent.launch();
-    } else {
+    } catch (e) {
       if (url != null) {
         launchUrlString(url);
       }
