@@ -9,6 +9,7 @@ class Profile {
     required this.id,
     // required this.images,
     required this.name,
+    this.looking_for = 'A',
     required this.dateOfBirth,
     required this.bio,
   });
@@ -18,6 +19,7 @@ class Profile {
   final images = ToMany<ProfileImages>();
   // List<dynamic> images;
   String name;
+  String looking_for;
   DateTime dateOfBirth;
   String bio;
 
@@ -27,6 +29,7 @@ class Profile {
       name: json["name"],
       dateOfBirth: DateTime.parse(json["date_of_birth"]),
       bio: json["bio"],
+      looking_for: json['looking_for'],
     );
 
     profile.user.target = User.fromJson(json["user"]);

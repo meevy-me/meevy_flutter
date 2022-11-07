@@ -26,11 +26,23 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   DateTime? selectedDate;
   TextEditingController name = TextEditingController();
   TextEditingController bio = TextEditingController();
+  String target = 'A';
+  int targetIndex = 0;
+
   @override
   void initState() {
     name.text = soulController.profile!.name;
     bio.text = soulController.profile!.bio;
     selectedDate = soulController.profile!.dateOfBirth;
+    target = soulController.profile!.looking_for;
+    if (soulController.profile!.looking_for == 'A') {
+      targetIndex = 3;
+    } else if (soulController.profile!.looking_for == 'M') {
+      targetIndex = 0;
+    } else if (soulController.profile!.looking_for == 'F') {
+      targetIndex = 1;
+    }
+
     super.initState();
   }
 
@@ -111,9 +123,11 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                 Map<String, String> body = {
                   "bio": bio.text,
                   "name": name.text,
+                  "looking_for": target,
                   "date_of_birth":
                       DateFormat("yyyy-MM-d").format(selectedDate!).toString()
                 };
+
                 soulController.updateProfile(body, context: context);
               },
               text: "Update",
@@ -185,7 +199,12 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
           Positioned(
             right: defaultMargin * 2,
             child: _TargetPick(
-              selectedTarget: 0,
+              selectedTarget: targetIndex,
+              onChange: (value) {
+                setState(() {
+                  target = value;
+                });
+              },
             ),
           )
         ],
@@ -201,7 +220,7 @@ class _TargetPick extends StatefulWidget {
     this.onChange,
   }) : super(key: key);
   final int selectedTarget;
-  final void Function()? onChange;
+  final void Function(String value)? onChange;
 
   @override
   State<_TargetPick> createState() => _TargetPickState();
@@ -232,7 +251,7 @@ class _TargetPickState extends State<_TargetPick> {
             RadioContainer(
               onTap: () {
                 if (widget.onChange != null) {
-                  widget.onChange!();
+                  widget.onChange!('M');
                 }
                 setState(() {
                   activeIndex = 0;
@@ -255,7 +274,7 @@ class _TargetPickState extends State<_TargetPick> {
             RadioContainer(
               onTap: () {
                 if (widget.onChange != null) {
-                  widget.onChange!();
+                  widget.onChange!('F');
                 }
                 setState(() {
                   activeIndex = 1;

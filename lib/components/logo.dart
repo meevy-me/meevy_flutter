@@ -7,20 +7,13 @@ class Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text("Soul", style: Theme.of(context).textTheme.bodyText1),
-        const SizedBox(
-          width: defaultPadding,
-        ),        SvgPicture.asset(
+        SvgPicture.asset(
           'assets/images/logo.svg',
-          width: 30,
+          width: 50,
         ),
-        const SizedBox(
-          width: defaultPadding,
-        ),
-        Text("Date", style: Theme.of(context).textTheme.bodyText1),
       ],
     );
   }

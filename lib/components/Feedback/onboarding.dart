@@ -64,7 +64,7 @@ class FeedbackOnboarding extends StatelessWidget {
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold))),
                     TextSpan(
-                        text: "Souldate Pro  ",
+                        text: "Meevy Pro  ",
                         style: GoogleFonts.poppins(
                             wordSpacing: 2,
                             height: 2,
