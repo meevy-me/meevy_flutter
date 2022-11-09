@@ -151,7 +151,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   elevation: 0,
-                                  primary: Theme.of(context).primaryColor,
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
                                   shape: const CircleBorder()),
                               onPressed: () {
                                 if (text.text.trim().isNotEmpty) {

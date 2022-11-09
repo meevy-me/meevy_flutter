@@ -36,7 +36,7 @@ class _MessagesPageState extends State<MessagesPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         // gradient: LinearGradient(
         //     begin: Alignment.topCenter,

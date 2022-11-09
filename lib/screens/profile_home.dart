@@ -6,7 +6,6 @@ import 'package:soul_date/components/profile_tab.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/feedback.dart';
-import 'package:soul_date/screens/settings_profile.dart';
 
 import '../components/buttons.dart';
 
@@ -29,7 +28,8 @@ class MyProfileScreen extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => FeedbackScreen()));
+                                    builder: (context) =>
+                                        const FeedbackScreen()));
                           },
                           iconSize: 25,
                           icon: const Icon(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:soul_date/constants/constants.dart';
 
 class Logo extends StatelessWidget {
   const Logo({Key? key}) : super(key: key);

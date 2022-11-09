@@ -54,8 +54,8 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
                 style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
-                    elevation: 0,
-                    primary: Theme.of(context).primaryColor),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    elevation: 0),
                 onPressed: () {
                   if (selected[0] != null) {
                     updateItem(selected[0]!);

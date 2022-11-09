@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:soul_date/components/appbar.dart';
 import 'package:soul_date/components/authfield.dart';
 import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -18,7 +17,7 @@ class ProfileEdit extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ProfileUpdate();
+    return const ProfileUpdate();
   }
 }
 

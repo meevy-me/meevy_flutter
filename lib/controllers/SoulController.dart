@@ -276,7 +276,7 @@ class SoulController extends GetxController {
 
   Future<FavouriteTrack?> getFriendFavouriteTrack(int id) async {
     http.Response res =
-        await client.get("${baseUrl}socials/friend/${id}/favourite/");
+        await client.get("${baseUrl}socials/friend/$id/favourite/");
 
     if (res.statusCode <= 210) {
       try {

@@ -218,7 +218,8 @@ class GenderButton extends StatelessWidget {
           child: Center(
               child: Text(
             text,
-            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+            style: const TextStyle(
+                fontWeight: FontWeight.w600, color: Colors.white),
           ))),
     );
   }

@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/profile_action_button.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -15,7 +13,7 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: ListView(padding: scrollPadding, children: [
-          Row(children: [
+          Row(children: const [
             IconContainer(
                 icon: Icon(
               Icons.chevron_left,
@@ -31,8 +29,10 @@ class SettingsPage extends StatelessWidget {
               iconData: CupertinoIcons.bubble_left,
               title: "Feedback",
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FeedbackScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const FeedbackScreen()));
               },
               subtitle: "For a chance at souldate pro")
         ]),

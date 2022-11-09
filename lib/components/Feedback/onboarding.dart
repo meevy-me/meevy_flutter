@@ -27,7 +27,7 @@ class FeedbackOnboarding extends StatelessWidget {
                         onPress: () {
                           Navigator.pop(context);
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.chevron_left,
                           size: 30,
                         ),
@@ -57,7 +57,7 @@ class FeedbackOnboarding extends StatelessWidget {
                     TextSpan(
                         text: "Get A Chance To Try Out ",
                         style: GoogleFonts.poppins(
-                            textStyle: TextStyle(
+                            textStyle: const TextStyle(
                                 wordSpacing: 2,
                                 height: 2,
                                 fontSize: 22,
@@ -76,7 +76,7 @@ class FeedbackOnboarding extends StatelessWidget {
                         text: "For Free.",
                         style: GoogleFonts.poppins(
                             wordSpacing: 2,
-                            textStyle: TextStyle(
+                            textStyle: const TextStyle(
                                 fontSize: 22,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold))),

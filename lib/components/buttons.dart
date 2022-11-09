@@ -19,7 +19,7 @@ class PrimaryButton extends StatelessWidget {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
             elevation: 0,
-            primary: Theme.of(context).primaryColor,
+            backgroundColor: Theme.of(context).primaryColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10))),
         onPressed: () {
@@ -57,7 +57,7 @@ class SpotifyButton extends StatelessWidget {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
             elevation: 0,
-            primary: spotifyGreen,
+            backgroundColor: spotifyGreen,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20))),
         onPressed: () {
