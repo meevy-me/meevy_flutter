@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
@@ -19,7 +18,6 @@ class MessageController extends GetxController {
   RxList<Chat> chats = <Chat>[].obs;
   WebSocketChannel? connection;
   HttpClient client = HttpClient();
-  final service = FlutterBackgroundService();
 
   SoulController controller = Get.find<SoulController>();
 

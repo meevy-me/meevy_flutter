@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,7 +35,6 @@ class SoulController extends GetxController {
   List<FavouritePlaylist?> favouritePlaylist = [];
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
-  final service = FlutterBackgroundService();
   final LocalStore store;
 
   SoulController(this.store);
@@ -220,7 +218,6 @@ class SoulController extends GetxController {
 
     if (await preferences.clear()) {
       store.store.close();
-      service.invoke('stopService');
       LocalStore.delete();
       Get.offAll(() => const LoginScreen());
       Get.delete<SoulController>();
