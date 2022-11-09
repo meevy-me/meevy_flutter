@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:soul_date/components/Feedback/question_card.dart';
 import 'package:soul_date/components/authfield.dart';
-import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/home.dart';
-import 'package:soul_date/screens/settings_profile.dart';
 
 import '../components/Feedback/onboarding.dart';
 
@@ -231,7 +228,6 @@ class _FeedbackQuestion1State extends State<FeedbackQuestion1>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
 
@@ -359,6 +355,5 @@ class _FeedbackQuestion3State extends State<FeedbackQuestion3>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
