@@ -133,7 +133,7 @@ class FeedbackQuestion1 extends StatefulWidget {
       : super(key: key);
   final Function(dynamic value) onNext;
   final Function onBack;
-
+  //TODO: Implement Dispose
   @override
   State<FeedbackQuestion1> createState() => _FeedbackQuestion1State();
 }
@@ -247,6 +247,12 @@ class _FeedbackQuestion2State extends State<FeedbackQuestion2>
   int selectedNumber = 0;
   TextEditingController answer = TextEditingController();
   @override
+  void dispose() {
+    answer.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -310,6 +316,13 @@ class _FeedbackQuestion3State extends State<FeedbackQuestion3>
     with AutomaticKeepAliveClientMixin {
   int selectedNumber = 0;
   TextEditingController answer = TextEditingController();
+
+  @override
+  void dispose() {
+    answer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

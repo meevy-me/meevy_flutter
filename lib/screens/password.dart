@@ -53,6 +53,14 @@ class _PasswordScreenBodyState extends State<_PasswordScreenBody> {
   }
 
   @override
+  void dispose() {
+    email.dispose();
+    pass1.dispose();
+    pass2.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView(
       padding: scaffoldPadding,

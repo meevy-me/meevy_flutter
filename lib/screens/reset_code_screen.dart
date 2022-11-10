@@ -18,6 +18,13 @@ class _ResetCodeScreenState extends State<ResetCodeScreen> {
   final TextEditingController code = TextEditingController();
   final SpotifyController spotifyController = Get.find<SpotifyController>();
   String? error;
+
+  @override
+  void dispose() {
+    code.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

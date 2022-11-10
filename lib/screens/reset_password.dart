@@ -23,6 +23,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController pass2 = TextEditingController();
   final SpotifyController controller = Get.find<SpotifyController>();
   String? errors;
+
+  @override
+  void dispose() {
+    pass1.dispose();
+    pass2.dispose();
+    super.dispose();
+  }
+
+  //TODO: Implement Dispose
   @override
   Widget build(BuildContext context) {
     return Scaffold(

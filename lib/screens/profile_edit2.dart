@@ -28,6 +28,13 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   int targetIndex = 0;
 
   @override
+  void dispose() {
+    name.dispose();
+    bio.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     name.text = soulController.profile!.name;
     bio.text = soulController.profile!.bio;

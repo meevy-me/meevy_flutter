@@ -29,6 +29,11 @@ class _PasswordResetEmailState extends State<PasswordResetEmail> {
   TextEditingController emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   SpotifyController spotifyController = Get.find<SpotifyController>();
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

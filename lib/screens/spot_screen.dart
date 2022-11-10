@@ -28,6 +28,9 @@ class _SpotScreenState extends State<SpotScreen> {
   final SoulController controller = Get.find<SoulController>();
   final SpotController spotController = Get.find<SpotController>();
   final WidgetsToImageController imageController = WidgetsToImageController();
+
+  //Implement Dispose
+
   Uint8List? bytes;
   void exportSpot(BuildContext context, Spot spot) async {
     bytes = await imageController.capture();

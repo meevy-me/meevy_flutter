@@ -38,6 +38,14 @@ class __ProfileCreatePageBodyState extends State<_ProfileCreatePageBody> {
   TextEditingController bio = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String selectedGender = 'M';
+
+  @override
+  void dispose() {
+    names.dispose();
+    bio.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     SpotifyUser? user = spotifyController.spotify.currentUser;
