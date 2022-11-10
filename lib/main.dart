@@ -38,7 +38,6 @@ late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   if (!kIsWeb) {
@@ -75,32 +74,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  void checkLogin() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    late LocalStore store;
-    // final service = FlutterBackgroundService();
-    if (preferences.getString("spotify_accesstoken") == null) {
-      FlutterNativeSplash.remove();
-      Get.offAll(() => const LoginScreen());
-    } else {
-      try {
-        store = await LocalStore.init();
-      } catch (e) {
-        store = await LocalStore.attach();
-      }
-      Get.put(SoulController(store), permanent: true);
-
-      Get.offAll(() => HomePage(
-            store: store,
-          ));
-
-      FlutterNativeSplash.remove();
-    }
-  }
-
   @override
   void initState() {
-    checkLogin();
     super.initState();
   } // This widget is the root of your application.
 
