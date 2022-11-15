@@ -1,4 +1,4 @@
-package com.example.soul_date
+package com.meevy.io
 
 import io.flutter.embedding.android.FlutterActivity
 
