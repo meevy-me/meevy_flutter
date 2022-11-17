@@ -63,9 +63,14 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
               padding: const EdgeInsets.all(defaultMargin),
               child: Row(
                 children: [
-                  const SizedBox(
-                      width: 20,
-                      child: IconContainer(icon: Icon(Icons.arrow_back_ios))),
+                  SizedBox(
+                    width: 20,
+                    child: IconContainer(
+                        icon: const Icon(Icons.arrow_back_ios),
+                        onPress: () {
+                          Navigator.pop(context);
+                        }),
+                  ),
                   Expanded(
                     child: Center(
                       child: Text(
