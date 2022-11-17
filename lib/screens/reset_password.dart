@@ -42,7 +42,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: defaultMargin),
             child: Text(
-              "Reset your souldate password",
+              "Reset your Meevy password",
               style: Theme.of(context).textTheme.bodyText1,
             ),
           ),

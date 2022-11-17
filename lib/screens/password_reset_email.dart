@@ -70,7 +70,7 @@ class _PasswordResetEmailState extends State<PasswordResetEmail> {
           Padding(
             padding: const EdgeInsets.only(top: defaultMargin * 2),
             child: Text(
-              "Enter your souldate email",
+              "Enter your Meevy email",
               style: Theme.of(context).textTheme.bodyText1,
             ),
           ),

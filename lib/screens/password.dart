@@ -152,7 +152,7 @@ class _RegisterWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Create souldate account to continue",
+          "Create Meevy account to continue",
           style: Theme.of(context).textTheme.bodyText1,
         ),
         Padding(
@@ -206,7 +206,7 @@ class _LoginWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Enter your souldate password to continue",
+          "Enter your Meevy password to continue",
           style: Theme.of(context).textTheme.bodyText1,
         ),
         Padding(
