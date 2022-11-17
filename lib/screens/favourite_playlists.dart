@@ -37,8 +37,12 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
   void initState() {
     getPlaylists();
     if (controller.favouritePlaylist.isNotEmpty) {
-      selected = SoulQueue.fromList(
-          controller.favouritePlaylist.map((e) => e!.details).toList());
+      var queue = SoulQueue.fromList(
+        controller.favouritePlaylist.map((e) => e!.details).toList(),
+      );
+
+      queue.fill(4);
+      selected = queue;
     }
     scrollController.addListener(() async {
       var nextPageTrigger = scrollController.position.maxScrollExtent * 0.8;
@@ -90,7 +94,7 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
                     elevation: 0),
                 onPressed: () {
                   if (selected.isNotEmpty) {
-                    updateItem(selected.items);
+                    updateItem(selected.flat);
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text(":) Favourite Playlists updated")));
                   }

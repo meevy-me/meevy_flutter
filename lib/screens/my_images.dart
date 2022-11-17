@@ -76,12 +76,22 @@ class _MyImagesState extends State<MyImages> {
                       ],
                     ),
                     childrenDelegate: SliverChildBuilderDelegate(
-                        (context, index) => ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: CachedNetworkImage(
-                                imageUrl: controller
-                                    .profile!.validImages[index].image,
-                                fit: BoxFit.cover,
+                        (context, index) => InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ImageView(
+                                            imageUrl: controller.profile!
+                                                .validImages[index].image)));
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: CachedNetworkImage(
+                                  imageUrl: controller
+                                      .profile!.validImages[index].image,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                         childCount: controller.profile!.validImages.length),

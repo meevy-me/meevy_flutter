@@ -34,6 +34,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762432045224:android:f37d1e94afb783f0f4429d",
+        "android_client_info": {
+          "package_name": "com.meevy.io"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "762432045224-aebkbrl1tvvgp60ko7m08pnqk5r2oata.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4xDY1oFUhwju0I_Ahv2zAdVcn6zy8pKo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "762432045224-aebkbrl1tvvgp60ko7m08pnqk5r2oata.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

@@ -237,10 +237,12 @@ class SoulController extends GetxController {
   }
 
   updateFavouritesPlaylist(List<SpotifyFavouriteItem?> items) async {
+    print(items);
     http.Response res = await client.post(myFavouriteUrl,
         body: {"type": 'playlist', "details": jsonEncode(items).toString()});
 
     if (res.statusCode <= 210) {
+      getFavouritePlaylist();
       return true;
     }
     return false;

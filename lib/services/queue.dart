@@ -3,8 +3,10 @@ class SoulQueue<T> extends Iterable {
   final List<T?> items;
   int top;
   SoulQueue({required this.arraySize, required this.items, this.top = -1});
-  factory SoulQueue.fromList(List<T?> items) =>
-      SoulQueue(arraySize: items.length, items: items, top: items.length - 1);
+  factory SoulQueue.fromList(List<T?> items, {int? arraySize}) => SoulQueue(
+      arraySize: arraySize ?? items.length,
+      items: items,
+      top: items.length - 1);
 
   void add(T item) {
     if (top < items.length - 1) {
@@ -31,6 +33,21 @@ class SoulQueue<T> extends Iterable {
   @override
   bool contains(Object? element) {
     return items.contains(element);
+  }
+
+  List<T?> get flat {
+    List<T?> flatList = items.toList();
+    flatList.removeWhere((element) => element == null);
+    return flatList;
+  }
+
+  void fill(int size) {
+    if (items.length != size) {
+      int deficit = arraySize - items.length;
+      for (int i = deficit; i < arraySize; i++) {
+        items.add(null);
+      }
+    }
   }
 
   T? get(int index) {
