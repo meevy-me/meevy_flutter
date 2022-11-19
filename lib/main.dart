@@ -3,34 +3,19 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/colors.dart';
-import 'package:soul_date/screens/Login/login.dart';
-import 'package:soul_date/screens/home.dart';
-import 'package:soul_date/screens/login.dart';
 import 'package:soul_date/screens/splash_screen.dart';
 import 'package:soul_date/services/notifications.dart';
-import 'package:soul_date/services/store.dart';
-
-import 'controllers/SoulController.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  if (message.notification!.title == 'Request') {
-    NotificationApi.showNotification(
-        id: message.notification.hashCode,
-        title: "Soul Request Accepted",
-        body: message.notification!.body);
-  }
-  if (message.notification!.title == 'Message') {
-    NotificationApi.showNotification(
-        id: message.notification.hashCode,
-        title: "You have a new message",
-        body: message.notification!.body);
-  }
+
+  NotificationApi.showNotification(
+      id: message.notification.hashCode,
+      title: message.notification?.title,
+      body: message.notification?.body);
 }
 
 late AndroidNotificationChannel channel;
@@ -38,9 +23,10 @@ late AndroidNotificationChannel channel;
 /// Initialize the [FlutterLocalNotificationsPlugin] package.
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 void main() async {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   if (!kIsWeb) {
     channel = const AndroidNotificationChannel(
       'high_importance_channel', // id
@@ -83,48 +69,47 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Meevy',
-      themeMode: ThemeMode.system,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-          primaryColor: primaryPink,
-          colorScheme: ColorScheme.fromSwatch()
-              .copyWith(secondary: primaryDark, outline: primaryLight),
-          textTheme: GoogleFonts.poppinsTextTheme(const TextTheme(
-              headline1: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-              headline2: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-              headline3: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-              headline4: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-              headline5: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-              headline6: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black),
-              bodyText1: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600),
-              caption: TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
-              bodyText2: TextStyle(fontSize: 14, color: Colors.black)))),
-      home: const SpotifyLogin(),
-    );
+        title: 'Meevy',
+        themeMode: ThemeMode.system,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+            primaryColor: primaryPink,
+            colorScheme: ColorScheme.fromSwatch()
+                .copyWith(secondary: primaryDark, outline: primaryLight),
+            textTheme: GoogleFonts.poppinsTextTheme(const TextTheme(
+                headline1: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+                headline2: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+                headline3: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+                headline4: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+                headline5: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+                headline6: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
+                bodyText1: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600),
+                caption: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+                bodyText2: TextStyle(fontSize: 14, color: Colors.black)))),
+        home: const SplashScreen());
   }
 }

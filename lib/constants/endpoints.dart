@@ -21,7 +21,8 @@ const String fetchFriendsUrl = baseUrl + "socials/friend/";
 const String fetchFriendRequestsUrl = baseUrl + "socials/friend/requests/";
 const String acceptRequestUrl = baseUrl + "socials/friend/accept/";
 const String fetchMessagesUrl = baseUrl + "socials/fetch/messages/";
-const String playerUrl = "https://api.spotify.com/v1/me/player";
+const String playerUrl =
+    "https://api.spotify.com/v1/me/player/currently-playing/";
 const String queueUrl = "https://api.spotify.com/v1/me/player/queue";
 const String spotsWs = 'ws://souldate.herokuapp.com/ws/spots/';
 const String messagesWs = 'ws://souldate.herokuapp.com/ws/chats/';
@@ -34,3 +35,5 @@ const String defaultAvatarUrl =
 const String registerDeviceUrl = baseUrl + "users/firebase/register/";
 const String myFavouriteUrl = baseUrl + "users/me/favourite/";
 const String favouritePlaylistsUrl = "https://api.spotify.com/v1/me/playlists";
+const String secondaryAvatarUrl =
+    "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?w=300&ssl=1";

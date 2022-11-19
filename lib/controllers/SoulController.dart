@@ -14,6 +14,7 @@ import 'package:soul_date/models/SpotifySearch/spotify_search.dart'
     as spotifySearch;
 import 'package:soul_date/models/favourite_model.dart';
 import 'package:soul_date/models/models.dart';
+import 'package:soul_date/screens/Login/login.dart';
 
 import 'package:soul_date/screens/login.dart';
 
@@ -219,7 +220,7 @@ class SoulController extends GetxController {
     if (await preferences.clear()) {
       store.store.close();
       LocalStore.delete();
-      Get.offAll(() => const LoginScreen());
+      Get.offAll(() => const SpotifyLogin());
       Get.delete<SoulController>();
       // Get.delete<SpotController>();
       // Get.delete<MessageController>();
@@ -237,7 +238,6 @@ class SoulController extends GetxController {
   }
 
   updateFavouritesPlaylist(List<SpotifyFavouriteItem?> items) async {
-    print(items);
     http.Response res = await client.post(myFavouriteUrl,
         body: {"type": 'playlist', "details": jsonEncode(items).toString()});
 

@@ -71,8 +71,8 @@ class _ResetCodeScreenState extends State<ResetCodeScreen> {
                         setState(() {
                           error = null;
                         });
-                        var result =
-                            await spotifyController.validatResetCode(value);
+                        var result = await spotifyController
+                            .validatResetCode(value, context: context);
                         if (result != "error") {
                           Navigator.push(
                               context,
@@ -109,8 +109,9 @@ class _ResetCodeScreenState extends State<ResetCodeScreen> {
                   ),
                   InkWell(
                     onTap: (() {
-                      spotifyController
-                          .resetPasswordEmail({'email': widget.email});
+                      spotifyController.resetPasswordEmail(
+                          {'email': widget.email},
+                          context: context);
                     }),
                     child: Text(
                       " Resend email",

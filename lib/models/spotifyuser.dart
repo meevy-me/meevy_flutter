@@ -1,3 +1,5 @@
+import 'package:soul_date/constants/constants.dart';
+
 class SpotifyUser {
   final String id;
   final String image;
@@ -17,7 +19,9 @@ class SpotifyUser {
   factory SpotifyUser.fromJson(Map<String, dynamic> json) {
     return SpotifyUser(
         id: json["id"],
-        image: json['images'][0]['url'],
+        image: json['images'].isNotEmpty
+            ? json['images'][0]['url']
+            : secondaryAvatarUrl,
         displayName: json['display_name'],
         uri: json['uri'],
         profileLink: json['href'],

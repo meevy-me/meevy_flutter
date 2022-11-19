@@ -1,3 +1,4 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/loading.dart';
 import 'package:soul_date/models/match_model.dart';
@@ -44,6 +45,40 @@ class MatchImage extends StatelessWidget {
             ),
           ),
         ),
+        if (match.matchMethod != null)
+          Positioned(
+            top: defaultMargin,
+            left: defaultMargin,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  vertical: defaultPadding, horizontal: defaultMargin),
+              constraints: const BoxConstraints(
+                minHeight: 30,
+              ),
+              decoration: BoxDecoration(
+                  color: Colors.black, borderRadius: BorderRadius.circular(20)),
+              child: Row(
+                children: [
+                  Container(
+                    width: 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                        color: spotifyGreen, shape: BoxShape.circle),
+                  ),
+                  SizedBox(
+                    width: defaultPadding,
+                  ),
+                  Text(
+                    match.matchMethod!,
+                    style: Theme.of(context)
+                        .textTheme
+                        .caption!
+                        .copyWith(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.all(defaultMargin),
           child: Row(

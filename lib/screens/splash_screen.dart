@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/screens/Login/login.dart';
 import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/screens/login.dart';
 import 'package:soul_date/services/store.dart';
@@ -26,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     late LocalStore store;
     // final service = FlutterBackgroundService();
     if (preferences.getString("spotify_accesstoken") == null) {
-      Get.offAll(() => const LoginScreen());
+      Get.offAll(() => const SpotifyLogin());
     } else {
       try {
         store = await LocalStore.init();

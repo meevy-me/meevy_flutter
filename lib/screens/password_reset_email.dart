@@ -100,7 +100,8 @@ class _PasswordResetEmailState extends State<PasswordResetEmail> {
                   if (_formKey.currentState!.validate()) {
                     Map<String, String> body = {};
                     body['email'] = emailController.text;
-                    spotifyController.resetPasswordEmail(body);
+                    spotifyController.resetPasswordEmail(body,
+                        context: context);
                   }
                 },
                 text: "Send Email"),

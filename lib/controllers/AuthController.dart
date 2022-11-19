@@ -15,6 +15,7 @@ import 'package:soul_date/screens/reset_code_Screen.dart';
 import 'package:soul_date/screens/splash_screen.dart';
 import 'package:soul_date/services/analytics.dart';
 import 'package:soul_date/services/network.dart';
+import 'package:soul_date/services/notifications.dart';
 import 'package:soul_date/services/spotify.dart';
 
 class SpotifyController extends GetxController {
@@ -155,7 +156,8 @@ class SpotifyController extends GetxController {
     }
   }
 
-  resetPasswordEmail(Map<String, String> body) async {
+  resetPasswordEmail(Map<String, String> body,
+      {required BuildContext context}) async {
     body['spotifyID'] = spotify.currentUser!.id;
     http.Response response =
         await client.post(resetPasswordUrl + 'email/', body: body);
@@ -165,11 +167,13 @@ class SpotifyController extends GetxController {
           ));
     } else {
       errors = json.decode(response.body);
+      showSnackBar(context, response.body);
       log(response.body, name: "EMAIL RESET");
     }
   }
 
-  Future<String> validatResetCode(String pin) async {
+  Future<String> validatResetCode(String pin,
+      {required BuildContext context}) async {
     Map<String, String> body = {'spotifyID': spotify.currentUser!.id};
     body['code'] = pin;
 
@@ -178,6 +182,7 @@ class SpotifyController extends GetxController {
     if (response.statusCode <= 210) {
       return json.decode(response.body)['grant_token'];
     } else {
+      showSnackBar(context, response.body);
       return "error";
     }
   }

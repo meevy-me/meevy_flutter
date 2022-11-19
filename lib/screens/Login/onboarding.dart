@@ -18,11 +18,29 @@ class Onboarding extends StatelessWidget {
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
-        Image.asset(
-          assetUrl,
-          height: size.height,
-          width: size.width,
-          fit: BoxFit.fitHeight,
+        Stack(
+          children: [
+            Image.asset(
+              assetUrl,
+              height: size.height,
+              width: size.width,
+              fit: BoxFit.fitHeight,
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: defaultMargin),
+                  child: Image.asset(
+                    'assets/images/logo-text.png',
+                    width: 50,
+                    height: 50,
+                  ),
+                ),
+              ),
+            )
+          ],
         ),
         Container(
             // alignment: Alignment.bottomCenter,

@@ -42,7 +42,7 @@ class MyProfileScreen extends StatelessWidget {
                                 context: context,
                                 builder: (context) => Dialog(
                                       child: SizedBox(
-                                        height: 100,
+                                        height: 140,
                                         child: Padding(
                                           padding: scaffoldPadding,
                                           child: Column(

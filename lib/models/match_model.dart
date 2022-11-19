@@ -53,17 +53,11 @@ class Match {
         "requested": requested,
       };
 
-  String get matchMethod {
-    List<String> methods = [];
-    for (var element in details) {
-      if (element.name != null) {
-        if (!methods.contains("Top Tracks")) {
-          methods.add("Top Tracks");
-        }
-      } else if (element.artistName != null) {
-        methods.add("Top Artists");
-      }
+  String? get matchMethod {
+    if (method == 'T') {
+      return 'Top artists or tracks';
+    } else if (method == 'F') {
+      return 'Favourite Song';
     }
-    return methods.join(", ");
   }
 }
