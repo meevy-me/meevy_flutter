@@ -9,9 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/screens/datafetch.dart';
+import 'package:soul_date/screens/password.dart';
 import 'package:soul_date/screens/profile.dart';
 import 'package:soul_date/screens/reset_code_Screen.dart';
 import 'package:soul_date/screens/splash_screen.dart';
+import 'package:soul_date/services/analytics.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/spotify.dart';
 
@@ -28,36 +30,49 @@ class SpotifyController extends GetxController {
       'scope':
           'user-read-private user-read-recently-played playlist-read-private user-library-read user-top-read user-modify-playback-state user-read-currently-playing'
     });
+    try {
+      final result = await FlutterWebAuth.authenticate(
+          url: url.toString(), callbackUrlScheme: 'souldate');
 
-    final result = await FlutterWebAuth.authenticate(
-        url: url.toString(), callbackUrlScheme: 'souldate');
+      final code = Uri.parse(result).queryParameters['code'];
+      Map? spotifyTokens = await spotify.getTokens(code!);
+      if (spotifyTokens != null) {
+        spotify.accessToken = spotifyTokens['access_token'];
+        spotify.refreshToken = spotifyTokens['refresh_token'];
 
-    final code = Uri.parse(result).queryParameters['code'];
-    Map? spotifyTokens = await spotify.getTokens(code!);
-    if (spotifyTokens != null) {
-      spotify.accessToken = spotifyTokens['access_token'];
-      spotify.refreshToken = spotifyTokens['refresh_token'];
-
-      spotify.currentUser =
-          await spotify.getCurrentUser(accessToken: spotify.accessToken);
+        spotify.currentUser =
+            await spotify.getCurrentUser(accessToken: spotify.accessToken);
+      }
+    } catch (e) {
+      Analytics.log_error('Web Auth Error', {'error': e.toString()});
     }
 
     return spotify;
   }
 
-  Future<bool> isRegistered() async {
+  Future isRegistered(BuildContext context) async {
     if (spotify.currentUser != null) {
       http.Response response = await client.get(checkUserUrl,
           useToken: false, parameters: {'spotifyID': spotify.currentUser!.id});
       if (response.statusCode <= 210) {
-        return jsonDecode(response.body);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("SUCCESS")));
+        Get.to(() => PasswordScreen(
+            user: spotify.currentUser!,
+            registered: !jsonDecode(response.body)));
       } else {
         log(response.body, name: "API-ERROR");
-        throw "An error has occured";
+        _showSnackBar("An error has occured", context);
       }
     } else {
-      throw "Spotify is null";
+      _showSnackBar("Something is wrong :/", context);
+      Analytics.log_error("Login Error", {'error': 'Spotify user is null'});
     }
+  }
+
+  void login(context) async {
+    await spotifyLogin();
+    await isRegistered(context);
   }
 
   void _showSnackBar(String text, BuildContext context) {

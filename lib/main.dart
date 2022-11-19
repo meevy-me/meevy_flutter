@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/colors.dart';
+import 'package:soul_date/screens/Login/login.dart';
 import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/screens/login.dart';
 import 'package:soul_date/screens/splash_screen.dart';
@@ -123,7 +124,7 @@ class _MyAppState extends State<MyApp> {
                 color: Colors.grey,
               ),
               bodyText2: TextStyle(fontSize: 14, color: Colors.black)))),
-      home: const SplashScreen(),
+      home: const SpotifyLogin(),
     );
   }
 }

@@ -58,7 +58,7 @@ class _MessagesPageState extends State<MessagesPage> {
               Expanded(child: _MessagesSection(
                 onRefresh: () {
                   spotController.fetchSpots();
-                  messageController.refreshChats();
+                  // messageController.refreshChats();
                 },
               ))
             ],
@@ -207,45 +207,45 @@ class _MessagesSection extends StatelessWidget {
             onRefresh();
           }),
           child: StreamBuilder<List<Chat>>(
-              stream: messageController.getChats(),
+              // stream: messageController.getChats(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return SpinKitCircle(
-                    color: Theme.of(context).primaryColor,
+            if (!snapshot.hasData) {
+              return SpinKitCircle(
+                color: Theme.of(context).primaryColor,
+              );
+            } else if (snapshot.data!.isEmpty) {
+              return const EmptyWidget(
+                text: "No chats yet",
+              );
+            } else {
+              // print(" YAAAHAHHH " +
+              //     snapshot.data!.last.friends.target.profile1);
+              return ListView.separated(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  var message = snapshot.data![index];
+                  return InkWell(
+                    onTap: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: defaultMargin / 2),
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(() => ChatScreen(chat: message));
+                        },
+                        child: message.friends.target != null
+                            ? ChatItem(message: message, size: size)
+                            : const SizedBox.shrink(),
+                      ),
+                    ),
                   );
-                } else if (snapshot.data!.isEmpty) {
-                  return const EmptyWidget(
-                    text: "No chats yet",
-                  );
-                } else {
-                  // print(" YAAAHAHHH " +
-                  //     snapshot.data!.last.friends.target.profile1);
-                  return ListView.separated(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      var message = snapshot.data![index];
-                      return InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: defaultMargin / 2),
-                          child: InkWell(
-                            onTap: () {
-                              Get.to(() => ChatScreen(chat: message));
-                            },
-                            child: message.friends.target != null
-                                ? ChatItem(message: message, size: size)
-                                : const SizedBox.shrink(),
-                          ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const Divider();
-                    },
-                  );
-                }
-              }),
+                },
+                separatorBuilder: (context, index) {
+                  return const Divider();
+                },
+              );
+            }
+          }),
         ));
   }
 }

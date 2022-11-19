@@ -94,23 +94,7 @@ class _LoginScreenBodyState extends State<_LoginScreenBody> {
           padding: const EdgeInsets.symmetric(vertical: defaultMargin),
           child: ElevatedButton(
               onPressed: () async {
-                await spotifyController.spotifyLogin();
-                SpotifyUser? user = spotifyController.spotify.currentUser;
-                bool registered = await spotifyController.isRegistered();
-                if (user!.isValid) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(const SnackBar(content: Text("SUCCESS")));
-
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return PasswordScreen(
-                          user: user, registered: !registered);
-                    },
-                  ));
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("An error has occured, try again")));
-                }
+                spotifyController.login(context);
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,

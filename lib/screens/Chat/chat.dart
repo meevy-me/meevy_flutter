@@ -156,11 +156,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                   shape: const CircleBorder()),
                               onPressed: () {
                                 if (text.text.trim().isNotEmpty) {
-                                  messageController.addMessageSocket(text.text,
-                                      reply:
-                                          replyTo != null ? replyTo!.id : null,
-                                      chat: widget.chat,
-                                      scrollController: scrollController);
+                                  // messageController.addMessageSocket(text.text,
+                                  //     reply:
+                                  //         replyTo != null ? replyTo!.id : null,
+                                  //     chat: widget.chat,
+                                  //     scrollController: scrollController);
                                   text.clear();
                                   setState(() {
                                     replyTo = null;
@@ -229,38 +229,38 @@ class _MessageBodyState extends State<_MessageBody> {
           curve: Curves.linear);
     }
     return StreamBuilder<Chat>(
-        stream: messageController.getMessages(widget.chat),
+        // stream: messageController.getMessages(widget.chat),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: Text(
-                "Ooops :/ There's nothing here, say hi",
-                style: Theme.of(context).textTheme.caption,
-              ),
+      if (!snapshot.hasData) {
+        return Center(
+          child: Text(
+            "Ooops :/ There's nothing here, say hi",
+            style: Theme.of(context).textTheme.caption,
+          ),
+        );
+      } else if (snapshot.data!.messages.isEmpty) {
+        return const Center(
+            child: EmptyWidget(
+          text: "There's nothing here, say Hi",
+        ));
+      } else {
+        return ListView.builder(
+          itemCount: snapshot.data!.messages.length,
+          itemBuilder: (context, index) {
+            var element = snapshot.data!.messages[index];
+            return ChatBox(
+              profile: widget.profile,
+              message: element,
+              width: size.width * 0.65,
+              onSwipe: ((message) {
+                widget.onReplyTo(message);
+              }),
             );
-          } else if (snapshot.data!.messages.isEmpty) {
-            return const Center(
-                child: EmptyWidget(
-              text: "There's nothing here, say Hi",
-            ));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.messages.length,
-              itemBuilder: (context, index) {
-                var element = snapshot.data!.messages[index];
-                return ChatBox(
-                  profile: widget.profile,
-                  message: element,
-                  width: size.width * 0.65,
-                  onSwipe: ((message) {
-                    widget.onReplyTo(message);
-                  }),
-                );
-              },
-              controller: widget.scrollController,
-              padding: scaffoldPadding,
-            );
-          }
-        });
+          },
+          controller: widget.scrollController,
+          padding: scaffoldPadding,
+        );
+      }
+    });
   }
 }

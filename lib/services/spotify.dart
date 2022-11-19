@@ -19,6 +19,7 @@ import 'package:soul_date/models/SpotifySearch/spotify_search.dart';
 import 'package:soul_date/models/spotify_spot_details.dart';
 import 'package:soul_date/models/spotifyuser.dart';
 import 'package:soul_date/screens/my_spot_screen.dart';
+import 'package:soul_date/services/analytics.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/notifications.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -116,7 +117,7 @@ class Spotify {
       await refreshAccessToken();
       fetchCurrentPlaying(context);
     } else {
-      return null;
+      Analytics.log_error("Spot Error", {'error': res.body});
     }
     return null;
   }
