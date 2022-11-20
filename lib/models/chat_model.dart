@@ -16,23 +16,23 @@ String chatToJson(List<Chat> data) =>
 
 class Chat {
   Chat({
+    this.lastMessage,
     required this.friends,
-    required this.messages,
     required this.id,
     required this.dateCreated,
   });
   final String id;
   final Friends friends;
-  final List<Message> messages;
+  final Message? lastMessage;
   DateTime dateCreated;
 
   factory Chat.fromJson(Map<String, dynamic> json) {
+    print(json);
     Chat newChat = Chat(
         id: json["id"],
         dateCreated: DateTime.parse(json["date_created"]),
         friends: Friends.fromJson(json["friends"]),
-        messages: List<Message>.from(
-            json["messages"].map((x) => Message.fromJson(x))));
+        lastMessage: Message.fromJson(json['lastMessage']));
 
     return newChat;
   }
@@ -40,7 +40,7 @@ class Chat {
   Map<String, dynamic> toJson() => {
         "id": id,
         // "friends": friends.toJson(),
-        "messages": List<dynamic>.from(messages.map((x) => x.toJson())),
+        // "messages": List<dynamic>.from(messages.map((x) => x.toJson())),
         "date_created": dateCreated.toIso8601String(),
       };
 

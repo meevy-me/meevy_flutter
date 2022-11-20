@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +14,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../constants/constants.dart';
 import '../models/models.dart';
 import '../services/network.dart';
+import 'package:http/http.dart' as http;
 
 class MessageController extends GetxController {
   RxList<Chat> chats = <Chat>[].obs;
@@ -25,6 +28,61 @@ class MessageController extends GetxController {
     // openConnection();
 
     super.onInit();
+  }
+
+  String? get userID {
+    return controller.profile?.user.id.toString();
+  }
+
+  Stream<List<Friends>>? fetchChats() {
+    if (userID != null) {
+      return FirebaseFirestore.instance
+          .collection('userChats')
+          .doc(userID!)
+          .collection('chats')
+          .snapshots()
+          .map((list) => list.docs.map((e) {
+                int chat_id = int.parse(e.data()['chat_id']);
+                Friends friend = getFriend(chat_id);
+                return friend;
+              }).toList());
+    }
+  }
+
+  Friends getFriend(id) {
+    int index = controller.friends.indexWhere((element) => element.id == id);
+
+    return controller.friends[index];
+  }
+
+  void sendMessage(
+      {required int chatID, required String msg, Message? replyTo}) {
+    FirebaseFirestore.instance
+        .collection('chatMessages')
+        .doc(chatID.toString())
+        .collection('messages')
+        .doc()
+        .set({
+      "sender": userID,
+      "message": msg,
+      "date_sent": DateTime.now().toString(),
+      "reply_to": replyTo?.toJson()
+    });
+  }
+
+  Stream<List<Message>>? fetchMessages(String id) {
+    return FirebaseFirestore.instance
+        .collection('chatMessages')
+        .doc(id)
+        .collection('messages')
+        .orderBy('date_sent')
+        .snapshots()
+        .map((list) => list.docs.map((e) {
+              Map<String, dynamic> json = {'id': e.id};
+              json.addAll(e.data());
+              Message msg = Message.fromJson(json);
+              return msg;
+            }).toList());
   }
 
   // void openConnection() async {

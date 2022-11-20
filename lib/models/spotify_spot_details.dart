@@ -96,7 +96,6 @@ class Item {
     required this.isLocal,
     required this.name,
     required this.popularity,
-    required this.previewUrl,
     required this.trackNumber,
     required this.type,
     required this.uri,
@@ -115,7 +114,6 @@ class Item {
   bool isLocal;
   String name;
   int popularity;
-  String previewUrl;
   int trackNumber;
   String type;
   String uri;
@@ -136,7 +134,6 @@ class Item {
         isLocal: json["is_local"],
         name: json["name"],
         popularity: json["popularity"],
-        previewUrl: json["preview_url"],
         trackNumber: json["track_number"],
         type: json["type"],
         uri: json["uri"],
@@ -156,7 +153,6 @@ class Item {
         "is_local": isLocal,
         "name": name,
         "popularity": popularity,
-        "preview_url": previewUrl,
         "track_number": trackNumber,
         "type": type,
         "uri": uri,

@@ -30,7 +30,7 @@ class SoulController extends GetxController {
   RxList<Chat> chats = <Chat>[].obs;
   Profile? profile;
   Map<String, dynamic> keyDb = {};
-  // RxList<Profile> profile = <Profile>[].obs;
+  List<Friends> friends = [];
   FavouriteTrack? favouriteTrack;
   List<FavouritePlaylist?> favouritePlaylist = [];
   Spotify spotify = Spotify();
@@ -43,6 +43,7 @@ class SoulController extends GetxController {
     //   await initializeService(store);
     // }
     setSpotifyToken();
+    getFriends();
     registerDevice();
     fetchMatches();
     getProfile();
@@ -75,6 +76,13 @@ class SoulController extends GetxController {
       update(['profile']);
     } else {
       log(res.body, name: "PROFILE FETCH ERROR");
+    }
+  }
+
+  void getFriends() async {
+    http.Response response = await client.get(fetchFriendsUrl);
+    if (response.statusCode <= 210) {
+      friends = friendsFromJson(response.body);
     }
   }
 

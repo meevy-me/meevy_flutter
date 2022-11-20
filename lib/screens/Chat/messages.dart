@@ -11,6 +11,7 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:collection/collection.dart';
 import 'package:soul_date/models/chat_model.dart';
+import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/screens/Chat/chat.dart';
 import 'package:soul_date/screens/friend_requests.dart';
 
@@ -192,6 +193,7 @@ class _MessagesSection extends StatelessWidget {
   _MessagesSection({Key? key, required this.onRefresh}) : super(key: key);
   final Function onRefresh;
   final MessageController messageController = Get.find<MessageController>();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -206,46 +208,45 @@ class _MessagesSection extends StatelessWidget {
           onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
             onRefresh();
           }),
-          child: StreamBuilder<List<Chat>>(
-              // stream: messageController.getChats(),
+          child: StreamBuilder<List<Friends>>(
+              stream: messageController.fetchChats(),
               builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return SpinKitCircle(
-                color: Theme.of(context).primaryColor,
-              );
-            } else if (snapshot.data!.isEmpty) {
-              return const EmptyWidget(
-                text: "No chats yet",
-              );
-            } else {
-              // print(" YAAAHAHHH " +
-              //     snapshot.data!.last.friends.target.profile1);
-              return ListView.separated(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  var message = snapshot.data![index];
-                  return InkWell(
-                    onTap: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: defaultMargin / 2),
-                      child: InkWell(
-                        onTap: () {
-                          Get.to(() => ChatScreen(chat: message));
-                        },
-                        child: message.friends != null
-                            ? ChatItem(message: message, size: size)
-                            : const SizedBox.shrink(),
-                      ),
-                    ),
+                if (!snapshot.hasData) {
+                  return SpinKitCircle(
+                    color: Theme.of(context).primaryColor,
                   );
-                },
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-              );
-            }
-          }),
+                } else if (snapshot.data!.isEmpty) {
+                  return const EmptyWidget(
+                    text: "No chats yet",
+                  );
+                } else {
+                  // print(" YAAAHAHHH " +
+                  //     snapshot.data!.last.friends.target.profile1);
+                  return ListView.separated(
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      var friend = snapshot.data![index];
+                      return InkWell(
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: defaultMargin / 2),
+                          child: InkWell(
+                              onTap: () {
+                                Get.to(() => ChatScreen(
+                                      friend: friend,
+                                    ));
+                              },
+                              child: ChatItem(friend: friend, size: size)),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const Divider();
+                    },
+                  );
+                }
+              }),
         ));
   }
 }
