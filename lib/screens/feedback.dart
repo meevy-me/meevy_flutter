@@ -102,8 +102,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             child: IconContainer(
                                 onPress: () {
                                   controller.feedbackPush(answers);
-                                  Get.offAll(
-                                      () => HomePage(store: controller.store));
+                                  Get.offAll(() => HomePage());
                                 },
                                 size: 50,
                                 icon: const Icon(

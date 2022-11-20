@@ -5,8 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/objectbox.g.dart';
-import 'package:soul_date/services/store.dart';
+
 import 'package:web_socket_channel/io.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -175,7 +174,6 @@ class MessageController extends GetxController {
 
   @override
   void dispose() {
-    controller.store.store.close();
     super.dispose();
   }
 }

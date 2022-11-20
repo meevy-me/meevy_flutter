@@ -108,8 +108,7 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
                       children: [
                         if (widget.message.replyTo != null)
                           FutureBuilder<Message?>(
-                              future: widget.message
-                                  .repliedMessage(soulController.store),
+                              future: widget.message.repliedMessage(),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData && snapshot.data != null) {
                                   return Padding(

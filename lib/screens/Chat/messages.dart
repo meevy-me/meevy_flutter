@@ -233,7 +233,7 @@ class _MessagesSection extends StatelessWidget {
                         onTap: () {
                           Get.to(() => ChatScreen(chat: message));
                         },
-                        child: message.friends.target != null
+                        child: message.friends != null
                             ? ChatItem(message: message, size: size)
                             : const SizedBox.shrink(),
                       ),

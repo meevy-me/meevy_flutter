@@ -29,11 +29,10 @@ class _ChatScreenState extends State<ChatScreen> {
   FocusNode focus = FocusNode();
 
   Profile currentProfile() {
-    if (controller.profile!.id ==
-        widget.chat.friends.target!.profile1.target!.id) {
-      return widget.chat.friends.target!.profile2.target!;
+    if (controller.profile!.id == widget.chat.friends.profile1.id) {
+      return widget.chat.friends.profile2;
     } else {
-      return widget.chat.friends.target!.profile1.target!;
+      return widget.chat.friends.profile1;
     }
   }
 

@@ -1,12 +1,8 @@
 import 'dart:convert';
 
-import 'package:objectbox/objectbox.dart';
-import 'package:soul_date/services/store.dart';
-
 List<Message> messageFromJson(String str) =>
     List<Message>.from(json.decode(str).map((x) => Message.fromJson(x)));
 
-@Entity()
 class Message {
   Message({
     required this.id,
@@ -16,12 +12,11 @@ class Message {
     this.replyTo,
     // required this.spot,
   });
-  @Id(assignable: true)
-  int id;
+  String id;
   String content;
   DateTime datePosted;
   int sender;
-  int? replyTo;
+  String? replyTo;
   // dynamic spot;
 
   factory Message.fromJson(Map<String, dynamic> json) => Message(
@@ -53,10 +48,10 @@ class Message {
     return content;
   }
 
-  Future<Message?> repliedMessage(LocalStore store) async {
+  Future<Message?> repliedMessage() async {
     Message? msg;
     if (replyTo != null) {
-      msg = await store.get<Message>(replyTo!);
+      // msg = await store.get<Message>(replyTo!);
     }
     return msg;
   }

@@ -268,7 +268,7 @@ class _ProfileDetailsTab extends StatelessWidget {
           child: GetBuilder<SoulController>(builder: (controller) {
             return InkWell(
               onTap: () => controller.spotify
-                  .openSpotify("spotify:user:${profile.user.target!.id}", ""),
+                  .openSpotify("spotify:user:${profile.user.id}", ""),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

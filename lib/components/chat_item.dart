@@ -27,11 +27,10 @@ class _ChatItemState extends State<ChatItem> {
   final SoulController controller = Get.find<SoulController>();
 
   Profile currentProfile() {
-    if (controller.profile!.id ==
-        widget.message.friends.target!.profile1.target!.id) {
-      return widget.message.friends.target!.profile2.target!;
+    if (controller.profile!.id == widget.message.friends.profile1.id) {
+      return widget.message.friends.profile2;
     } else {
-      return widget.message.friends.target!.profile1.target!;
+      return widget.message.friends.profile1;
     }
   }
 

@@ -21,7 +21,6 @@ import 'package:soul_date/screens/login.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/services/spotify.dart';
-import 'package:soul_date/services/store.dart';
 
 class SoulController extends GetxController {
   HttpClient client = HttpClient();
@@ -36,9 +35,6 @@ class SoulController extends GetxController {
   List<FavouritePlaylist?> favouritePlaylist = [];
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
-  final LocalStore store;
-
-  SoulController(this.store);
 
   @override
   void onInit() async {
@@ -218,8 +214,6 @@ class SoulController extends GetxController {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     if (await preferences.clear()) {
-      store.store.close();
-      LocalStore.delete();
       Get.offAll(() => const SpotifyLogin());
       Get.delete<SoulController>();
       // Get.delete<SpotController>();
