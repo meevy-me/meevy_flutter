@@ -50,7 +50,7 @@ class _MessagesPageState extends State<MessagesPage> {
             backgroundColor: Theme.of(context).primaryColor,
             child: const Icon(FontAwesomeIcons.spotify),
             onPressed: () async {
-              controller.spotify.fetchCurrentPlaying(context);
+              controller.spotify.fetchCurrentPlaying(context: context);
             }),
         body: SafeArea(
           child: Column(

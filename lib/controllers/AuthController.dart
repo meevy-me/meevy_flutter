@@ -94,7 +94,7 @@ class SpotifyController extends GetxController {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String firebaseToken = json['firebase_token'];
       preferences.setString('token', json['token']);
-      preferences.setString('firebase_token', json['firebase_token']);
+      preferences.setString('firebase_token', firebaseToken);
       preferences.setString('spotify_accesstoken', spotify.accessToken);
       preferences.setString('spotify_refreshtoken', spotify.refreshToken);
       await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);

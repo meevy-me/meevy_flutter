@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cron/cron.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,24 +40,41 @@ class SoulController extends GetxController {
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
 
+  Cron cron = Cron();
+
   @override
   void onInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-    // if (!await service.isRunning()) {
-    //   await initializeService(store);
-    // }
     setSpotifyToken();
     getFriends();
     registerDevice();
     fetchMatches();
     getProfile();
+    currentlyPlaying();
     super.onInit();
+  }
+
+  currentlyPlaying() {
+    Timer.periodic(const Duration(minutes: 5), (timer) async {
+      if (profile != null) {
+        SpotifyDetails? data =
+            await spotify.fetchCurrentPlaying(navigate: false);
+        FirebaseDatabase.instance
+            .ref()
+            .child('currentlyPlaying')
+            .child(profile!.user.id.toString())
+            .set(data?.item.toJson());
+      }
+    });
   }
 
   registerDevice() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    if (preferences.containsKey('firebaseRegistered') &&
-        preferences.getBool('firebaseRegistered')!) {
+    if (preferences.containsKey('firebase_token')) {
+      String? firebase_token = preferences.getString('firebase_token');
+      if (firebase_token != null) {
+        FirebaseAuth.instance.signInWithCustomToken(firebase_token);
+      }
     } else {
       var fireToken = await FirebaseMessaging.instance.getToken();
       //firebase_token
@@ -128,6 +149,8 @@ class SoulController extends GetxController {
     http.Response res = await client.get(fetchFriendRequestsUrl);
     if (res.statusCode <= 210) {
       friendRequest.value = friendsFromJson(res.body);
+    } else {
+      log(res.body);
     }
   }
 
@@ -314,5 +337,15 @@ class SoulController extends GetxController {
         FirebaseFirestore.instance.collection('feedback');
     Map<String, dynamic> data = {'profile': profile!.id, 'comments': comments};
     collectionReference.add(data);
+  }
+
+  Future<bool> sendNotification(Profile profile, String message) async {
+    http.Response response = await client.post(notifyUrl,
+        body: {'receiver': profile.id.toString(), 'message': message});
+
+    if (response.statusCode <= 210) {
+      return true;
+    }
+    return false;
   }
 }

@@ -56,18 +56,29 @@ class MessageController extends GetxController {
   }
 
   void sendMessage(
-      {required int chatID, required String msg, Message? replyTo}) {
+      {required int chatID,
+      required String msg,
+      Profile? receiver,
+      Message? replyTo}) {
+    Map<String, dynamic> to_send = {
+      "sender": userID,
+      "message": msg,
+      "date_sent": DateTime.now().toString(),
+      "reply_to": replyTo?.toJson()
+    };
     FirebaseFirestore.instance
         .collection('chatMessages')
         .doc(chatID.toString())
         .collection('messages')
         .doc()
-        .set({
-      "sender": userID,
-      "message": msg,
-      "date_sent": DateTime.now().toString(),
-      "reply_to": replyTo?.toJson()
-    });
+        .set(to_send);
+    FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatID.toString())
+        .update({"last_message": to_send});
+    if (receiver != null) {
+      controller.sendNotification(receiver, msg);
+    }
   }
 
   Stream<List<Message>>? fetchMessages(String id) {

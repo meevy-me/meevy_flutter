@@ -1,13 +1,19 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/Spotify/album_model.dart';
 import 'package:soul_date/models/chat_model.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
-
+import 'package:soul_date/models/spotify_spot_details.dart' as Spotify;
 import '../constants/constants.dart';
 import '../models/friend_model.dart';
 import 'image_circle.dart';
@@ -37,22 +43,6 @@ class _ChatItemState extends State<ChatItem> {
     }
   }
 
-  Stream<List<Message>> getLastMessage(String id) {
-    return FirebaseFirestore.instance
-        .collection('chatMessages')
-        .doc(id)
-        .collection('messages')
-        .limit(1)
-        .orderBy('date_sent', descending: true)
-        .get()
-        .asStream()
-        .map((event) => event.docs.map((e) {
-              Map<String, dynamic> json = {"id": e.id};
-              json.addAll(e.data());
-              return Message.fromJson(json);
-            }).toList());
-  }
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SoulController>(
@@ -61,85 +51,61 @@ class _ChatItemState extends State<ChatItem> {
           if (controller.profile != null) {
             Profile profile = currentProfile();
 
-            return StreamBuilder<List<Message>>(
-                stream: getLastMessage(widget.friend.id.toString()),
-                builder: (context, snapshot) {
-                  return Row(
+            return Row(
+              children: [
+                SoulCircleAvatar(
+                  imageUrl: profile.images.last.image,
+                  radius: 25,
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: defaultMargin),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SoulCircleAvatar(
-                        imageUrl: profile.images.last.image,
-                        radius: 25,
+                      Text(
+                        profile.name,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(fontWeight: FontWeight.bold),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: defaultMargin),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              profile.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            if (snapshot.hasData)
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: defaultMargin / 2),
-                                child: SizedBox(
-                                    width: widget.size.width * 0.6,
-                                    child: Text(
-                                      snapshot.data != null &&
-                                              snapshot.data!.isEmpty
-                                          ? "Say Hello"
-                                          : snapshot.data!.first.content,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .copyWith(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    )),
-                              )
-                          ],
-                        ),
-                      ),
-                      const Spacer(),
-                      if (snapshot.hasData && snapshot.data!.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: defaultMargin / 2),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              // Container(
-                              //   height: 6,
-                              //   width: 6,
-                              //   decoration: BoxDecoration(
-                              //       color: Theme.of(context).primaryColor,
-                              //       shape: BoxShape.circle),
-                              // ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: defaultMargin / 2),
-                                child: Text(
-                                  snapshot.data!.isNotEmpty
-                                      ? DateFormat(DateFormat.HOUR_MINUTE)
-                                          .format(
-                                              snapshot.data!.first.datePosted)
-                                      : "",
-                                  style: Theme.of(context).textTheme.caption,
-                                ),
-                              )
-                            ],
-                          ),
-                        )
+                      ListeningActivity(
+                        profile: currentProfile(),
+                        friends: widget.friend,
+                      )
                     ],
-                  );
-                });
+                  ),
+                ),
+                const Spacer(),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: defaultMargin / 2),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Container(
+                      //   height: 6,
+                      //   width: 6,
+                      //   decoration: BoxDecoration(
+                      //       color: Theme.of(context).primaryColor,
+                      //       shape: BoxShape.circle),
+                      // ),
+                      // Padding(
+                      //     padding: const EdgeInsets.symmetric(
+                      //         vertical: defaultMargin / 2),
+                      //     child: IconContainer(
+                      //       icon: Icon(
+                      //         Cu,
+                      //         size: 20,
+                      //         color: Theme.of(context).primaryColor,
+                      //       ),
+                      //     ))
+                    ],
+                  ),
+                )
+              ],
+            );
           } else {
             return SpinKitRing(
               color: Theme.of(context).primaryColor,
@@ -149,4 +115,80 @@ class _ChatItemState extends State<ChatItem> {
           }
         });
   }
+}
+
+class ListeningActivity extends StatefulWidget {
+  const ListeningActivity({
+    Key? key,
+    required this.profile,
+    required this.friends,
+  }) : super(key: key);
+
+  final Profile profile;
+  final Friends friends;
+
+  @override
+  State<ListeningActivity> createState() => _ListeningActivityState();
+}
+
+class _ListeningActivityState extends State<ListeningActivity>
+    with AutomaticKeepAliveClientMixin<ListeningActivity> {
+  Spotify.Item? item;
+  @override
+  void initState() {
+    FirebaseDatabase.instance
+        .ref()
+        .child('currentlyPlaying')
+        .child(widget.profile.user.id.toString())
+        .onValue
+        .listen((event) {
+      final data =
+          jsonDecode(jsonEncode(event.snapshot.value)) as Map<String, dynamic>?;
+      if (data != null) {
+        if (mounted) {
+          setState(() {
+            item = Spotify.Item.fromJson(data);
+          });
+        }
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return item != null
+        ? Padding(
+            padding: const EdgeInsets.only(top: defaultMargin / 2),
+            child: Row(
+              children: [
+                SoulCircleAvatar(
+                  imageUrl: item!.album.images.first.url,
+                  radius: 10,
+                ),
+                const SizedBox(
+                  width: defaultPadding,
+                ),
+                Text(
+                  "${item!.name} - ${item!.artists.join(",")}",
+                  style: Theme.of(context).textTheme.caption!.copyWith(
+                      fontSize: 12,
+                      color: spotifyGreen,
+                      fontWeight: FontWeight.w500),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          )
+        : Text(
+            widget.friends.lastMessage != null
+                ? widget.friends.lastMessage!.content
+                : "${widget.profile.name} is not active",
+            style: Theme.of(context).textTheme.caption,
+          );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

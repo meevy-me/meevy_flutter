@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
 
 List<Friends> friendsFromJson(String str) =>
@@ -20,6 +21,7 @@ class Friends {
   final dynamic dateAccepted;
   final Profile profile1;
   final dynamic match;
+  final Message? lastMessage;
 
   factory Friends.fromJson(Map<String, dynamic> json) {
     Friends friend = Friends(
@@ -29,13 +31,15 @@ class Friends {
         profile2: Profile.fromJson(json["profile2"]),
         profile1: Profile.fromJson(json["profile1"]),
         match: json["match"],
+        lastMessage: Message.fromJson(json['last_message']),
         accepted: json["accepted"]);
 
     return friend;
   }
 
   Friends(
-      {required this.id,
+      {this.lastMessage,
+      required this.id,
       required this.profile2,
       required this.accepted,
       required this.dateAdded,
