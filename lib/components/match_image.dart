@@ -1,4 +1,3 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/loading.dart';
 import 'package:soul_date/models/match_model.dart';
@@ -62,10 +61,10 @@ class MatchImage extends StatelessWidget {
                   Container(
                     width: 7,
                     height: 7,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: spotifyGreen, shape: BoxShape.circle),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: defaultPadding,
                   ),
                   Text(

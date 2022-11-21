@@ -1,17 +1,10 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/models/Spotify/album_model.dart';
-import 'package:soul_date/models/chat_model.dart';
-import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/models/spotify_spot_details.dart' as Spotify;
 import '../constants/constants.dart';
@@ -83,7 +76,7 @@ class _ChatItemState extends State<ChatItem> {
                       const EdgeInsets.symmetric(vertical: defaultMargin / 2),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
+                    children: const [
                       // Container(
                       //   height: 6,
                       //   width: 6,

@@ -1,20 +1,10 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 
-import 'package:web_socket_channel/io.dart';
-
 import 'package:web_socket_channel/web_socket_channel.dart';
-import '../constants/constants.dart';
 import '../models/models.dart';
 import '../services/network.dart';
-import 'package:http/http.dart' as http;
 
 class MessageController extends GetxController {
   RxList<Chat> chats = <Chat>[].obs;
@@ -22,13 +12,6 @@ class MessageController extends GetxController {
   HttpClient client = HttpClient();
 
   SoulController controller = Get.find<SoulController>();
-
-  @override
-  void onInit() async {
-    // openConnection();
-
-    super.onInit();
-  }
 
   String? get userID {
     return controller.profile?.user.id.toString();
@@ -47,6 +30,7 @@ class MessageController extends GetxController {
                 return friend;
               }).toList());
     }
+    return null;
   }
 
   Friends getFriend(id) {
@@ -241,8 +225,4 @@ class MessageController extends GetxController {
   //   }
   // }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

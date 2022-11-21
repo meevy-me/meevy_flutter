@@ -20,8 +20,6 @@ import 'package:soul_date/models/favourite_model.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:soul_date/screens/Login/login.dart';
 
-import 'package:soul_date/screens/login.dart';
-
 import 'package:soul_date/services/network.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/services/spotify.dart';

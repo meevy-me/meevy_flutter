@@ -7,8 +7,6 @@ import 'package:soul_date/components/loading.dart';
 import 'package:soul_date/constants/colors.dart';
 import 'package:soul_date/constants/spacings.dart';
 import 'package:soul_date/controllers/AuthController.dart';
-import 'package:soul_date/models/spotifyuser.dart';
-import 'package:soul_date/screens/password.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);

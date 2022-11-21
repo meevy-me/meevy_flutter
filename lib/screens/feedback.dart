@@ -132,7 +132,6 @@ class FeedbackQuestion1 extends StatefulWidget {
       : super(key: key);
   final Function(dynamic value) onNext;
   final Function onBack;
-  //TODO: Implement Dispose
   @override
   State<FeedbackQuestion1> createState() => _FeedbackQuestion1State();
 }
@@ -296,7 +295,6 @@ class _FeedbackQuestion2State extends State<FeedbackQuestion2>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
 
