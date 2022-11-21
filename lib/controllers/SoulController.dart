@@ -119,6 +119,7 @@ class SoulController extends GetxController {
   }
 
   void fetchMatches() async {
+    await client.get(fetchMakeMatchesUrl);
     http.Response res = await client.get(fetchMatchesUrl);
     if (res.statusCode <= 210) {
       matches.value = matchFromJson(utf8.decode(res.bodyBytes));

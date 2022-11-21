@@ -14,6 +14,7 @@ const String defaultGirlUrl =
 const String defaultArtistUrl =
     "https://media.gq-magazine.co.uk/photos/5ebd301ea7a089b1a9138c63/master/pass/20200514-Martin-Garrix-01.jpg";
 const String fetchMatchesUrl = baseUrl + "spotify/match/";
+const String fetchMakeMatchesUrl = baseUrl + "spotify/match/make/";
 const String fetchSpotsUrl = baseUrl + "socials/spots/";
 const String fetchSpotsMeUrl = baseUrl + "socials/spots/me/";
 const String fetchChatsUrl = baseUrl + "socials/chats/";
