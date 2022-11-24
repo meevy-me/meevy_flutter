@@ -214,14 +214,14 @@ class _MessagesSection extends StatelessWidget {
                   return SpinKitCircle(
                     color: Theme.of(context).primaryColor,
                   );
-                } else if (snapshot.data!.isEmpty) {
+                } else if (snapshot.data == null && snapshot.data!.isEmpty) {
                   return const EmptyWidget(
                     text: "No chats yet",
                   );
                 } else {
-                  // print(" YAAAHAHHH " +
-                  //     snapshot.data!.last.friends.target.profile1);
-                  return ListView.separated(
+                  snapshot.data!.sort(((a, b) => a.compareTo(b)));
+
+                  return ListView.builder(
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       var friend = snapshot.data![index];
@@ -236,12 +236,14 @@ class _MessagesSection extends StatelessWidget {
                                       friend: friend,
                                     ));
                               },
-                              child: ChatItem(friend: friend, size: size)),
+                              child: Column(
+                                children: [
+                                  ChatItem(friend: friend, size: size),
+                                  const Divider()
+                                ],
+                              )),
                         ),
                       );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const Divider();
                     },
                   );
                 }

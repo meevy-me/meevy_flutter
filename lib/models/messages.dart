@@ -53,9 +53,7 @@ class Message {
   Message? get repliedMessage {
     Message? msg;
     if (replyTo != null) {
-      print(replyTo);
       msg = Message.fromJson(replyTo!);
-      print(msg);
     }
     return msg;
   }

@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/models/spotify_spot_details.dart' as Spotify;
+import 'package:soul_date/services/formatting.dart';
 import '../constants/constants.dart';
 import '../models/friend_model.dart';
 import 'image_circle.dart';
@@ -63,10 +67,13 @@ class _ChatItemState extends State<ChatItem> {
                             .bodyText1!
                             .copyWith(fontWeight: FontWeight.bold),
                       ),
-                      ListeningActivity(
-                        profile: currentProfile(),
+                      const SizedBox(
+                        height: defaultMargin,
+                      ),
+                      _ChatMessage(
                         friends: widget.friend,
-                      )
+                        currentProfile: currentProfile(),
+                      ),
                     ],
                   ),
                 ),
@@ -76,24 +83,11 @@ class _ChatItemState extends State<ChatItem> {
                       const EdgeInsets.symmetric(vertical: defaultMargin / 2),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
-                      // Container(
-                      //   height: 6,
-                      //   width: 6,
-                      //   decoration: BoxDecoration(
-                      //       color: Theme.of(context).primaryColor,
-                      //       shape: BoxShape.circle),
-                      // ),
-                      // Padding(
-                      //     padding: const EdgeInsets.symmetric(
-                      //         vertical: defaultMargin / 2),
-                      //     child: IconContainer(
-                      //       icon: Icon(
-                      //         Cu,
-                      //         size: 20,
-                      //         color: Theme.of(context).primaryColor,
-                      //       ),
-                      //     ))
+                    children: [
+                      ListeningActivity(
+                        profile: currentProfile(),
+                        friends: widget.friend,
+                      )
                     ],
                   ),
                 )
@@ -163,7 +157,7 @@ class _ListeningActivityState extends State<ListeningActivity>
                   width: defaultPadding,
                 ),
                 Text(
-                  "${item!.name} - ${item!.artists.join(",")}",
+                  item!.name,
                   style: Theme.of(context).textTheme.caption!.copyWith(
                       fontSize: 12,
                       color: spotifyGreen,
@@ -174,14 +168,89 @@ class _ListeningActivityState extends State<ListeningActivity>
               ],
             ),
           )
-        : Text(
-            widget.friends.lastMessage != null
-                ? widget.friends.lastMessage!.content
-                : "${widget.profile.name} is not active",
-            style: Theme.of(context).textTheme.caption,
-          );
+        : const SizedBox.shrink();
   }
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class _ChatMessage extends StatelessWidget {
+  const _ChatMessage({
+    Key? key,
+    required this.friends,
+    required this.currentProfile,
+  }) : super(key: key);
+  final Friends friends;
+  final Profile currentProfile;
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('chats')
+            .doc(friends.id.toString())
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            DocumentSnapshot data = snapshot.data as DocumentSnapshot;
+            Map<String, dynamic>? json = data.data() as Map<String, dynamic>?;
+            if (json != null && json.containsKey('last_message')) {
+              json['last_message'].addAll({'id': "some_id_lol"});
+
+              friends.lastMessage = Message.fromJson(json['last_message']);
+            }
+            if (friends.lastMessage != null) {
+              var chatText = SoulChatText(text: friends.lastMessage!.content);
+              return Row(
+                children: [
+                  !chatText.valid
+                      ? Container(
+                          margin: const EdgeInsets.only(right: defaultPadding),
+                          height: 6,
+                          width: 6,
+                          decoration: BoxDecoration(
+                              color: friends.lastMessage!.sender ==
+                                      currentProfile.user.id
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.grey,
+                              shape: BoxShape.circle),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.only(right: defaultPadding),
+                          child: Icon(
+                            Icons.music_note,
+                            size: 12,
+                            color: friends.lastMessage!.sender ==
+                                    currentProfile.user.id
+                                ? Theme.of(context).primaryColor
+                                : Colors.grey,
+                          ),
+                        ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: size.width * 0.6),
+                    child: Text(
+                      friends.lastMessage != null
+                          ? SoulChatText(text: friends.lastMessage!.content)
+                                  .valid
+                              ? "Sent a ${SoulChatText(text: friends.lastMessage!.content).format}"
+                              : friends.lastMessage!.content
+                          : "👋 Say Hello",
+                      style: Theme.of(context).textTheme.caption!.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2A2A2A),
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  ),
+                ],
+              );
+            }
+          }
+          return Text(
+            "👋 Say Hello",
+            style: Theme.of(context).textTheme.caption,
+          );
+        });
+  }
 }

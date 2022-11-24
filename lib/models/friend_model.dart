@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:get/get.dart';
+import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
 
@@ -13,7 +15,7 @@ List<Friends> friendsFromJson(String str) =>
 String friendsToJson(List<Friends> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class Friends {
+class Friends extends Comparable<Friends> {
   final int id;
   final Profile profile2;
   final bool accepted;
@@ -21,8 +23,10 @@ class Friends {
   final dynamic dateAccepted;
   final Profile profile1;
   final dynamic match;
-  final Message? lastMessage;
 
+  int position = 0;
+  Message? lastMessage;
+  String? docmentID;
   factory Friends.fromJson(Map<String, dynamic> json) {
     Friends friend = Friends(
         id: json["id"],
@@ -31,14 +35,17 @@ class Friends {
         profile2: Profile.fromJson(json["profile2"]),
         profile1: Profile.fromJson(json["profile1"]),
         match: json["match"],
-        lastMessage: Message.fromJson(json['last_message']),
+        lastMessage: json.containsKey('last_message')
+            ? Message.fromJson(json['last_message'])
+            : null,
         accepted: json["accepted"]);
 
     return friend;
   }
 
   Friends(
-      {this.lastMessage,
+      {this.docmentID,
+      this.lastMessage,
       required this.id,
       required this.profile2,
       required this.accepted,
@@ -56,4 +63,22 @@ class Friends {
         "profile1": profile1,
         "match": match,
       };
+
+  @override
+  int compareTo(Friends other) {
+    if (other.position == null) {
+      return -1;
+    }
+    return position - other.position;
+  }
+
+  Profile get friendsProfile {
+    final SoulController controller = Get.find<SoulController>();
+
+    if (controller.profile!.id == profile1.id) {
+      return profile2;
+    } else {
+      return profile1;
+    }
+  }
 }
