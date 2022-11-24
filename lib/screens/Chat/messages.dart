@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/chat_item.dart';
 import 'package:soul_date/components/empty_widget.dart';
+import 'package:soul_date/components/reorderable_firebase_list.dart';
 import 'package:soul_date/components/spot.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
@@ -172,12 +174,21 @@ class _SpotSectionState extends State<_SpotSection> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: defaultMargin),
-                child: Text(
-                  "Your Messages",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(fontSize: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Your Messages",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(fontSize: 15),
+                    ),
+                    Text(
+                      "Drag Chats to reorder",
+                      style: Theme.of(context).textTheme.caption,
+                    )
+                  ],
                 ),
               )
             ],
@@ -204,50 +215,39 @@ class _MessagesSection extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: radius)),
         child: RefreshIndicator(
-          onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
-            onRefresh();
-          }),
-          child: StreamBuilder<List<Friends>>(
-              stream: messageController.fetchChats(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return SpinKitCircle(
-                    color: Theme.of(context).primaryColor,
-                  );
-                } else if (snapshot.data == null && snapshot.data!.isEmpty) {
-                  return const EmptyWidget(
-                    text: "No chats yet",
-                  );
-                } else {
-                  snapshot.data!.sort(((a, b) => a.compareTo(b)));
-
-                  return ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      var friend = snapshot.data![index];
-                      return InkWell(
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: defaultMargin / 2),
-                          child: InkWell(
-                              onTap: () {
-                                Get.to(() => ChatScreen(
-                                      friend: friend,
-                                    ));
-                              },
-                              child: Column(
-                                children: [
-                                  ChatItem(friend: friend, size: size),
-                                  const Divider()
-                                ],
-                              )),
-                        ),
-                      );
-                    },
-                  );
-                }
-              }),
-        ));
+            onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
+                  onRefresh();
+                }),
+            child: ReorderableFirebaseList(
+              collection: FirebaseFirestore.instance
+                  .collection('userChats')
+                  .doc(messageController.userID)
+                  .collection('chats'),
+              indexKey: 'position',
+              itemBuilder: (context, index, doc) {
+                var chat_id = int.parse(doc['chat_id']);
+                var friend = messageController.getFriend(chat_id);
+                return InkWell(
+                  key: UniqueKey(),
+                  onTap: () {},
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: defaultMargin / 2),
+                    child: InkWell(
+                        onTap: () {
+                          Get.to(() => ChatScreen(
+                                friend: friend,
+                              ));
+                        },
+                        child: Column(
+                          children: [
+                            ChatItem(friend: friend, size: size),
+                            const Divider()
+                          ],
+                        )),
+                  ),
+                );
+              },
+            )));
   }
 }

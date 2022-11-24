@@ -34,7 +34,7 @@ class MessageController extends GetxController {
     return null;
   }
 
-  Friends getFriend(id) {
+  Friends getFriend(int id) {
     int index = controller.friends.indexWhere((element) => element.id == id);
 
     return controller.friends[index];

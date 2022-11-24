@@ -49,8 +49,18 @@ class _ReorderableFirebaseListState extends State<ReorderableFirebaseList> {
                   }),
                 );
               } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return Center(
+                  child: Column(
+                    children: [
+                      CircularProgressIndicator(
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      Text(
+                        "Updating your chats",
+                        style: Theme.of(context).textTheme.caption,
+                      )
+                    ],
+                  ),
                 );
               }
             },
