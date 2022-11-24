@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:soul_date/constants/spacings.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/images.dart';
 import 'package:soul_date/screens/image_viewer.dart';
 
 class MyImages extends StatefulWidget {
@@ -78,12 +79,14 @@ class _MyImagesState extends State<MyImages> {
                     childrenDelegate: SliverChildBuilderDelegate(
                         (context, index) => InkWell(
                               onTap: () {
+                                ProfileImages image =
+                                    controller.profile!.validImages[index];
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => ImageView(
-                                            imageUrl: controller.profile!
-                                                .validImages[index].image)));
+                                            imageID: image.id,
+                                            imageUrl: image.image)));
                               },
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20),

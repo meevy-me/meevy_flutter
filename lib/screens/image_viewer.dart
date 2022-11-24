@@ -83,11 +83,12 @@ class ImageView extends StatelessWidget {
                             .copyWith(color: Colors.white),
                       ),
                     ),
-                    PrimaryButton(
-                        onPress: () {
-                          controller.deleteImage(imageID!, context: context);
-                        },
-                        text: "Delete")
+                    if (imageID != null)
+                      PrimaryButton(
+                          onPress: () {
+                            controller.deleteImage(imageID!, context: context);
+                          },
+                          text: "Delete")
                   ],
                 ),
               )

@@ -130,14 +130,19 @@ class _MatchProfile extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultMargin),
             child: Center(
-              child: SoulSlider(
-                completedWidget: const Text("You have sent a request"),
-                defaultText: "Slide to match with ${match.matched.name}",
-                onComplete: () {
-                  controller.sendRequest({'matchID': match.id.toString()},
-                      context: context);
-                },
-              ),
+              child: match.requested
+                  ? Text(
+                      ":( You already sent a request",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    )
+                  : SoulSlider(
+                      completedWidget: const Text("You have sent a request"),
+                      defaultText: "Slide to match with ${match.matched.name}",
+                      onComplete: () {
+                        controller.sendRequest({'matchID': match.id.toString()},
+                            context: context);
+                      },
+                    ),
               // child: SlideToLike(
               //     match: match.matched,
               //     onLiked: (value) {

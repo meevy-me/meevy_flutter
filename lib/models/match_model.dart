@@ -21,7 +21,7 @@ class Match {
     required this.method,
     required this.details,
     required this.dateAdded,
-    required this.requested,
+    required this.friends,
   });
 
   int id;
@@ -30,8 +30,7 @@ class Match {
   String method;
   List<Details> details;
   DateTime dateAdded;
-  bool requested;
-
+  String friends;
   factory Match.fromJson(Map<String, dynamic> json) => Match(
         id: json["id"],
         profile: Profile.fromJson(json["profile"]),
@@ -40,7 +39,7 @@ class Match {
         details:
             List<Details>.from(json["details"].map((x) => Details.fromJson(x))),
         dateAdded: DateTime.parse(json["date_added"]),
-        requested: json["requested"],
+        friends: json["isFriend"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -57,7 +56,18 @@ class Match {
     if (method == 'T') {
       return 'Top artists or tracks';
     } else if (method == 'F') {
-      return 'Favourite Song';
+      return 'Favourite song';
+    }
+    return "We recommend";
+  }
+
+  bool get requested {
+    if (friends == 'F') {
+      return true;
+    } else if (friends == 'P') {
+      return true;
+    } else {
+      return false;
     }
   }
 }
