@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/controllers/AuthController.dart';
-import 'package:soul_date/screens/Login/onboarding.dart';
 import 'package:soul_date/screens/Login/onboarding2.dart';
 
-import '../../constants/constants.dart';
 import 'onboarding1.dart';
 
 class SpotifyLogin extends StatefulWidget {

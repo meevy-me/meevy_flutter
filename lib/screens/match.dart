@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/appbar_home.dart';
@@ -38,6 +39,34 @@ class _MatchScreenBody extends StatelessWidget {
   _MatchScreenBody({Key? key, required this.controller}) : super(key: key);
   final SoulController controller;
   TextEditingController searchField = TextEditingController();
+
+  void searchText(BuildContext context, String _text) async {
+    String text = _text;
+    String searchText = text;
+    if (text.isNotEmpty) {
+      if (text.contains("https://open.spotify.com/")) {
+        var textf = text.replaceAll("https://open.spotify.com/", "");
+        var keys = textf.split("/");
+        var fieldId = keys[1];
+        if (fieldId.contains("?")) {
+          searchText = fieldId.split("?")[0];
+        }
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text(":/ Not a valid Url")));
+      }
+      Profile? searchProfile = await controller.searchProfile(searchText);
+      if (searchProfile == null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text(":/ Soul not found")));
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) => SearchProfileDialog(profile: searchProfile));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -53,41 +82,26 @@ class _MatchScreenBody extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(
                 top: defaultMargin, bottom: defaultMargin * 2),
-            child: SoulField(
-              controller: searchField,
-              activeColor: Theme.of(context).primaryColor,
-              hintText: "Search by user spotify url",
-              suffixIcon: IconButton(
-                  onPressed: () async {
-                    String text = searchField.text;
-                    String searchText = text;
-                    if (text.isNotEmpty) {
-                      if (text.contains("https://open.spotify.com/")) {
-                        var textf =
-                            text.replaceAll("https://open.spotify.com/", "");
-                        var keys = textf.split("/");
-                        var fieldId = keys[1];
-                        if (fieldId.contains("?")) {
-                          searchText = fieldId.split("?")[0];
-                        }
-                      }
-                      Profile? searchProfile =
-                          await controller.searchProfile(searchText);
-                      if (searchProfile == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text(":/ Soul not found")));
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) =>
-                                SearchProfileDialog(profile: searchProfile));
-                      }
-                    }
-                  },
-                  icon: const Icon(Icons.search)),
-              prefixIcon: const Icon(
-                FontAwesomeIcons.spotify,
-                color: spotifyGreen,
+            child: GestureDetector(
+              onTap: () async {
+                ClipboardData? text = await Clipboard.getData('text/plain');
+                if (text != null && text.text != null) {
+                  searchText(context, text.text!);
+                }
+              },
+              child: SoulField(
+                controller: searchField,
+                activeColor: Theme.of(context).primaryColor,
+                hintText: "Search by user spotify url",
+                suffixIcon: IconButton(
+                    onPressed: () async {
+                      searchText(context, searchField.text);
+                    },
+                    icon: const Icon(Icons.search)),
+                prefixIcon: const Icon(
+                  FontAwesomeIcons.spotify,
+                  color: spotifyGreen,
+                ),
               ),
             ),
           ),

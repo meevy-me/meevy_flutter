@@ -1,15 +1,15 @@
-import 'package:objectbox/objectbox.dart';
 
-@Entity()
 class User {
   User({
     required this.spotifyId,
+    required this.id
   });
-  int? id;
-  String spotifyId;
+  final int id;
+  final String spotifyId;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         spotifyId: json["spotifyID"],
+        id:json['id']
       );
 
   Map<String, dynamic> toJson() => {

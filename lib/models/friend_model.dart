@@ -4,7 +4,9 @@
 
 import 'dart:convert';
 
-import 'package:objectbox/objectbox.dart';
+import 'package:get/get.dart';
+import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
 
 List<Friends> friendsFromJson(String str) =>
@@ -13,30 +15,44 @@ List<Friends> friendsFromJson(String str) =>
 String friendsToJson(List<Friends> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-@Entity()
-class Friends {
-  Friends({required this.id, required this.dateAdded, required this.accepted});
-  @Id(assignable: true)
-  int id;
-  final profile2 = ToOne<Profile>();
-  bool accepted;
-  DateTime dateAdded;
-  dynamic dateAccepted;
-  final profile1 = ToOne<Profile>();
-  dynamic match;
+class Friends extends Comparable<Friends> {
+  final int id;
+  final Profile profile2;
+  final bool accepted;
+  final DateTime dateAdded;
+  final dynamic dateAccepted;
+  final Profile profile1;
+  final dynamic match;
 
+  int position = 0;
+  Message? lastMessage;
+  String? docmentID;
   factory Friends.fromJson(Map<String, dynamic> json) {
     Friends friend = Friends(
         id: json["id"],
         dateAdded: DateTime.parse(json["date_added"]),
+        dateAccepted: json["date_accepted"],
+        profile2: Profile.fromJson(json["profile2"]),
+        profile1: Profile.fromJson(json["profile1"]),
+        match: json["match"],
+        lastMessage: json.containsKey('last_message')
+            ? Message.fromJson(json['last_message'])
+            : null,
         accepted: json["accepted"]);
-    friend.dateAccepted = json["date_accepted"];
-    friend.profile2.target = Profile.fromJson(json["profile2"]);
-    friend.profile1.target = Profile.fromJson(json["profile1"]);
-    friend.match = json["match"];
 
     return friend;
   }
+
+  Friends(
+      {this.docmentID,
+      this.lastMessage,
+      required this.id,
+      required this.profile2,
+      required this.accepted,
+      required this.dateAdded,
+      this.dateAccepted,
+      required this.profile1,
+      this.match});
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -47,4 +63,22 @@ class Friends {
         "profile1": profile1,
         "match": match,
       };
+
+  @override
+  int compareTo(Friends other) {
+    if (other.position == null) {
+      return -1;
+    }
+    return position - other.position;
+  }
+
+  Profile get friendsProfile {
+    final SoulController controller = Get.find<SoulController>();
+
+    if (controller.profile!.id == profile1.id) {
+      return profile2;
+    } else {
+      return profile1;
+    }
+  }
 }

@@ -7,14 +7,14 @@ import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/models/chat_model.dart';
+import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/screens/vinyls.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key, required this.chat}) : super(key: key);
-  final Chat chat;
+  const ChatScreen({Key? key, required this.friend}) : super(key: key);
+  final Friends friend;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -29,11 +29,10 @@ class _ChatScreenState extends State<ChatScreen> {
   FocusNode focus = FocusNode();
 
   Profile currentProfile() {
-    if (controller.profile!.id ==
-        widget.chat.friends.target!.profile1.target!.id) {
-      return widget.chat.friends.target!.profile2.target!;
+    if (controller.profile!.id == widget.friend.profile1.id) {
+      return widget.friend.profile2;
     } else {
-      return widget.chat.friends.target!.profile1.target!;
+      return widget.friend.profile1;
     }
   }
 
@@ -77,10 +76,11 @@ class _ChatScreenState extends State<ChatScreen> {
       body: SafeArea(
           child: SizedBox(
         height: size.height,
+        width: size.width,
         child: Stack(
           children: [
             SizedBox(
-              height: (size.height * 0.8 -
+              height: (size.height * 0.9 -
                       MediaQuery.of(context).viewInsets.bottom -
                       10) -
                   (replyTo != null ? 70 : 0),
@@ -92,7 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     focus.requestFocus();
                   });
                 }),
-                chat: widget.chat,
+                chat: widget.friend,
                 scrollController: scrollController,
               ),
             ),
@@ -161,6 +161,10 @@ class _ChatScreenState extends State<ChatScreen> {
                                   //         replyTo != null ? replyTo!.id : null,
                                   //     chat: widget.chat,
                                   //     scrollController: scrollController);
+                                  messageController.sendMessage(
+                                      chatID: widget.friend.id,
+                                      msg: text.text,
+                                      replyTo: replyTo);
                                   text.clear();
                                   setState(() {
                                     replyTo = null;
@@ -194,7 +198,7 @@ class _MessageBody extends StatefulWidget {
     required this.onReplyTo,
     required this.profile,
   }) : super(key: key);
-  final Chat chat;
+  final Friends chat;
   final ScrollController scrollController;
   final Function(Message message) onReplyTo;
   final Profile profile;
@@ -204,7 +208,6 @@ class _MessageBody extends StatefulWidget {
 
 class _MessageBodyState extends State<_MessageBody> {
   final SoulController controller = Get.find<SoulController>();
-
   final MessageController messageController = Get.find<MessageController>();
 
   @override
@@ -228,39 +231,41 @@ class _MessageBodyState extends State<_MessageBody> {
           duration: const Duration(seconds: 1),
           curve: Curves.linear);
     }
-    return StreamBuilder<Chat>(
-        // stream: messageController.getMessages(widget.chat),
+    return StreamBuilder<List<Message>>(
+        stream: messageController.fetchMessages(widget.chat.id.toString()),
         builder: (context, snapshot) {
-      if (!snapshot.hasData) {
-        return Center(
-          child: Text(
-            "Ooops :/ There's nothing here, say hi",
-            style: Theme.of(context).textTheme.caption,
-          ),
-        );
-      } else if (snapshot.data!.messages.isEmpty) {
-        return const Center(
-            child: EmptyWidget(
-          text: "There's nothing here, say Hi",
-        ));
-      } else {
-        return ListView.builder(
-          itemCount: snapshot.data!.messages.length,
-          itemBuilder: (context, index) {
-            var element = snapshot.data!.messages[index];
-            return ChatBox(
-              profile: widget.profile,
-              message: element,
-              width: size.width * 0.65,
-              onSwipe: ((message) {
-                widget.onReplyTo(message);
-              }),
+          if (!snapshot.hasData) {
+            return Center(
+              child: Text(
+                "Ooops :/ There's nothing here, say hi",
+                style: Theme.of(context).textTheme.caption,
+              ),
             );
-          },
-          controller: widget.scrollController,
-          padding: scaffoldPadding,
-        );
-      }
-    });
+          } else if (snapshot.data!.isEmpty) {
+            return const Center(
+                child: EmptyWidget(
+              text: "There's nothing here, say Hi",
+            ));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                var element = snapshot.data![index];
+                return ChatBox(
+                  key: UniqueKey(),
+                  friends: widget.chat,
+                  profile: widget.profile,
+                  message: element,
+                  width: size.width * 0.65,
+                  onSwipe: ((message) {
+                    widget.onReplyTo(message);
+                  }),
+                );
+              },
+              controller: widget.scrollController,
+              padding: scaffoldPadding,
+            );
+          }
+        });
   }
 }

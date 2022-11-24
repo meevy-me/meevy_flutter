@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cron/cron.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,12 +20,9 @@ import 'package:soul_date/models/favourite_model.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:soul_date/screens/Login/login.dart';
 
-import 'package:soul_date/screens/login.dart';
-
 import 'package:soul_date/services/network.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/services/spotify.dart';
-import 'package:soul_date/services/store.dart';
 
 class SoulController extends GetxController {
   HttpClient client = HttpClient();
@@ -31,32 +32,47 @@ class SoulController extends GetxController {
   RxList<Chat> chats = <Chat>[].obs;
   Profile? profile;
   Map<String, dynamic> keyDb = {};
-  // RxList<Profile> profile = <Profile>[].obs;
+  List<Friends> friends = [];
   FavouriteTrack? favouriteTrack;
   List<FavouritePlaylist?> favouritePlaylist = [];
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
-  final LocalStore store;
 
-  SoulController(this.store);
+  Cron cron = Cron();
 
   @override
   void onInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-    // if (!await service.isRunning()) {
-    //   await initializeService(store);
-    // }
     setSpotifyToken();
+    getFriends();
     registerDevice();
     fetchMatches();
     getProfile();
+    currentlyPlaying();
     super.onInit();
+  }
+
+  currentlyPlaying() {
+    Timer.periodic(const Duration(minutes: 5), (timer) async {
+      if (profile != null) {
+        SpotifyDetails? data =
+            await spotify.fetchCurrentPlaying(navigate: false);
+        FirebaseDatabase.instance
+            .ref()
+            .child('currentlyPlaying')
+            .child(profile!.user.id.toString())
+            .set(data?.item.toJson());
+      }
+    });
   }
 
   registerDevice() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    if (preferences.containsKey('firebaseRegistered') &&
-        preferences.getBool('firebaseRegistered')!) {
+    if (preferences.containsKey('firebase_token')) {
+      String? firebase_token = preferences.getString('firebase_token');
+      if (firebase_token != null) {
+        FirebaseAuth.instance.signInWithCustomToken(firebase_token);
+      }
     } else {
       var fireToken = await FirebaseMessaging.instance.getToken();
       //firebase_token
@@ -82,6 +98,13 @@ class SoulController extends GetxController {
     }
   }
 
+  void getFriends() async {
+    http.Response response = await client.get(fetchFriendsUrl);
+    if (response.statusCode <= 210) {
+      friends = friendsFromJson(response.body);
+    }
+  }
+
   setSpotifyToken() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (preferences.getString("spotify_accesstoken") == null) {
@@ -94,6 +117,7 @@ class SoulController extends GetxController {
   }
 
   void fetchMatches() async {
+    await client.get(fetchMakeMatchesUrl);
     http.Response res = await client.get(fetchMatchesUrl);
     if (res.statusCode <= 210) {
       matches.value = matchFromJson(utf8.decode(res.bodyBytes));
@@ -124,6 +148,8 @@ class SoulController extends GetxController {
     http.Response res = await client.get(fetchFriendRequestsUrl);
     if (res.statusCode <= 210) {
       friendRequest.value = friendsFromJson(res.body);
+    } else {
+      log(res.body);
     }
   }
 
@@ -218,8 +244,6 @@ class SoulController extends GetxController {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     if (await preferences.clear()) {
-      store.store.close();
-      LocalStore.delete();
       Get.offAll(() => const SpotifyLogin());
       Get.delete<SoulController>();
       // Get.delete<SpotController>();
@@ -312,5 +336,15 @@ class SoulController extends GetxController {
         FirebaseFirestore.instance.collection('feedback');
     Map<String, dynamic> data = {'profile': profile!.id, 'comments': comments};
     collectionReference.add(data);
+  }
+
+  Future<bool> sendNotification(Profile profile, String message) async {
+    http.Response response = await client.post(notifyUrl,
+        body: {'receiver': profile.id.toString(), 'message': message});
+
+    if (response.statusCode <= 210) {
+      return true;
+    }
+    return false;
   }
 }

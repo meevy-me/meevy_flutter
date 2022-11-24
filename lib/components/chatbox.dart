@@ -17,11 +17,13 @@ class ChatBox extends StatefulWidget {
     required this.width,
     this.height,
     required this.profile,
+    required this.friends,
   }) : super(key: key);
 
   final double width;
   final double? height;
   final Message message;
+  final Friends friends;
   final Function(Message message)? onSwipe;
   final Profile profile;
 
@@ -106,25 +108,18 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (widget.message.replyTo != null)
-                          FutureBuilder<Message?>(
-                              future: widget.message
-                                  .repliedMessage(soulController.store),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData && snapshot.data != null) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(
-                                        bottom: defaultPadding),
-                                    child: ReplyChatBox(
-                                        message: snapshot.data!,
-                                        height: 50,
-                                        profile: widget.profile,
-                                        onClose: null),
-                                  );
-                                } else {
-                                  return const SizedBox.shrink();
-                                }
-                              }),
+                        if (widget.message.repliedMessage != null)
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: defaultPadding),
+                            child: ReplyChatBox(
+                                message: widget.message.repliedMessage!,
+                                height: 50,
+                                profile: widget.profile,
+                                onClose: null),
+                          )
+                        else
+                          const SizedBox.shrink(),
                         Text(
                           widget.message.content,
                           textAlign: TextAlign.left,

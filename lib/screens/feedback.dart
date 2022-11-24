@@ -102,8 +102,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             child: IconContainer(
                                 onPress: () {
                                   controller.feedbackPush(answers);
-                                  Get.offAll(
-                                      () => HomePage(store: controller.store));
+                                  Get.offAll(() => HomePage());
                                 },
                                 size: 50,
                                 icon: const Icon(
@@ -133,7 +132,6 @@ class FeedbackQuestion1 extends StatefulWidget {
       : super(key: key);
   final Function(dynamic value) onNext;
   final Function onBack;
-  //TODO: Implement Dispose
   @override
   State<FeedbackQuestion1> createState() => _FeedbackQuestion1State();
 }
@@ -297,7 +295,6 @@ class _FeedbackQuestion2State extends State<FeedbackQuestion2>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
 

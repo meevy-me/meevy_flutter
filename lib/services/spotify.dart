@@ -91,8 +91,8 @@ class Spotify {
     }
   }
 
-  Future<SpotifyDetails?> fetchCurrentPlaying(BuildContext context,
-      {navigate = true}) async {
+  Future<SpotifyDetails?> fetchCurrentPlaying(
+      {BuildContext? context, navigate = true}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     accessToken = preferences.getString("spotify_accesstoken")!;
     refreshToken = preferences.getString("spotify_refreshtoken")!;
@@ -108,14 +108,17 @@ class Spotify {
       if (navigate) {
         Get.to(() => MySpotScreen(details: detail));
       }
+      return detail;
     } else if (res.statusCode <= 210 && res.body.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("You're not playing any song currently.")));
+      if (context != null) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("You're not playing any song currently.")));
+      }
     } else if (res.statusCode <= 401 &&
         json.decode(res.body)['error']['message'] ==
             "The access token expired") {
       await refreshAccessToken();
-      fetchCurrentPlaying(context);
+      fetchCurrentPlaying(context: context);
     } else {
       Analytics.log_error("Spot Error", {'error': res.body});
     }

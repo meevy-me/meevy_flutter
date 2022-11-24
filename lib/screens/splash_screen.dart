@@ -6,7 +6,6 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/Login/login.dart';
 import 'package:soul_date/screens/home.dart';
 import 'package:soul_date/screens/login.dart';
-import 'package:soul_date/services/store.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -24,21 +23,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void checkLogin() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    late LocalStore store;
     // final service = FlutterBackgroundService();
     if (preferences.getString("spotify_accesstoken") == null) {
       Get.offAll(() => const SpotifyLogin());
     } else {
-      try {
-        store = await LocalStore.init();
-      } catch (e) {
-        store = await LocalStore.attach();
-      }
-      Get.put(SoulController(store), permanent: true);
+      Get.put(SoulController(), permanent: true);
 
-      Get.offAll(() => HomePage(
-            store: store,
-          ));
+      Get.offAll(() => HomePage());
     }
   }
 

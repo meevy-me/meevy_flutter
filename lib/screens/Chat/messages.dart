@@ -1,16 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/chat_item.dart';
 import 'package:soul_date/components/empty_widget.dart';
+import 'package:soul_date/components/reorderable_firebase_list.dart';
 import 'package:soul_date/components/spot.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:collection/collection.dart';
-import 'package:soul_date/models/chat_model.dart';
+import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/screens/Chat/chat.dart';
 import 'package:soul_date/screens/friend_requests.dart';
 
@@ -49,7 +51,7 @@ class _MessagesPageState extends State<MessagesPage> {
             backgroundColor: Theme.of(context).primaryColor,
             child: const Icon(FontAwesomeIcons.spotify),
             onPressed: () async {
-              controller.spotify.fetchCurrentPlaying(context);
+              controller.spotify.fetchCurrentPlaying(context: context);
             }),
         body: SafeArea(
           child: Column(
@@ -172,12 +174,21 @@ class _SpotSectionState extends State<_SpotSection> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: defaultMargin),
-                child: Text(
-                  "Your Messages",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(fontSize: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Your Messages",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(fontSize: 15),
+                    ),
+                    Text(
+                      "Drag Chats to reorder",
+                      style: Theme.of(context).textTheme.caption,
+                    )
+                  ],
                 ),
               )
             ],
@@ -192,6 +203,7 @@ class _MessagesSection extends StatelessWidget {
   _MessagesSection({Key? key, required this.onRefresh}) : super(key: key);
   final Function onRefresh;
   final MessageController messageController = Get.find<MessageController>();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -203,49 +215,39 @@ class _MessagesSection extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: radius)),
         child: RefreshIndicator(
-          onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
-            onRefresh();
-          }),
-          child: StreamBuilder<List<Chat>>(
-              // stream: messageController.getChats(),
-              builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return SpinKitCircle(
-                color: Theme.of(context).primaryColor,
-              );
-            } else if (snapshot.data!.isEmpty) {
-              return const EmptyWidget(
-                text: "No chats yet",
-              );
-            } else {
-              // print(" YAAAHAHHH " +
-              //     snapshot.data!.last.friends.target.profile1);
-              return ListView.separated(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  var message = snapshot.data![index];
-                  return InkWell(
-                    onTap: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: defaultMargin / 2),
-                      child: InkWell(
+            onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
+                  onRefresh();
+                }),
+            child: ReorderableFirebaseList(
+              collection: FirebaseFirestore.instance
+                  .collection('userChats')
+                  .doc(messageController.userID)
+                  .collection('chats'),
+              indexKey: 'position',
+              itemBuilder: (context, index, doc) {
+                var chat_id = int.parse(doc['chat_id']);
+                var friend = messageController.getFriend(chat_id);
+                return InkWell(
+                  key: UniqueKey(),
+                  onTap: () {},
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: defaultMargin / 2),
+                    child: InkWell(
                         onTap: () {
-                          Get.to(() => ChatScreen(chat: message));
+                          Get.to(() => ChatScreen(
+                                friend: friend,
+                              ));
                         },
-                        child: message.friends.target != null
-                            ? ChatItem(message: message, size: size)
-                            : const SizedBox.shrink(),
-                      ),
-                    ),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-              );
-            }
-          }),
-        ));
+                        child: Column(
+                          children: [
+                            ChatItem(friend: friend, size: size),
+                            const Divider()
+                          ],
+                        )),
+                  ),
+                );
+              },
+            )));
   }
 }

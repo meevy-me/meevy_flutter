@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:soul_date/constants/constants.dart';
 
 class SoulSlider extends StatefulWidget {
@@ -40,96 +41,26 @@ class _SoulSliderState extends State<SoulSlider>
 
     return slideComplete
         ? widget.completedWidget
-        : SizedBox(
-            width: widget.width ?? size.width,
-            child: Stack(
-              children: [
-                Container(
-                  height: 60,
-                  width: widgetWidth,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          offset: const Offset(6.0, 6.0),
-                          blurRadius: 16.0,
-                        ),
-                      ]),
-                ),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  height: widget.height ?? 60,
-                  child: Center(
-                    child: Text(widget.defaultText,
-                        style: Theme.of(context).textTheme.caption!.copyWith(
-                            color:
-                                1 * (horizontalPosition.dx / widgetWidth) > 0.5
-                                    ? Colors.white
-                                    : Colors.black)),
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .primaryColor
-                        .withOpacity(1 * (horizontalPosition.dx / widgetWidth)),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                Positioned(
-                  top: 0,
-                  bottom: 0,
-                  left: horizontalPosition.dx,
-                  // right: 0,
-                  child: GestureDetector(
-                    // onHorizontalDragStart: (details) {
-                    //   setState(() {
-                    //     horizontalPosition = details.globalPosition;
-                    //   });
-                    // },
-                    onHorizontalDragUpdate: (details) {
-                      if (details.delta.dx.isNegative) {
-                        setState(() {
-                          horizontalPosition = const Offset(defaultPadding, 0);
-                        });
-                      }
-                      if (details.globalPosition.dx <= widgetWidth - 80) {
-                        setState(() {
-                          horizontalPosition = details.globalPosition;
-                        });
-                      } else {
-                        Future.delayed(const Duration(milliseconds: 500), () {
-                          setState(() {
-                            slideComplete = true;
-                            horizontalPosition =
-                                const Offset(defaultPadding, 0);
-                            widget.onComplete();
-                          });
-                        });
-                      }
-                    },
-                    onHorizontalDragEnd: (details) {
-                      if (!slideComplete) {
-                        setState(() {
-                          horizontalPosition = const Offset(defaultPadding, 0);
-                        });
-                      }
-                    },
-
-                    child: Container(
-                      height: widget.height ?? 50,
-                      width: widget.height ?? 50,
-                      child: const Icon(
-                        FontAwesomeIcons.heartCirclePlus,
-                        color: Colors.white,
-                      ),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Theme.of(context).primaryColor),
-                    ),
-                  ),
-                )
-              ],
-            ));
+        : ConfirmationSlider(
+            onConfirmation: () {
+              setState(() {
+                slideComplete = true;
+              });
+              widget.onComplete();
+            },
+            iconColor: Theme.of(context).primaryColor,
+            foregroundColor: Theme.of(context).primaryColor,
+            shadow: BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              offset: const Offset(6.0, 6.0),
+              blurRadius: 16.0,
+            ),
+            sliderButtonContent: const Icon(
+              FontAwesomeIcons.heartCirclePlus,
+              color: Colors.white,
+            ),
+            text: "Slide to send pair request",
+            textStyle: Theme.of(context).textTheme.caption,
+          );
   }
 }

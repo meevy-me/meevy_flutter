@@ -7,13 +7,11 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/screens/match.dart';
 import 'package:soul_date/screens/profile_home.dart';
-import 'package:soul_date/services/store.dart';
 
 import 'settings_home.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.store}) : super(key: key);
-  final LocalStore store;
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();

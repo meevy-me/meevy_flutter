@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:objectbox/objectbox.dart';
 import 'package:soul_date/models/friend_model.dart';
 
 import 'messages.dart';
@@ -15,26 +14,25 @@ List<Chat> chatFromJson(String str) =>
 String chatToJson(List<Chat> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-@Entity()
 class Chat {
   Chat({
+    this.lastMessage,
+    required this.friends,
     required this.id,
     required this.dateCreated,
   });
-  @Id(assignable: true)
-  int id;
-  final friends = ToOne<Friends>();
-  final messages = ToMany<Message>();
+  final String id;
+  final Friends friends;
+  final Message? lastMessage;
   DateTime dateCreated;
 
   factory Chat.fromJson(Map<String, dynamic> json) {
+    print(json);
     Chat newChat = Chat(
-      id: json["id"],
-      dateCreated: DateTime.parse(json["date_created"]),
-    );
-    newChat.friends.target = Friends.fromJson(json["friends"]);
-    newChat.messages.addAll(
-        List<Message>.from(json["messages"].map((x) => Message.fromJson(x))));
+        id: json["id"],
+        dateCreated: DateTime.parse(json["date_created"]),
+        friends: Friends.fromJson(json["friends"]),
+        lastMessage: Message.fromJson(json['lastMessage']));
 
     return newChat;
   }
@@ -42,7 +40,7 @@ class Chat {
   Map<String, dynamic> toJson() => {
         "id": id,
         // "friends": friends.toJson(),
-        "messages": List<dynamic>.from(messages.map((x) => x.toJson())),
+        // "messages": List<dynamic>.from(messages.map((x) => x.toJson())),
         "date_created": dateCreated.toIso8601String(),
       };
 

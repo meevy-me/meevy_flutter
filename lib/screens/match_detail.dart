@@ -275,7 +275,7 @@ class _MatchDetails extends StatelessWidget {
           IconButton(
               onPressed: () async {
                 launchUrlString(
-                    "https://open.spotify.com/user/${match.matched.user.target!.spotifyId}");
+                    "https://open.spotify.com/user/${match.matched.user.spotifyId}");
               },
               icon: const Icon(
                 FontAwesomeIcons.spotify,

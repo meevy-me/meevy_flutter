@@ -1,16 +1,8 @@
-import 'dart:convert';
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/objectbox.g.dart';
-import 'package:soul_date/services/store.dart';
-import 'package:web_socket_channel/io.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
-import '../constants/constants.dart';
 import '../models/models.dart';
 import '../services/network.dart';
 
@@ -21,161 +13,80 @@ class MessageController extends GetxController {
 
   SoulController controller = Get.find<SoulController>();
 
-  @override
-  void onInit() async {
-    // openConnection();
-
-    super.onInit();
+  String? get userID {
+    return controller.profile?.user.id.toString();
   }
 
-  // void openConnection() async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   String token = preferences.getString("token")!;
-  //   connection = IOWebSocketChannel.connect(messagesWs,
-  //       headers: {'authorization': "Token $token"});
-  //   listenConnection(controller.store);
-  //   fetchChats(controller.store);
-  // }
+  Stream<List<Friends>>? fetchChats() {
+    if (userID != null) {
+      return FirebaseFirestore.instance
+          .collection('userChats')
+          .doc(userID!)
+          .collection('chats')
+          .snapshots()
+          .map((list) => list.docs.map((e) {
+                int chat_id = int.parse(e.data()['chat_id']);
+                Friends friend = getFriend(chat_id);
+                friend.docmentID = e.id;
+                return friend;
+              }).toList());
+    }
+    return null;
+  }
 
-  // void messageToStore(Chat chat,
-  //     {required Message message, required LocalStore store}) async {
-  //   await store.insert<Message>(message);
-  //   // print(id);
+  Friends getFriend(int id) {
+    int index = controller.friends.indexWhere((element) => element.id == id);
 
-  //   chat.messages.add(message);
-  //   chat.dateCreated = message.datePosted;
-  //   await store.insert<Chat>(chat);
-  // }
+    return controller.friends[index];
+  }
 
-  // Future<Chat?> addMessage(
-  //   LocalStore store,
-  //   Map data,
-  // ) async {
-  //   Chat? chat = await store.get<Chat>(data["chat"]);
-  //   if (chat != null) {
-  //     var message = Message(
-  //       id: data['id'],
-  //       replyTo: data['reply_to'],
-  //       content: data['content'],
-  //       datePosted: DateTime.parse(data['date_posted']),
-  //       sender: data['sender'],
-  //     );
-  //     chat.dateCreated = DateTime.parse(data['date_posted']);
-  //     messageToStore(chat, message: message, store: store);
+  void sendMessage(
+      {required int chatID,
+      required String msg,
+      Profile? receiver,
+      Message? replyTo}) {
+    Map<String, dynamic> to_send = {
+      "sender": userID,
+      "message": msg,
+      "date_sent": DateTime.now().toString(),
+      "reply_to": replyTo?.toJson()
+    };
+    FirebaseFirestore.instance
+        .collection('chatMessages')
+        .doc(chatID.toString())
+        .collection('messages')
+        .doc()
+        .set(to_send);
+    FirebaseFirestore.instance
+        .collection('chats')
+        .doc(chatID.toString())
+        .update({"last_message": to_send});
+    if (receiver != null) {
+      controller.sendNotification(receiver, msg);
+    }
+  }
 
-  //     // NotificationApi.showNotification(
-  //     //     title: "Message from ${chat.friends.target!.profile2.target!.name}",
-  //     //     body: message.formatContent,
-  //     //     payload: chat.id.toString());
-  //     // if (service is AndroidServiceInstance) {
-  //     //   service.setForegroundNotificationInfo(
-  //     //     title: "New Message from ${chat.friends.target!.profile2.target!.name}",
-  //     //     content: message.content,
-  //     //   );
-  //     // }
-  //     return chat;
-  //   }
-  //   return null;
-  // }
+  Stream<List<Message>>? fetchMessages(String id) {
+    return FirebaseFirestore.instance
+        .collection('chatMessages')
+        .doc(id)
+        .collection('messages')
+        .orderBy('date_sent')
+        .snapshots()
+        .map((list) => list.docs.map((e) {
+              Map<String, dynamic> json = {'id': e.id};
+              json.addAll(e.data());
+              Message msg = Message.fromJson(json);
+              return msg;
+            }).toList());
+  }
 
-  // listenConnection(LocalStore store) async {
-  //   if (connection != null) {
-  //     connection!.stream.listen(
-  //       (event) {
-  //         var data = json.decode(event)['message'];
-  //         addMessage(store, data);
-  //       },
-  //     );
-  //   }
-  // }
-
-  // Stream<List<Chat>> getChats() {
-  //   final QueryBuilder<Chat> queryBuilder = controller.store.store
-  //       .box<Chat>()
-  //       .query()
-  //     ..order(Chat_.dateCreated, flags: Order.descending);
-  //   return queryBuilder
-  //       .watch(triggerImmediately: true)
-  //       .map((event) => event.find());
-  // }
-
-  // void refreshChats() {
-  //   if (connection == null) {
-  //     openConnection();
-  //   }
-  //   fetchChats(controller.store);
-  // }
-
-  // Stream<Chat> getMessages(Chat chat) {
-  //   return controller.store.store
-  //       .box<Chat>()
-  //       .query(Chat_.id.equals(chat.id))
-  //       .watch(triggerImmediately: true)
-  //       .map((event) => event.findFirst()!);
-  // }
-
-  // addMessageSocket(String content,
-  //     {required Chat chat,
-  //     required ScrollController scrollController,
-  //     int? reply}) async {
-  //   var payload = {"chat": chat.id, "message": content};
-  //   if (reply != null) {
-  //     payload["reply_to"] = reply;
-  //   }
-
-  //   sendMessage(payload, store: controller.store);
-  //   // var isRunning = await service.isRunning();
-  // }
-
-  // void sendMessage(
-  //   Map? payload, {
-  //   required LocalStore store,
-  // }) async {
-  //   // SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   // int profile = preferences.getInt('profileID')!;
-  //   if (payload != null) {
-  //     connection!.sink.add(json.encode(payload));
-
-  //     // Message message = Message(
-  //     //     id: 0, content: content, datePosted: DateTime.now(), sender: profile);
-  //     // Chat? chat = await store.get<Chat>(id);
-  //     // if (chat != null) {
-  //     //   messageToStore(chat, message: message, store: store);
-  //     // }
-  //   }
-  // }
-
-  // void fetchChats(LocalStore store) async {
-  //   var res = await client.get(fetchChatsUrl);
-  //   if (res.statusCode <= 210) {
-  //     var chatList = chatFromJson(utf8.decode(res.bodyBytes));
-  //     for (var element in chatList) {
-  //       store.store.box<Friends>().put(element.friends.target!);
-  //       store.store
-  //           .box<ProfileImages>()
-  //           .putMany(element.friends.target!.profile1.target!.images);
-  //       store.store
-  //           .box<ProfileImages>()
-  //           .putMany(element.friends.target!.profile2.target!.images);
-  //       store.store
-  //           .box<Profile>()
-  //           .put(element.friends.target!.profile2.target!);
-  //       store.store
-  //           .box<Profile>()
-  //           .put(element.friends.target!.profile1.target!);
-
-  //       store.store.box<Message>().putMany(element.messages);
-  //     }
-  //     store.insertList<Chat>(chatList);
-  //     // chats.value = chatList;
-  //   } else {
-  //     log(res.body, name: "CHATS ERROR");
-  //   }
-  // }
-
-  @override
-  void dispose() {
-    controller.store.store.close();
-    super.dispose();
+  updateOrder(Friends friends, int newPosition) {
+    FirebaseFirestore.instance
+        .collection('userChats')
+        .doc(userID!)
+        .collection('chats')
+        .doc(friends.docmentID!)
+        .update({"position": newPosition});
   }
 }
