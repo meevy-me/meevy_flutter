@@ -92,7 +92,7 @@ class _MatchScreenBody extends StatelessWidget {
             ),
           ),
           Text(
-            "Your Matches",
+            "Today's Matches",
             style: Theme.of(context).textTheme.headline5,
           ),
           Padding(
