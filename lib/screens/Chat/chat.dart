@@ -56,20 +56,20 @@ class _ChatScreenState extends State<ChatScreen> {
         elevation: 0,
         title: ProfileStatus(profile: profile),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: defaultMargin),
-            child: InkWell(
-                onTap: () => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => const VinylScreen())))
-                    },
-                child: SvgPicture.asset(
-                  'assets/images/vinyl.svg',
-                  width: 25,
-                )),
-          )
+          // Padding(
+          //   padding: const EdgeInsets.only(right: defaultMargin),
+          //   child: InkWell(
+          //       onTap: () => {
+          //             Navigator.push(
+          //                 context,
+          //                 MaterialPageRoute(
+          //                     builder: ((context) => const VinylScreen())))
+          //           },
+          //       child: SvgPicture.asset(
+          //         'assets/images/vinyl.svg',
+          //         width: 25,
+          //       )),
+          // )
         ],
         centerTitle: true,
       ),

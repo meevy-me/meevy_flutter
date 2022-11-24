@@ -139,7 +139,8 @@ class _MatchProfile extends StatelessWidget {
                       completedWidget: const Text("You have sent a request"),
                       defaultText: "Slide to match with ${match.matched.name}",
                       onComplete: () {
-                        controller.sendRequest({'matchID': match.id.toString()},
+                        controller.sendRequest(
+                            {'profile2': match.matched.id.toString()},
                             context: context);
                       },
                     ),
