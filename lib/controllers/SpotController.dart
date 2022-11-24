@@ -84,7 +84,7 @@ class SpotController extends GetxController {
 
   void showNotification(Spot spotNew) {
     Get.showSnackbar(GetSnackBar(
-      backgroundColor: primaryPink.withOpacity(0.8),
+      backgroundColor: primaryPink,
       snackPosition: SnackPosition.TOP,
       duration: const Duration(seconds: 10),
       isDismissible: true,
