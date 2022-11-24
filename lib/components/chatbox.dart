@@ -38,7 +38,7 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
   SpotifyData? spotifyData;
   @override
   void initState() {
-    if (widget.message.sender != widget.profile.id) {
+    if (widget.message.sender != widget.profile.user.id) {
       mine = true;
     }
     matchText();
