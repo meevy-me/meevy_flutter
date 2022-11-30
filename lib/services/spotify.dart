@@ -142,6 +142,10 @@ class Spotify {
             "The access token expired") {
       await refreshAccessToken();
       playTrack(uri, context: context);
+    } else if (res.statusCode == 404) {
+      showSnackBar(context, "Your spotify player is not active");
+    } else if (res.statusCode >= 500) {
+      showSnackBar(context, "Spotify Error");
     } else {
       showSnackBar(context, "An error has occured");
       log(res.body, name: "SPOTIFY ERROR");

@@ -118,6 +118,7 @@ class SoulController extends GetxController {
 
   void fetchMatches() async {
     await client.get(fetchMakeMatchesUrl);
+
     http.Response res = await client.get(fetchMatchesUrl);
     if (res.statusCode <= 210) {
       matches.value = matchFromJson(utf8.decode(res.bodyBytes));
@@ -336,6 +337,15 @@ class SoulController extends GetxController {
         FirebaseFirestore.instance.collection('feedback');
     Map<String, dynamic> data = {'profile': profile!.id, 'comments': comments};
     collectionReference.add(data);
+  }
+
+  Future<bool> isFriendRequested(Profile profile) async {
+    http.Response response =
+        await client.get(friendCheckUrl + "${profile.id}/");
+    if (response.statusCode <= 210) {
+      return jsonDecode(response.body);
+    }
+    return false;
   }
 
   Future<bool> sendNotification(Profile profile, String message) async {

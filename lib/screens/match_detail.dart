@@ -127,31 +127,39 @@ class _MatchProfile extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-            child: Center(
-              child: match.requested
-                  ? Text(
-                      ":( You already sent a request",
-                      style: Theme.of(context).textTheme.bodyText1,
-                    )
-                  : SoulSlider(
-                      completedWidget: const Text("You have sent a request"),
-                      defaultText: "Slide to match with ${match.matched.name}",
-                      onComplete: () {
-                        controller.sendRequest(
-                            {'profile2': match.matched.id.toString()},
-                            context: context);
-                      },
-                    ),
-              // child: SlideToLike(
-              //     match: match.matched,
-              //     onLiked: (value) {
-              //       controller.sendRequest({'matchID': match.id.toString()},
-              //           context: context);
-              //     })
-            ),
-          ),
+          FutureBuilder<bool>(
+              future: match.requested,
+              builder: (context, snapshot) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+                  child: Center(
+                    child: snapshot.data != null &&
+                            snapshot.hasData &&
+                            snapshot.data!
+                        ? Text(
+                            ":( You already sent a request",
+                            style: Theme.of(context).textTheme.bodyText1,
+                          )
+                        : SoulSlider(
+                            completedWidget:
+                                const Text("You have sent a request"),
+                            defaultText:
+                                "Slide to match with ${match.matched.name}",
+                            onComplete: () {
+                              controller.sendRequest(
+                                  {'profile2': match.matched.id.toString()},
+                                  context: context);
+                            },
+                          ),
+                    // child: SlideToLike(
+                    //     match: match.matched,
+                    //     onLiked: (value) {
+                    //       controller.sendRequest({'matchID': match.id.toString()},
+                    //           context: context);
+                    //     })
+                  ),
+                );
+              }),
         ],
       ),
     );

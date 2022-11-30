@@ -71,7 +71,7 @@ class MessageController extends GetxController {
         .collection('chatMessages')
         .doc(id)
         .collection('messages')
-        .orderBy('date_sent')
+        .orderBy('date_sent', descending: true)
         .snapshots()
         .map((list) => list.docs.map((e) {
               Map<String, dynamic> json = {'id': e.id};

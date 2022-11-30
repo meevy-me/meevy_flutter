@@ -11,29 +11,21 @@ String spotifyDetailsToJson(SpotifyDetails data) => json.encode(data.toJson());
 
 class SpotifyDetails {
   SpotifyDetails({
-    required this.context,
+    // required this.context,
     required this.item,
-    required this.currentlyPlayingType,
-    required this.isPlaying,
   });
 
-  Context? context;
+  // Context? context;
   Item item;
-  String currentlyPlayingType;
-  bool isPlaying;
 
   factory SpotifyDetails.fromJson(Map<String, dynamic> json) => SpotifyDetails(
-        context:
-            json['context'] == null ? null : Context.fromJson(json["context"]),
+        // context:
+        //     json['context'] == null ? null : Context.fromJson(json["context"]),
         item: Item.fromJson(json["item"]),
-        currentlyPlayingType: json["currently_playing_type"],
-        isPlaying: json["is_playing"],
       );
 
   Map<String, dynamic> toJson() => {
         "item": item.toJson(),
-        "currently_playing_type": currentlyPlayingType,
-        "is_playing": isPlaying,
       };
 }
 

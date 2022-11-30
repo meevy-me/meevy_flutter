@@ -219,7 +219,7 @@ class ReplyChatBox extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
             child: Text(
-              message.content,
+              message.content.trim(),
               style: Theme.of(context)
                   .textTheme
                   .bodyText1!

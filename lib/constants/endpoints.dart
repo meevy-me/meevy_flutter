@@ -39,3 +39,4 @@ const String favouritePlaylistsUrl = "https://api.spotify.com/v1/me/playlists";
 const String secondaryAvatarUrl =
     "https://i0.wp.com/sbcf.fr/wp-content/uploads/2018/03/sbcf-default-avatar.png?w=300&ssl=1";
 const String notifyUrl = baseUrl + "socials/notify/";
+const String friendCheckUrl = baseUrl + "socials/friend/requested/";

@@ -39,6 +39,11 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     profile = currentProfile();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.jumpTo(200);
+      }
+    });
     messageController = Get.find<MessageController>();
     super.initState();
   }
@@ -55,22 +60,7 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: ProfileStatus(profile: profile),
-        actions: [
-          // Padding(
-          //   padding: const EdgeInsets.only(right: defaultMargin),
-          //   child: InkWell(
-          //       onTap: () => {
-          //             Navigator.push(
-          //                 context,
-          //                 MaterialPageRoute(
-          //                     builder: ((context) => const VinylScreen())))
-          //           },
-          //       child: SvgPicture.asset(
-          //         'assets/images/vinyl.svg',
-          //         width: 25,
-          //       )),
-          // )
-        ],
+        actions: [],
         centerTitle: true,
       ),
       body: SafeArea(
@@ -80,22 +70,44 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Stack(
           children: [
             SizedBox(
-              height: (size.height * 0.9 -
-                      MediaQuery.of(context).viewInsets.bottom -
-                      10) -
-                  (replyTo != null ? 70 : 0),
-              child: _MessageBody(
-                profile: profile,
-                onReplyTo: ((message) {
-                  setState(() {
-                    replyTo = message;
-                    focus.requestFocus();
-                  });
-                }),
-                chat: widget.friend,
-                scrollController: scrollController,
-              ),
-            ),
+                height: (size.height * 0.8 -
+                        MediaQuery.of(context).viewInsets.bottom -
+                        10) -
+                    (replyTo != null ? 70 : 0),
+                child: StreamBuilder<List<Message>>(
+                    stream: messageController
+                        .fetchMessages(widget.friend.id.toString()),
+                    builder: (context, snapshot) {
+                      return ListView.builder(
+                          reverse: true,
+                          padding: scaffoldPadding,
+                          shrinkWrap: true,
+                          controller: scrollController,
+                          itemCount:
+                              snapshot.data != null ? snapshot.data!.length : 1,
+                          itemBuilder: (context, index) {
+                            if (snapshot.data != null &&
+                                snapshot.data!.isNotEmpty) {
+                              var element = snapshot.data![index];
+                              return ChatBox(
+                                key: UniqueKey(),
+                                friends: widget.friend,
+                                profile: profile,
+                                message: element,
+                                width: size.width * 0.65,
+                                onSwipe: ((message) {
+                                  setState(() {
+                                    replyTo = message;
+                                    focus.requestFocus();
+                                  });
+                                }),
+                              );
+                            } else {
+                              return const Center(
+                                  child: Text("There's nothing here"));
+                            }
+                          });
+                    })),
             Positioned(
               bottom: 0,
               child: Padding(
@@ -165,6 +177,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       chatID: widget.friend.id,
                                       msg: text.text,
                                       replyTo: replyTo);
+
                                   text.clear();
                                   setState(() {
                                     replyTo = null;
@@ -194,12 +207,10 @@ class _MessageBody extends StatefulWidget {
   const _MessageBody({
     Key? key,
     required this.chat,
-    required this.scrollController,
     required this.onReplyTo,
     required this.profile,
   }) : super(key: key);
   final Friends chat;
-  final ScrollController scrollController;
   final Function(Message message) onReplyTo;
   final Profile profile;
   @override
@@ -209,13 +220,12 @@ class _MessageBody extends StatefulWidget {
 class _MessageBodyState extends State<_MessageBody> {
   final SoulController controller = Get.find<SoulController>();
   final MessageController messageController = Get.find<MessageController>();
-
+  final ScrollController scrollController = ScrollController();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.scrollController.hasClients) {
-        widget.scrollController
-            .jumpTo(widget.scrollController.position.maxScrollExtent);
+      if (scrollController.hasClients) {
+        scrollController.jumpTo(scrollController.position.maxScrollExtent);
       }
     });
 
@@ -225,12 +235,7 @@ class _MessageBodyState extends State<_MessageBody> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    if (widget.scrollController.hasClients) {
-      widget.scrollController.animateTo(
-          widget.scrollController.position.maxScrollExtent,
-          duration: const Duration(seconds: 1),
-          curve: Curves.linear);
-    }
+
     return StreamBuilder<List<Message>>(
         stream: messageController.fetchMessages(widget.chat.id.toString()),
         builder: (context, snapshot) {
@@ -249,6 +254,7 @@ class _MessageBodyState extends State<_MessageBody> {
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,
+              shrinkWrap: true,
               itemBuilder: (context, index) {
                 var element = snapshot.data![index];
                 return ChatBox(
@@ -262,7 +268,7 @@ class _MessageBodyState extends State<_MessageBody> {
                   }),
                 );
               },
-              controller: widget.scrollController,
+              controller: scrollController,
               padding: scaffoldPadding,
             );
           }
