@@ -133,6 +133,20 @@ class __ProfileCreatePageBodyState extends State<_ProfileCreatePageBody> {
                             },
                           ),
                         ),
+                        const SizedBox(
+                          width: defaultMargin,
+                        ),
+                        Expanded(
+                          child: GenderButton(
+                            text: "Both",
+                            active: selectedGender == 'A',
+                            onPress: () {
+                              setState(() {
+                                selectedGender = 'A';
+                              });
+                            },
+                          ),
+                        ),
                       ],
                     )
                   ],

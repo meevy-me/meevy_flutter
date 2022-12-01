@@ -12,23 +12,28 @@ import 'package:soul_date/components/soul_spotify_border.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 
-class ProfileCreate extends StatefulWidget {
-  const ProfileCreate({Key? key}) : super(key: key);
+import '../models/profile_model.dart';
+
+class ProfileUpdate extends StatefulWidget {
+  const ProfileUpdate({Key? key}) : super(key: key);
 
   @override
-  State<ProfileCreate> createState() => _ProfileCreateState();
+  State<ProfileUpdate> createState() => _ProfileUpdateState();
 }
 
-class _ProfileCreateState extends State<ProfileCreate> {
+class _ProfileUpdateState extends State<ProfileUpdate> {
   final SoulController soulController = Get.find<SoulController>();
   DateTime? selectedDate;
   TextEditingController name = TextEditingController();
   TextEditingController bio = TextEditingController();
   String target = 'A';
-  int targetIndex = 0;
 
   @override
   void initState() {
+    Profile _profile = soulController.profile!;
+    name.text = _profile.name;
+    bio.text = _profile.bio;
+    target = _profile.looking_for;
     super.initState();
   }
 
@@ -44,9 +49,12 @@ class _ProfileCreateState extends State<ProfileCreate> {
               padding: const EdgeInsets.all(defaultMargin),
               child: Row(
                 children: [
-                  const SizedBox(
+                  SizedBox(
                       width: 20,
-                      child: IconContainer(icon: Icon(Icons.arrow_back_ios))),
+                      child: IconContainer(
+                        icon: const Icon(Icons.arrow_back_ios),
+                        onPress: () => Navigator.pop(context),
+                      )),
                   Expanded(
                     child: Center(
                       child: Text(
@@ -191,7 +199,7 @@ class _ProfileCreateState extends State<ProfileCreate> {
           Positioned(
             right: defaultMargin * 2,
             child: _TargetPick(
-              selectedTarget: targetIndex,
+              selectedTarget: target,
               onChange: (value) {
                 setState(() {
                   target = value;
@@ -211,7 +219,7 @@ class _TargetPick extends StatefulWidget {
     required this.selectedTarget,
     this.onChange,
   }) : super(key: key);
-  final int selectedTarget;
+  final String selectedTarget;
   final void Function(String value)? onChange;
 
   @override
@@ -219,10 +227,10 @@ class _TargetPick extends StatefulWidget {
 }
 
 class _TargetPickState extends State<_TargetPick> {
-  late int activeIndex;
+  late String activeTarget;
   @override
   void initState() {
-    activeIndex = widget.selectedTarget;
+    activeTarget = widget.selectedTarget;
 
     super.initState();
   }
@@ -230,60 +238,82 @@ class _TargetPickState extends State<_TargetPick> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Audience",
+          "Your Audience",
           style: Theme.of(context).textTheme.bodyText1,
         ),
         const SizedBox(
           height: defaultMargin,
         ),
-        Column(
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Column(
+              children: [
+                RadioContainer(
+                  onTap: () {
+                    if (widget.onChange != null) {
+                      widget.onChange!('M');
+                    }
+                    setState(() {
+                      activeTarget = 'M';
+                    });
+                  },
+                  active: activeTarget == 'M',
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        FontAwesomeIcons.male,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: defaultMargin * 1,
+                ),
+                RadioContainer(
+                  onTap: () {
+                    if (widget.onChange != null) {
+                      widget.onChange!('F');
+                    }
+                    setState(() {
+                      activeTarget = 'F';
+                    });
+                  },
+                  active: activeTarget == 'F',
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(
+                        FontAwesomeIcons.female,
+                        color: Colors.white,
+                      ),
+                      SizedBox(
+                        width: defaultMargin,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             RadioContainer(
               onTap: () {
                 if (widget.onChange != null) {
-                  widget.onChange!('M');
+                  widget.onChange!('A');
                 }
                 setState(() {
-                  activeIndex = 0;
+                  activeTarget = 'A';
                 });
               },
-              active: activeIndex == 0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(
-                    FontAwesomeIcons.male,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: defaultMargin * 1,
-            ),
-            RadioContainer(
-              onTap: () {
-                if (widget.onChange != null) {
-                  widget.onChange!('F');
-                }
-                setState(() {
-                  activeIndex = 1;
-                });
-              },
-              active: activeIndex == 1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(
-                    FontAwesomeIcons.female,
-                    color: Colors.white,
-                  ),
-                  SizedBox(
-                    width: defaultMargin,
-                  ),
-                ],
+              active: activeTarget == 'A',
+              child: Icon(
+                FontAwesomeIcons.peopleGroup,
+                color: Colors.white,
               ),
             ),
           ],
