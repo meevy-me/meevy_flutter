@@ -42,16 +42,7 @@ class SearchProfileDialog extends StatelessWidget {
               profile.bio,
               style: Theme.of(context).textTheme.caption,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
-              child: SoulSlider(
-                  onComplete: () {
-                    controller.sendRequest({'profile2': profile.id.toString()},
-                        context: context);
-                  },
-                  defaultText: "Send Pair Request",
-                  completedWidget: const Text("You have sent a request")),
-            )
+            SoulSliderCheck(profile: profile)
           ],
         ),
       ),

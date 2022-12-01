@@ -297,7 +297,7 @@ class _SongWithImage extends StatelessWidget {
                 spot.caption,
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText2!
+                    .bodyText1!
                     .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
               ),
             ],
@@ -320,7 +320,7 @@ class _SongDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<SoulController>(builder: (controller) {
       return InkWell(
-        onTap: () => controller.spotify
+        onDoubleTap: () => controller.spotify
             .openSpotify(spot.details.item.uri, spot.details.item.href),
         child: Row(
           children: [

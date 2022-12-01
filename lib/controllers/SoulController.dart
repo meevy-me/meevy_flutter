@@ -43,8 +43,8 @@ class SoulController extends GetxController {
   @override
   void onInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-    setSpotifyToken();
     getFriends();
+    setSpotifyToken();
     registerDevice();
     fetchMatches();
     getProfile();
@@ -55,8 +55,7 @@ class SoulController extends GetxController {
   currentlyPlaying() {
     Timer.periodic(const Duration(minutes: 5), (timer) async {
       if (profile != null) {
-        SpotifyDetails? data =
-            await spotify.fetchCurrentPlaying(navigate: false);
+        SpotifyDetails? data = await spotify.currentlyPlaying();
         FirebaseDatabase.instance
             .ref()
             .child('currentlyPlaying')
@@ -103,6 +102,12 @@ class SoulController extends GetxController {
     if (response.statusCode <= 210) {
       friends = friendsFromJson(response.body);
     }
+  }
+
+  Future<Friends> getFriend(int id) async {
+    http.Response response = await client.get(fetchFriendsUrl + "$id/");
+
+    return Friends.fromJson(json.decode(response.body));
   }
 
   setSpotifyToken() async {

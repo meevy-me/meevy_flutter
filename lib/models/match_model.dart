@@ -53,7 +53,7 @@ class Match {
 
   String? get matchMethod {
     // if (method == 'T') {
-    return "Top artist or track";
+    return method;
     // } else if (method == 'F') {
     //   return 'Favourite song';
     // }

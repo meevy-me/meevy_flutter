@@ -228,27 +228,45 @@ class _MessagesSection extends StatelessWidget {
               indexKey: 'position',
               itemBuilder: (context, index, doc) {
                 var chat_id = int.parse(doc['chat_id']);
-                var friend = messageController.getFriend(chat_id);
-                return InkWell(
-                  key: UniqueKey(),
-                  onTap: () {},
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultMargin / 2),
-                    child: InkWell(
-                        onTap: () {
-                          Get.to(() => ChatScreen(
-                                friend: friend,
-                              ));
-                        },
-                        child: Column(
-                          children: [
-                            ChatItem(friend: friend, size: size),
-                            const Divider()
-                          ],
-                        )),
-                  ),
-                );
+                return FutureBuilder<Friends>(
+                    key: UniqueKey(),
+                    initialData: messageController.friends[chat_id],
+                    future: messageController.getFriend(chat_id),
+                    builder: (context, snapshot) {
+                      return snapshot.data != null &&
+                              snapshot.hasData &&
+                              !snapshot.hasError
+                          ? InkWell(
+                              key: UniqueKey(),
+                              onTap: () {},
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: defaultMargin / 2),
+                                child: InkWell(
+                                    onTap: () {
+                                      Get.to(() => ChatScreen(
+                                            friend: snapshot.data!,
+                                          ));
+                                    },
+                                    child: Column(
+                                      children: [
+                                        ChatItem(
+                                            friend: snapshot.data!, size: size),
+                                        const Divider()
+                                      ],
+                                    )),
+                              ),
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: defaultMargin),
+                              child: SpinKitRing(
+                                color: Theme.of(context).primaryColor,
+                                size: 20,
+                                lineWidth: 2,
+                              ),
+                            );
+                    });
               },
             )));
   }

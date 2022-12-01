@@ -91,6 +91,23 @@ class Spotify {
     }
   }
 
+  Future<SpotifyDetails?> currentlyPlaying() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    accessToken = preferences.getString("spotify_accesstoken")!;
+    refreshToken = preferences.getString("spotify_refreshtoken")!;
+    http.Response res = await client.get(playerUrl,
+        headers: {
+          'Authorization': "Bearer $accessToken",
+          "Content-Type": "application/json"
+        },
+        useToken: false);
+
+    if (res.statusCode <= 210 && res.body.isNotEmpty) {
+      return SpotifyDetails.fromJson(json.decode(res.body));
+    }
+    return null;
+  }
+
   Future<SpotifyDetails?> fetchCurrentPlaying(
       {BuildContext? context, navigate = true}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();

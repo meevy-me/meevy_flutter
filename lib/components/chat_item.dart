@@ -147,25 +147,27 @@ class _ListeningActivityState extends State<ListeningActivity>
     return item != null
         ? Padding(
             padding: const EdgeInsets.only(top: defaultMargin / 2),
-            child: Row(
-              children: [
-                SoulCircleAvatar(
-                  imageUrl: item!.album.images.first.url,
-                  radius: 10,
-                ),
-                const SizedBox(
-                  width: defaultPadding,
-                ),
-                Text(
-                  item!.name,
-                  style: Theme.of(context).textTheme.caption!.copyWith(
-                      fontSize: 12,
-                      color: spotifyGreen,
-                      fontWeight: FontWeight.w500),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+            child: FittedBox(
+              child: Row(
+                children: [
+                  SoulCircleAvatar(
+                    imageUrl: item!.album.images.first.url,
+                    radius: 10,
+                  ),
+                  const SizedBox(
+                    width: defaultPadding,
+                  ),
+                  Text(
+                    item!.name,
+                    style: Theme.of(context).textTheme.caption!.copyWith(
+                        fontSize: 12,
+                        color: spotifyGreen,
+                        fontWeight: FontWeight.w500),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           )
         : const SizedBox.shrink();

@@ -298,7 +298,7 @@ class _SongDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<SoulController>(builder: (controller) {
       return InkWell(
-        onTap: () =>
+        onDoubleTap: () =>
             controller.spotify.openSpotify(details.item.uri, details.item.href),
         child: SizedBox(
           height: 100,

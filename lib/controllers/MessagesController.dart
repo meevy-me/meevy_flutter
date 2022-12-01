@@ -7,37 +7,36 @@ import '../models/models.dart';
 import '../services/network.dart';
 
 class MessageController extends GetxController {
-  RxList<Chat> chats = <Chat>[].obs;
-  WebSocketChannel? connection;
-  HttpClient client = HttpClient();
-
   SoulController controller = Get.find<SoulController>();
-
+  Map<int, Friends> friends = {};
   String? get userID {
     return controller.profile?.user.id.toString();
   }
 
-  Stream<List<Friends>>? fetchChats() {
-    if (userID != null) {
-      return FirebaseFirestore.instance
-          .collection('userChats')
-          .doc(userID!)
-          .collection('chats')
-          .snapshots()
-          .map((list) => list.docs.map((e) {
-                int chat_id = int.parse(e.data()['chat_id']);
-                Friends friend = getFriend(chat_id);
-                friend.docmentID = e.id;
-                return friend;
-              }).toList());
+  // Stream<List<Friends>>? fetchChats() {
+  //   if (userID != null) {
+  //     return FirebaseFirestore.instance
+  //         .collection('userChats')
+  //         .doc(userID!)
+  //         .collection('chats')
+  //         .snapshots()
+  //         .map((list) => list.docs.map((e) {
+  //               int chat_id = int.parse(e.data()['chat_id']);
+  //               late Friends friend;
+  //               getFriend(chat_id).then((value) => friend = value);
+  //               friend.docmentID = e.id;
+  //               return friend;
+  //             }).toList());
+  //   }
+  //   return null;
+  // }
+
+  Future<Friends> getFriend(int id) async {
+    if (!friends.containsKey(id)) {
+      friends[id] = await controller.getFriend(id);
     }
-    return null;
-  }
 
-  Friends getFriend(int id) {
-    int index = controller.friends.indexWhere((element) => element.id == id);
-
-    return controller.friends[index];
+    return friends[id]!;
   }
 
   void sendMessage(

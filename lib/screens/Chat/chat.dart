@@ -176,6 +176,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   messageController.sendMessage(
                                       chatID: widget.friend.id,
                                       msg: text.text,
+                                      receiver: profile,
                                       replyTo: replyTo);
 
                                   text.clear();

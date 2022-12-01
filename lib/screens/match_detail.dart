@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/custom_slider.dart';
@@ -7,6 +8,7 @@ import 'package:soul_date/components/spotify_card.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/match_model.dart';
+import 'package:soul_date/models/models.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class MatchDetail extends StatelessWidget {
@@ -127,39 +129,9 @@ class _MatchProfile extends StatelessWidget {
               ],
             ),
           ),
-          FutureBuilder<bool>(
-              future: match.requested,
-              builder: (context, snapshot) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-                  child: Center(
-                    child: snapshot.data != null &&
-                            snapshot.hasData &&
-                            snapshot.data!
-                        ? Text(
-                            ":( You already sent a request",
-                            style: Theme.of(context).textTheme.bodyText1,
-                          )
-                        : SoulSlider(
-                            completedWidget:
-                                const Text("You have sent a request"),
-                            defaultText:
-                                "Slide to match with ${match.matched.name}",
-                            onComplete: () {
-                              controller.sendRequest(
-                                  {'profile2': match.matched.id.toString()},
-                                  context: context);
-                            },
-                          ),
-                    // child: SlideToLike(
-                    //     match: match.matched,
-                    //     onLiked: (value) {
-                    //       controller.sendRequest({'matchID': match.id.toString()},
-                    //           context: context);
-                    //     })
-                  ),
-                );
-              }),
+          SoulSliderCheck(
+            profile: match.matched,
+          ),
         ],
       ),
     );
