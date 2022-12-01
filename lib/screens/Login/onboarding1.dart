@@ -1,4 +1,6 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../constants/constants.dart';
 import 'onboarding.dart';
@@ -8,6 +10,7 @@ class Page1 extends StatelessWidget {
   final Function()? onPress;
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Onboarding(
       assetUrl: "assets/images/girl_onboarding.jpg",
       child: Column(
@@ -36,35 +39,41 @@ class Page1 extends StatelessWidget {
                   ),
             ),
           ),
-          InkWell(
-            onTap: () {
-              // onTap();
-            },
-            child: Align(
-              alignment: Alignment.bottomRight,
+          const SizedBox(
+            height: defaultMargin * 2,
+          ),
+          ElevatedButton(
+              onPressed: onPress,
+              style: ElevatedButton.styleFrom(
+                  fixedSize: Size(size.width, 50),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  backgroundColor: Theme.of(context).primaryColor),
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: defaultMargin * 3),
-                child: InkWell(
-                  onTap: onPress,
-                  child: Container(
-                    height: 60,
-                    width: 60,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor),
-                    child: Center(
-                      child: Icon(
+                padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+                child: Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
                         Icons.login,
-                        size: 30,
                         color: Colors.white,
                       ),
-                    ),
+                      const SizedBox(
+                        width: defaultMargin,
+                      ),
+                      Text(
+                        "Proceed to Meevy",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Colors.white),
+                      )
+                    ],
                   ),
                 ),
-              ),
-            ),
-          )
+              ))
         ],
       ),
     );

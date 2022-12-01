@@ -46,6 +46,8 @@ class MyProfileScreen extends StatelessWidget {
                                         child: Padding(
                                           padding: scaffoldPadding,
                                           child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
                                               Text(
                                                 "Do you want to logout?",
@@ -54,7 +56,7 @@ class MyProfileScreen extends StatelessWidget {
                                                     .bodyText1,
                                               ),
                                               const SizedBox(
-                                                height: defaultMargin,
+                                                height: defaultMargin * 2,
                                               ),
                                               Row(
                                                 mainAxisAlignment:
