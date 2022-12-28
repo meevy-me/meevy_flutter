@@ -104,6 +104,13 @@ class Spotify {
 
     if (res.statusCode <= 210 && res.body.isNotEmpty) {
       return SpotifyDetails.fromJson(json.decode(res.body));
+    } else if (res.statusCode <= 401 &&
+        json.decode(res.body)['error']['message'] ==
+            "The access token expired") {
+      await refreshAccessToken();
+      currentlyPlaying();
+    } else {
+      log(res.body, name: "CURRENTLY PLAYING");
     }
     return null;
   }

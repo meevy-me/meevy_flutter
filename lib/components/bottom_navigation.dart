@@ -1,6 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:soul_date/constants/constants.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SoulBottomNavigationBar extends StatefulWidget {
   const SoulBottomNavigationBar({
@@ -22,10 +22,11 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
     return Container(
       height: 55,
       width: size.width,
-      margin: const EdgeInsets.fromLTRB(
-          defaultMargin * 3, 0, defaultMargin * 3, defaultMargin),
-      decoration: BoxDecoration(
-          color: Colors.black, borderRadius: BorderRadius.circular(20)),
+      // margin: const EdgeInsets.fromLTRB(
+      //     defaultMargin * 3, 0, defaultMargin * 3, defaultMargin),
+      decoration: const BoxDecoration(
+        color: Colors.black,
+      ),
       child: Row(
         children: [
           Flexible(
@@ -38,19 +39,46 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
               },
               child: _BottomNavigationItem(
                 active: selectedIndex == 0 ? true : false,
-                iconData: FontAwesomeIcons.house,
+                icon: CupertinoIcons.house_alt_fill,
+                title: "Home",
               ),
             ),
           ),
           Flexible(
             child: InkWell(
-              onTap: () => setState(() {
-                selectedIndex = 1;
-                widget.onTap(1);
-              }),
+              onTap: () {
+                setState(() {
+                  selectedIndex = 1;
+                  widget.onTap(1);
+                });
+              },
               child: _BottomNavigationItem(
                 active: selectedIndex == 1 ? true : false,
-                iconData: FontAwesomeIcons.userLarge,
+                child: SvgPicture.asset(
+                  'assets/images/paper.svg',
+                  height: selectedIndex == 1 ? 28 : 25,
+                  color: selectedIndex == 1 ? Colors.black : Colors.grey,
+                ),
+                title: "Messages",
+              ),
+            ),
+          ),
+          Flexible(
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  selectedIndex = 2;
+                  widget.onTap(2);
+                });
+              },
+              child: _BottomNavigationItem(
+                active: selectedIndex == 2 ? true : false,
+                child: SvgPicture.asset(
+                  'assets/images/disco.svg',
+                  height: selectedIndex == 2 ? 26 : 23,
+                  color: selectedIndex == 2 ? Colors.black : Colors.grey,
+                ),
+                title: "Discover",
               ),
             ),
           ),
@@ -63,12 +91,16 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
 class _BottomNavigationItem extends StatefulWidget {
   const _BottomNavigationItem({
     Key? key,
-    required this.iconData,
     this.active = false,
+    this.icon,
+    required this.title,
+    this.child,
   }) : super(key: key);
 
   final bool active;
-  final IconData iconData;
+  final IconData? icon;
+  final String title;
+  final Widget? child;
 
   @override
   State<_BottomNavigationItem> createState() => _BottomNavigationItemState();
@@ -78,18 +110,32 @@ class _BottomNavigationItemState extends State<_BottomNavigationItem> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      decoration: BoxDecoration(
-          color: widget.active ? Colors.white : null,
-          borderRadius: BorderRadius.circular(20)),
-      child: Center(
-        child: Icon(
-          widget.iconData,
-          size: 20,
-          color: widget.active ? Theme.of(context).primaryColor : Colors.grey,
-        ),
-      ),
-    );
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+            color: widget.active ? Colors.white : null,
+            borderRadius: BorderRadius.circular(20)),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              widget.child ??
+                  Icon(
+                    widget.icon,
+                    size: widget.active ? 28 : 25,
+                    color: widget.active ? Colors.black : Colors.grey,
+                  ),
+              Text(
+                widget.title,
+                style: Theme.of(context).textTheme.caption!.copyWith(
+                    color: widget.active
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey,
+                    fontWeight: widget.active ? FontWeight.w600 : null),
+              )
+            ],
+          ),
+        ));
   }
 }

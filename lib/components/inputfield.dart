@@ -11,6 +11,7 @@ class SoulField extends StatefulWidget {
     Key? key,
     required this.hintText,
     this.onChanged,
+    this.focusNode,
   }) : super(key: key);
   final String hintText;
   final TextEditingController? controller;
@@ -19,6 +20,7 @@ class SoulField extends StatefulWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final Color activeColor;
+  final FocusNode? focusNode;
   final Function(String value)? onChanged;
 
   @override
@@ -44,6 +46,7 @@ class _SoulFieldState extends State<SoulField> {
         autovalidateMode: AutovalidateMode.always,
         validator: widget.validator,
         controller: widget.controller,
+        focusNode: widget.focusNode,
         obscureText: visible,
         decoration: InputDecoration(
             focusColor: Colors.black,

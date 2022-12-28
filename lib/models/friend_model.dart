@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
@@ -70,6 +71,10 @@ class Friends extends Comparable<Friends> {
       return -1;
     }
     return position - other.position;
+  }
+
+  String get dateAcceptedFormat {
+    return DateFormat.yMEd().format(dateAdded);
   }
 
   Profile get friendsProfile {

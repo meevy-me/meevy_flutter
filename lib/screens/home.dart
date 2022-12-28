@@ -5,6 +5,9 @@ import 'package:soul_date/controllers/FirebaseController.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
+import 'package:soul_date/screens/Chat/messages.dart';
+import 'package:soul_date/screens/discover.dart';
+import 'package:soul_date/screens/home/feed.dart';
 import 'package:soul_date/screens/match.dart';
 import 'package:soul_date/screens/profile_home.dart';
 
@@ -24,7 +27,11 @@ class _HomePageState extends State<HomePage> {
   final MessageController msgController = Get.put(MessageController());
   final PageController _pageController = PageController();
   int selectedIndex = 0;
-  List<Widget> pages = const [MatchScreen(), MyProfileScreen(), SettingsHome()];
+  List<Widget> pages = const [
+    HomeFeed(),
+    MessagesPage(),
+    DiscoverPage(),
+  ];
   @override
   void initState() {
     super.initState();
@@ -39,26 +46,13 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: SoulBottomNavigationBar(
-        onTap: (index) {
-          setState(() {
-            _pageController.animateToPage(index,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut);
-            selectedIndex = index;
-          });
-        },
-      ),
-      body: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            selectedIndex = index;
-          });
-        },
-        children: pages,
-      ),
-    );
+        bottomNavigationBar: SoulBottomNavigationBar(
+          onTap: (index) {
+            setState(() {
+              selectedIndex = index;
+            });
+          },
+        ),
+        body: pages[selectedIndex]);
   }
 }

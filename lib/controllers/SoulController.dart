@@ -52,8 +52,15 @@ class SoulController extends GetxController {
     super.onInit();
   }
 
+  Future<Map> currentCountry() async {
+    //Returns a map for the country code of the IP
+    http.Response res = await client.get('http://ip-api.com/json');
+    Map data = jsonDecode(res.body);
+    return data;
+  }
+
   currentlyPlaying() {
-    Timer.periodic(const Duration(minutes: 5), (timer) async {
+    Timer.periodic(const Duration(minutes: 1), (timer) async {
       if (profile != null) {
         SpotifyDetails? data = await spotify.currentlyPlaying();
         FirebaseDatabase.instance
@@ -68,9 +75,9 @@ class SoulController extends GetxController {
   registerDevice() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (preferences.containsKey('firebase_token')) {
-      String? firebase_token = preferences.getString('firebase_token');
-      if (firebase_token != null) {
-        FirebaseAuth.instance.signInWithCustomToken(firebase_token);
+      String? firebaseToken = preferences.getString('firebase_token');
+      if (firebaseToken != null) {
+        FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
       }
     } else {
       var fireToken = await FirebaseMessaging.instance.getToken();
@@ -198,8 +205,8 @@ class SoulController extends GetxController {
     http.Response res = await client.patch('${profileUrl}1/', body);
     if (res.statusCode <= 210) {
       getProfile();
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Profile Updated")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Profile Updated. Matches will update tomorrow")));
     } else {
       log(res.body, name: "UPDATE PROFILE");
       ScaffoldMessenger.of(context)

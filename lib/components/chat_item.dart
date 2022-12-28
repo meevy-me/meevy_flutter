@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
@@ -144,6 +143,7 @@ class _ListeningActivityState extends State<ListeningActivity>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return item != null
         ? Padding(
             padding: const EdgeInsets.only(top: defaultMargin / 2),
@@ -241,7 +241,7 @@ class _ChatMessage extends StatelessWidget {
                           : "👋 Say Hello",
                       style: Theme.of(context).textTheme.caption!.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF2A2A2A),
+                          color: const Color(0xFF2A2A2A),
                           overflow: TextOverflow.ellipsis),
                     ),
                   ),

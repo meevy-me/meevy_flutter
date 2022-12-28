@@ -28,10 +28,9 @@ class _MatchScreenState extends State<MatchScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            appBar: buildHomeAppBar(context),
             body: _MatchScreenBody(
-              controller: controller,
-            )));
+      controller: controller,
+    )));
   }
 }
 
@@ -106,7 +105,7 @@ class _MatchScreenBody extends StatelessWidget {
             ),
           ),
           Text(
-            "Today's Matches",
+            "Discover your matches",
             style: Theme.of(context).textTheme.headline5,
           ),
           Padding(

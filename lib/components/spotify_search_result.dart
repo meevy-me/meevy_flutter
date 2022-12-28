@@ -36,6 +36,7 @@ class _SpotifyTrackResultState extends State<SpotifyTrackResult>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: defaultMargin),
       child: Row(

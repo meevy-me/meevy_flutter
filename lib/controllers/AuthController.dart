@@ -147,10 +147,13 @@ class SpotifyController extends GetxController {
       'access_token': spotify.accessToken,
       'refresh_token': spotify.refreshToken
     });
+    log(spotify.accessToken);
+    log(spotify.refreshToken);
     if (response.statusCode <= 210) {
       Get.to(() => const SplashScreen());
     } else if (response.statusCode <= 500) {
-      Get.to(() => const SplashScreen());
+      log(response.body);
+      // Get.to(() => const SplashScreen());
     } else {
       log(response.body, name: "ERROR");
     }

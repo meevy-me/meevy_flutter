@@ -27,7 +27,6 @@ class Chat {
   DateTime dateCreated;
 
   factory Chat.fromJson(Map<String, dynamic> json) {
-    print(json);
     Chat newChat = Chat(
         id: json["id"],
         dateCreated: DateTime.parse(json["date_created"]),

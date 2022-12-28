@@ -66,6 +66,7 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Radius r = const Radius.circular(10);
     return GestureDetector(
       onLongPress: () =>

@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:soul_date/constants/colors.dart';
+import 'package:soul_date/screens/Phone/phone_auth.dart';
 import 'package:soul_date/screens/splash_screen.dart';
 import 'package:soul_date/services/notifications.dart';
 

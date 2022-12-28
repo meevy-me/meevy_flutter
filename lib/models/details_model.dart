@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:soul_date/constants/constants.dart';
-import 'package:soul_date/models/match_base.dart';
 import 'package:soul_date/models/models.dart';
 
 List<Details> detailsFromJson(String str) =>

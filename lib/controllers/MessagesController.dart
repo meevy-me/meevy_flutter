@@ -2,9 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 
-import 'package:web_socket_channel/web_socket_channel.dart';
 import '../models/models.dart';
-import '../services/network.dart';
 
 class MessageController extends GetxController {
   SoulController controller = Get.find<SoulController>();
@@ -44,7 +42,7 @@ class MessageController extends GetxController {
       required String msg,
       Profile? receiver,
       Message? replyTo}) {
-    Map<String, dynamic> to_send = {
+    Map<String, dynamic> toSend = {
       "sender": userID,
       "message": msg,
       "date_sent": DateTime.now().toString(),
@@ -55,11 +53,11 @@ class MessageController extends GetxController {
         .doc(chatID.toString())
         .collection('messages')
         .doc()
-        .set(to_send);
+        .set(toSend);
     FirebaseFirestore.instance
         .collection('chats')
         .doc(chatID.toString())
-        .update({"last_message": to_send});
+        .update({"last_message": toSend});
     if (receiver != null) {
       controller.sendNotification(receiver, msg);
     }

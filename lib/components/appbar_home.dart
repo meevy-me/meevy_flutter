@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:soul_date/controllers/FirebaseController.dart';
-import 'package:soul_date/screens/Chat/messages.dart';
+import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/screens/profile_home.dart';
 
 import 'logo.dart';
 
@@ -10,8 +11,7 @@ AppBar buildHomeAppBar(BuildContext context) {
   return AppBar(
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     elevation: 0,
-    title: const Logo(),
-    centerTitle: true,
+
     // leading: IconButton(
     //   onPressed: () {},
     //   icon: SvgPicture.asset(
@@ -21,35 +21,25 @@ AppBar buildHomeAppBar(BuildContext context) {
     //   ),
     // ),
     actions: [
-      IconButton(
-          onPressed: () {
-            Get.to(() => const MessagesPage());
-          },
-          icon: Stack(
-            children: [
-              SvgPicture.asset(
-                'assets/images/paper.svg',
-                height: 25,
-              ),
-              GetBuilder<FirebaseController>(
-                  id: 'hasChat',
-                  builder: (controller) {
-                    return Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Visibility(
-                        visible: controller.hasChat,
-                        child: Container(
-                            height: 8,
-                            width: 8,
-                            decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
-                                shape: BoxShape.circle)),
-                      ),
-                    );
-                  })
-            ],
-          ))
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
+        child: GetBuilder<SoulController>(builder: (controller) {
+          return controller.profile != null
+              ? InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MyProfileScreen()));
+                  },
+                  child: SoulCircleAvatar(
+                    imageUrl: controller.profile!.images.last.image,
+                    radius: 15,
+                  ),
+                )
+              : const SizedBox.shrink();
+        }),
+      )
     ],
   );
 }
