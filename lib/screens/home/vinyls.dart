@@ -140,10 +140,8 @@ class _VinylsPageState extends State<VinylsPage> {
                                                   vinyl: VinylModel.fromJson(
                                                       data, doc_id));
                                             }
-                                            return SpinKitRing(
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                              lineWidth: 2,
+                                            return SpinKitPulse(
+                                              color: Colors.grey,
                                             );
                                           });
                                     },

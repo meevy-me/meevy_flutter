@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
@@ -36,7 +38,7 @@ class VinylModal extends StatelessWidget {
                   width: 140,
                   height: 140,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: defaultMargin,
                 ),
                 TextScroll(
@@ -59,10 +61,30 @@ class VinylModal extends StatelessWidget {
           ),
           Column(
             children: [
-              VinylModalAction(
-                icon: CupertinoIcons.heart_fill,
-                text: "Like",
-              ),
+              FutureBuilder<bool>(
+                  future: isVinylLiked(vinyl),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.data != null) {
+                      return VinylModalAction(
+                        icon: snapshot.data!
+                            ? CupertinoIcons.heart_slash_fill
+                            : CupertinoIcons.heart_fill,
+                        text: snapshot.data! ? "Remove from liked" : "Like",
+                        onPress: () {
+                          if (!snapshot.data!) {
+                            vinylLike(context, vinyl);
+                          } else {
+                            vinylLikeRemove(context, vinyl);
+                          }
+                          Navigator.pop(context);
+                        },
+                      );
+                    }
+                    return const SpinKitPulse(
+                      color: Colors.grey,
+                    );
+                  }),
               VinylModalAction(
                 onPress: () {
                   vinylPlay(context, vinyl);
@@ -79,14 +101,30 @@ class VinylModal extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
-              VinylModalAction(
-                icon: Icons.playlist_add,
-                onPress: () {
-                  vinylPlaylist(context, vinyl);
-                  Navigator.pop(context);
-                },
-                text: "Add to Mutual Playlist",
-              ),
+              FutureBuilder<bool>(
+                  future: isVinylInPlaylist(vinyl),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.data != null) {
+                      return VinylModalAction(
+                        icon: snapshot.data!
+                            ? Icons.playlist_remove
+                            : Icons.playlist_add,
+                        onPress: () {
+                          snapshot.data!
+                              ? vinylPlaylistRemove(context, vinyl)
+                              : vinylPlaylist(context, vinyl);
+                          Navigator.pop(context);
+                        },
+                        text: snapshot.data!
+                            ? "Remove from Mutual Playlist"
+                            : "Add to Mutual Playlist",
+                      );
+                    }
+                    return const SpinKitPulse(
+                      color: Colors.grey,
+                    );
+                  }),
               VinylModalAction(
                 onPress: () {
                   vinylOpenSpotify(context, vinyl);

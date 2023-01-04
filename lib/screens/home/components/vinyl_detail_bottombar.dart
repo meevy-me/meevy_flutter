@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
 import 'package:soul_date/services/color_utils.dart';
@@ -41,15 +42,31 @@ class VinylBottomBar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _VinylBottomItem(
-                    color: bgColor,
-                    onPress: () {
-                      vinylLike(context, vinylModel);
-                    },
-                    iconColor: iconColor,
-                    iconData: CupertinoIcons.heart_fill,
-                    title: "Like",
-                  ),
+                  FutureBuilder<bool>(
+                      future: isVinylLiked(vinylModel),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done &&
+                            snapshot.data != null) {
+                          return _VinylBottomItem(
+                            color: bgColor,
+                            onPress: () {
+                              if (!snapshot.data!) {
+                                vinylLike(context, vinylModel);
+                              } else {
+                                vinylLikeRemove(context, vinylModel);
+                              }
+                            },
+                            iconColor: iconColor,
+                            iconData: snapshot.data!
+                                ? CupertinoIcons.heart_slash_fill
+                                : CupertinoIcons.heart_fill,
+                            title: "Like",
+                          );
+                        }
+                        return SpinKitPulse(
+                          color: Colors.grey,
+                        );
+                      }),
                   _VinylBottomItem(
                     color: bgColor,
                     onPress: () {
@@ -59,15 +76,29 @@ class VinylBottomBar extends StatelessWidget {
                     iconData: CupertinoIcons.play_arrow_solid,
                     title: "Play",
                   ),
-                  _VinylBottomItem(
-                    color: bgColor,
-                    onPress: () {
-                      vinylPlaylist(context, vinylModel);
-                    },
-                    iconColor: iconColor,
-                    iconData: Icons.playlist_add,
-                    title: "Add",
-                  ),
+                  FutureBuilder<bool>(
+                      future: isVinylInPlaylist(vinylModel),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done &&
+                            snapshot.data != null) {
+                          return _VinylBottomItem(
+                            color: bgColor,
+                            onPress: () {
+                              snapshot.data!
+                                  ? vinylPlaylistRemove(context, vinylModel)
+                                  : vinylPlaylist(context, vinylModel);
+                            },
+                            iconColor: iconColor,
+                            iconData: snapshot.data!
+                                ? Icons.playlist_remove
+                                : Icons.playlist_add,
+                            title: snapshot.data! ? "Remove" : "Add",
+                          );
+                        }
+                        return const SpinKitPulse(
+                          color: Colors.grey,
+                        );
+                      }),
                   _VinylBottomItem(
                     color: bgColor,
                     onPress: () {
