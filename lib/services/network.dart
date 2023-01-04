@@ -94,4 +94,33 @@ class HttpClient {
 
     return res;
   }
+
+  Future<http.Response> put(String endpoint,
+      {Map<String, dynamic>? body,
+      Object? bodyRaw,
+      Map<String, String>? parameters,
+      Map<String, String>? headers,
+      bool useToken = true}) async {
+    String? token = await getToken();
+
+    late Map<String, String> _headers;
+
+    if (headers != null) {
+      _headers = headers;
+    } else {
+      _headers = {};
+    }
+    if (useToken && token != null) {
+      _headers['Authorization'] = "Token $token";
+    }
+
+    http.Response res = await http.put(
+        Uri.parse(
+          _formatEndpoint(endpoint, parameters),
+        ),
+        headers: _headers,
+        body: body ?? bodyRaw);
+
+    return res;
+  }
 }

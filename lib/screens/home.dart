@@ -8,6 +8,7 @@ import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/screens/Chat/messages.dart';
 import 'package:soul_date/screens/discover.dart';
 import 'package:soul_date/screens/home/feed.dart';
+import 'package:soul_date/screens/home/vinyls.dart';
 import 'package:soul_date/screens/match.dart';
 import 'package:soul_date/screens/profile_home.dart';
 
@@ -28,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
   int selectedIndex = 0;
   List<Widget> pages = const [
-    HomeFeed(),
+    VinylsPage(),
     MessagesPage(),
     DiscoverPage(),
   ];

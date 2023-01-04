@@ -27,7 +27,15 @@ class Profile {
     })));
     return profile;
   }
-
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "user": user.toJson(),
+        "name": name,
+        "bio": bio,
+        "date_of_birth": dateOfBirth.toIso8601String(),
+        "looking_for": looking_for,
+        "images": [images.last.toJson()]
+      };
   Profile(
       {required this.id,
       required this.user,

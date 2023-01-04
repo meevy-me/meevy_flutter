@@ -316,4 +316,30 @@ class Spotify {
       }
     }
   }
+
+  Future<bool> startTrack(Map<String, dynamic> body) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var spotToken = preferences.getString("spotify_accesstoken");
+
+    http.Response res = await client.put(spotifyPlayUrl,
+        useToken: false,
+        headers: {
+          'Authorization': "Bearer $spotToken",
+          "Content-Type": "application/json"
+        },
+        bodyRaw: jsonEncode(body));
+
+    if (res.statusCode <= 210) {
+      return true;
+    } else if (res.statusCode == 401 &&
+        json.decode(res.body)['error']['message'] ==
+            "The access token expired") {
+      await refreshAccessToken();
+      startTrack(body);
+    } else {
+      log(res.body);
+      return false;
+    }
+    return false;
+  }
 }

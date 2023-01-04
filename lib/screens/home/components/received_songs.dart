@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/screens/home/vinyls.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 import '../../../constants/constants.dart';
@@ -63,105 +64,111 @@ class _ReceivedSongCard extends StatelessWidget {
     required this.index,
   }) : super(key: key);
 
-  final int index;  
+  final int index;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     Radius radius = const Radius.circular(20);
     Radius zeroRadius = const Radius.circular(0);
-    return Container(
-        height: 120,
-        width: size.width,
-        padding: const EdgeInsets.symmetric(
-            horizontal: defaultMargin, vertical: defaultPadding),
-        margin: EdgeInsets.only(
-            top: defaultMargin * 2,
-            right: index.isEven ? defaultMargin : 0.0,
-            left: index.isOdd ? defaultMargin : 0.0),
-        decoration: BoxDecoration(
-            color: Colors.black, borderRadius: BorderRadius.all(radius)),
-        child: Row(
-          children: [
-            SoulCircleAvatar(
-              imageUrl: defaultGirlUrl,
-              radius: 22,
-            ),
-            SizedBox(
-              width: defaultMargin,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: defaultMargin),
-                      child: RowSuper(children: [
-                        SoulCircleAvatar(
-                          imageUrl: secondaryAvatarUrl,
-                          radius: 12,
-                        )
-                      ]),
+    return InkWell(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const VinylsPage()));
+      },
+      child: Container(
+          height: 120,
+          width: size.width,
+          padding: const EdgeInsets.symmetric(
+              horizontal: defaultMargin, vertical: defaultPadding),
+          margin: EdgeInsets.only(
+              top: defaultMargin * 2,
+              right: index.isEven ? defaultMargin : 0.0,
+              left: index.isOdd ? defaultMargin : 0.0),
+          decoration: BoxDecoration(
+              color: Colors.black, borderRadius: BorderRadius.all(radius)),
+          child: Row(
+            children: [
+              SoulCircleAvatar(
+                imageUrl: defaultGirlUrl,
+                radius: 22,
+              ),
+              SizedBox(
+                width: defaultMargin,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: defaultMargin),
+                        child: RowSuper(children: [
+                          SoulCircleAvatar(
+                            imageUrl: secondaryAvatarUrl,
+                            radius: 12,
+                          )
+                        ]),
+                      ),
                     ),
-                  ),
-                  Text(
-                    "Hope Celestine",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Colors.white),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultMargin / 2),
-                    child: Row(
+                    Text(
+                      "Hope Celestine",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(color: Colors.white),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: defaultMargin / 2),
+                      child: Row(
+                        children: [
+                          SoulCircleAvatar(
+                            imageUrl: defaultArtistUrl,
+                            radius: 12,
+                          ),
+                          const SizedBox(
+                            width: defaultPadding,
+                          ),
+                          TextScroll(
+                            "Perfect. Ed Sheeran",
+                            style: Theme.of(context)
+                                .textTheme
+                                .caption!
+                                .copyWith(color: spotifyGreen),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: defaultPadding,
+                    ),
+                    Row(
                       children: [
-                        SoulCircleAvatar(
-                          imageUrl: defaultArtistUrl,
-                          radius: 12,
+                        Text(
+                          "Hope:",
+                          style: Theme.of(context).textTheme.caption,
                         ),
                         const SizedBox(
                           width: defaultPadding,
                         ),
-                        TextScroll(
-                          "Perfect. Ed Sheeran",
-                          style: Theme.of(context)
-                              .textTheme
-                              .caption!
-                              .copyWith(color: spotifyGreen),
-                        )
+                        Expanded(
+                          child: Text(
+                            "Omg Guys you need to listen to this",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(
-                    height: defaultPadding,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Hope:",
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                      const SizedBox(
-                        width: defaultPadding,
-                      ),
-                      Expanded(
-                        child: Text(
-                          "Omg Guys you need to listen to this",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        ));
+                  ],
+                ),
+              )
+            ],
+          )),
+    );
   }
 }

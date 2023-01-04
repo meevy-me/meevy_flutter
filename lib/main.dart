@@ -75,8 +75,11 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primaryColor: primaryPink,
-            colorScheme: ColorScheme.fromSwatch()
-                .copyWith(secondary: primaryDark, outline: primaryLight),
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+                secondary: primaryDark,
+                primaryContainer: const Color(0xFF241D1E),
+                outline: primaryLight,
+                tertiary: spotifyGreen),
             textTheme: GoogleFonts.poppinsTextTheme(const TextTheme(
                 headline1: TextStyle(
                     fontSize: 26,

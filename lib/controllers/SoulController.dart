@@ -108,6 +108,7 @@ class SoulController extends GetxController {
     http.Response response = await client.get(fetchFriendsUrl);
     if (response.statusCode <= 210) {
       friends = friendsFromJson(response.body);
+      update();
     }
   }
 

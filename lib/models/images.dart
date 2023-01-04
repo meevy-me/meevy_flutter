@@ -9,6 +9,11 @@ class ProfileImages {
     return ProfileImages(
         image: json['image'], id: json['id'], isDefault: json['default']);
   }
+
+  Map<String, dynamic> toJson() {
+    return {"id": id, "default": isDefault, "image": image};
+  }
+
   @override
   String toString() {
     return image;

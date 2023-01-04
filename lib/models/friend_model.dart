@@ -57,11 +57,11 @@ class Friends extends Comparable<Friends> {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        // "profile2": profile2.toJson(),
         "accepted": accepted,
         "date_added": dateAdded.toIso8601String(),
         "date_accepted": dateAccepted,
-        "profile1": profile1,
+        "profile1": profile1.toJson(),
+        "profile2": profile2.toJson(),
         "match": match,
       };
 
