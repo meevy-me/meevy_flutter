@@ -7,8 +7,10 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/profile_model.dart';
+import 'package:soul_date/screens/home/components/vinyl_modal.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
 import 'package:soul_date/screens/home/vinyl_detail.dart';
+import 'package:soul_date/services/modal.dart';
 import 'package:soul_date/services/spotify.dart';
 import 'package:text_scroll/text_scroll.dart';
 
@@ -44,11 +46,14 @@ class _VinylSentCardState extends State<VinylSentCard> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: CachedNetworkImage(
-                imageUrl: widget.vinyl.item.album.images.last.url,
-                height: 65,
-                width: 60,
-                fit: BoxFit.cover,
+              child: Hero(
+                tag: widget.vinyl,
+                child: CachedNetworkImage(
+                  imageUrl: widget.vinyl.item.album.images.last.url,
+                  height: 65,
+                  width: 60,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(
@@ -127,7 +132,9 @@ class _VinylSentCardState extends State<VinylSentCard> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                showModal(context, VinylModal(vinyl: widget.vinyl));
+              },
               child: const Icon(
                 FeatherIcons.moreHorizontal,
                 color: Colors.white,

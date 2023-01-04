@@ -129,10 +129,13 @@ class _VinylDetailState extends State<VinylDetail> {
                               vertical: defaultMargin),
                           child: Column(
                             children: [
-                              CachedNetworkImage(
-                                imageUrl:
-                                    widget.vinyl.item.album.images.first.url,
-                                height: size.height * 0.23,
+                              Hero(
+                                tag: widget.vinyl,
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      widget.vinyl.item.album.images.first.url,
+                                  height: size.height * 0.23,
+                                ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -279,7 +282,7 @@ class _VinylDetailState extends State<VinylDetail> {
                                     ),
                                     ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                            fixedSize: Size(60, 40),
+                                            fixedSize: const Size(40, 40),
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(20)),

@@ -103,7 +103,9 @@ class _VinylsPageState extends State<VinylsPage> {
                                   final userSnapshot = snapshot.data?.docs;
                                   return ListView.separated(
                                     padding: scaffoldPadding,
-                                    itemCount: userSnapshot!.length,
+                                    itemCount: userSnapshot != null
+                                        ? userSnapshot.length
+                                        : 0,
                                     shrinkWrap: true,
                                     separatorBuilder: (context, index) {
                                       return Divider(
@@ -111,7 +113,7 @@ class _VinylsPageState extends State<VinylsPage> {
                                       );
                                     },
                                     itemBuilder: (context, index) {
-                                      String doc_id = userSnapshot[index].id;
+                                      String doc_id = userSnapshot![index].id;
                                       return FutureBuilder<DocumentSnapshot>(
                                           future: FirebaseFirestore.instance
                                               .collection('sentTracks')
@@ -123,7 +125,8 @@ class _VinylsPageState extends State<VinylsPage> {
                                                   "Something went wrong");
                                             }
 
-                                            if (snapshot.hasData &&
+                                            if (snapshot.data != null &&
+                                                snapshot.hasData &&
                                                 !snapshot.data!.exists) {
                                               return const SizedBox.shrink();
                                             }

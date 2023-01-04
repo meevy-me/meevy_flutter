@@ -317,6 +317,30 @@ class Spotify {
     }
   }
 
+  Future<bool> queueTrack(String uri) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    accessToken = preferences.getString("spotify_accesstoken")!;
+    refreshToken = preferences.getString("spotify_refreshtoken")!;
+    http.Response res = await client.post(queueUrl,
+        body: {},
+        parameters: {"uri": uri},
+        useToken: false,
+        headers: {'Authorization': "Bearer $accessToken"});
+    if (res.statusCode <= 210) {
+      return true;
+      // showSnackBar(context, "Song added to your queue");
+    } else if (res.statusCode == 401 &&
+        json.decode(res.body)['error']['message'] ==
+            "The access token expired") {
+      await refreshAccessToken();
+      queueTrack(
+        uri,
+      );
+    }
+    return false;
+  }
+
   Future<bool> startTrack(Map<String, dynamic> body) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var spotToken = preferences.getString("spotify_accesstoken");

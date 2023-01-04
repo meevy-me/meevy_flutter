@@ -5,6 +5,6 @@ void showModal(BuildContext context, Widget child) {
   showModalBottomSheet(
     isScrollControlled: true,
     context: context,
-    builder: (context) => SizedBox(height: size.height * 0.7, child: child),
+    builder: (context) => child,
   );
 }

@@ -5,6 +5,7 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
 import 'package:soul_date/services/color_utils.dart';
 import 'package:soul_date/services/images.dart';
+import 'package:soul_date/services/spotify_utils.dart';
 
 import '../../../constants/constants.dart';
 
@@ -42,30 +43,38 @@ class VinylBottomBar extends StatelessWidget {
                 children: [
                   _VinylBottomItem(
                     color: bgColor,
-                    onPress: () {},
+                    onPress: () {
+                      vinylLike(context, vinylModel);
+                    },
                     iconColor: iconColor,
                     iconData: CupertinoIcons.heart_fill,
                     title: "Like",
                   ),
                   _VinylBottomItem(
                     color: bgColor,
-                    onPress: () {},
+                    onPress: () {
+                      vinylPlay(context, vinylModel);
+                    },
                     iconColor: iconColor,
                     iconData: CupertinoIcons.play_arrow_solid,
                     title: "Play",
                   ),
                   _VinylBottomItem(
                     color: bgColor,
-                    onPress: () {},
+                    onPress: () {
+                      vinylPlaylist(context, vinylModel);
+                    },
                     iconColor: iconColor,
-                    iconData: CupertinoIcons.music_albums_fill,
+                    iconData: Icons.playlist_add,
                     title: "Add",
                   ),
                   _VinylBottomItem(
                     color: bgColor,
-                    onPress: () {},
+                    onPress: () {
+                      vinylPlaylist(context, vinylModel);
+                    },
                     iconColor: iconColor,
-                    iconData: FeatherIcons.list,
+                    iconData: Icons.queue_music,
                     title: "Queue",
                   ),
                 ],
