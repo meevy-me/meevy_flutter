@@ -104,8 +104,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
       titleSpacing: 0,
       pinned: true,
       title: Text(
-        "Discover",
-        style: Theme.of(context).textTheme.headline3,
+        "Your Matches",
+        style: Theme.of(context).textTheme.headline4,
       ),
       actions: [
         IconContainer(

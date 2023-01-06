@@ -10,7 +10,6 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
-import 'package:soul_date/screens/vinyls.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.friend}) : super(key: key);

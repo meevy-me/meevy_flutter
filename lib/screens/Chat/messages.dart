@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -46,10 +47,22 @@ class _MessagesPageState extends State<MessagesPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        title:
-            Text("Souls & Spots", style: Theme.of(context).textTheme.bodyText1),
-        centerTitle: true,
+        title: Text("Friends & Messages",
+            style: Theme.of(context).textTheme.headline5),
+        // centerTitle: true,
         actions: [
+          IconContainer(
+            onPress: () {},
+            size: 40,
+            icon: const Center(
+              child: Icon(
+                FeatherIcons.search,
+                color: Colors.black,
+                size: 20,
+              ),
+            ),
+            color: Colors.grey.withOpacity(0.2),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
             child: IconContainer(
@@ -58,9 +71,9 @@ class _MessagesPageState extends State<MessagesPage> {
               size: 40,
               icon: const Center(
                 child: Icon(
-                  CupertinoIcons.group_solid,
+                  FeatherIcons.userPlus,
                   color: Colors.black,
-                  size: 30,
+                  size: 20,
                 ),
               ),
               color: Colors.grey.withOpacity(0.2),
@@ -69,12 +82,46 @@ class _MessagesPageState extends State<MessagesPage> {
         ],
       ),
       floatingActionButton: controller.profile != null
-          ? FloatingActionButton(
-              backgroundColor: Theme.of(context).primaryColor,
-              child: const Icon(FontAwesomeIcons.spotify),
-              onPressed: () async {
-                controller.spotify.fetchCurrentPlaying(context: context);
-              })
+          ? InkWell(
+              child: Material(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                type: MaterialType.button,
+                // padding: const EdgeInsets.symmetric(
+                //       vertical: defaultMargin,
+                //       horizontal: defaultMargin + defaultPadding),
+                //   decoration: BoxDecoration(
+                //       color: Theme.of(context).colorScheme.primaryContainer,
+                //       borderRadius: BorderRadius.circular(20)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: defaultMargin,
+                      horizontal: defaultMargin + defaultPadding),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/images/status.svg',
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(
+                        width: defaultPadding,
+                      ),
+                      Text(
+                        "Create Spot",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(color: Colors.white, fontSize: 13),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              onTap: () =>
+                  controller.spotify.fetchCurrentPlaying(context: context),
+            )
           : null,
       body: SafeArea(
         child: Column(
@@ -129,7 +176,7 @@ class _SpotSectionState extends State<_SpotSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Friend's Spots",
+                "Spots",
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1!

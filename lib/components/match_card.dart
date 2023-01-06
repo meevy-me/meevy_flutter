@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/match_model.dart';
 
@@ -28,15 +29,20 @@ class _MatchCardState extends State<MatchCard> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
-            child: SizedBox(
-              height: 50,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: widget.match.details.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(right: defaultMargin),
-                  child: SpotifyCard(
-                    details: widget.match.details[index],
+            child: SlideAnimation(
+              child: SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: widget.match.details.length,
+                  itemBuilder: (context, index) => Padding(
+                    padding: const EdgeInsets.only(right: defaultMargin),
+                    child: SlideAnimation(
+                      begin: const Offset(0, 250),
+                      child: SpotifyCard(
+                        details: widget.match.details[index],
+                      ),
+                    ),
                   ),
                 ),
               ),

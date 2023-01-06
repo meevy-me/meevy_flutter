@@ -31,12 +31,12 @@ class _VinylsPageState extends State<VinylsPage> {
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
         body: SafeArea(
-          child: Padding(
-            padding: scrollPadding,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding: scaffoldPadding,
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -53,20 +53,23 @@ class _VinylsPageState extends State<VinylsPage> {
                     ))
                   ],
                 ),
-                const SizedBox(
-                  height: defaultMargin,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-                  child: CurrentVinyl(),
-                ),
-                SizedBox(
-                  height: defaultMargin * 2,
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Row(
+              ),
+              const SizedBox(
+                height: defaultMargin,
+              ),
+              Padding(
+                padding: scaffoldPadding,
+                child: CurrentVinyl(),
+              ),
+              SizedBox(
+                height: defaultMargin * 2,
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: scaffoldPadding,
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
@@ -83,78 +86,76 @@ class _VinylsPageState extends State<VinylsPage> {
                           )
                         ],
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: defaultMargin),
-                          child: Container(
-                            // height: 450,
-                            decoration: BoxDecoration(
-                                color: const Color(0xFF241D1E),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: StreamBuilder<QuerySnapshot>(
-                                //TODO: Change to user profile
-                                stream: FirebaseFirestore.instance
-                                    .collection('userSentTracks')
-                                    .doc('6')
-                                    .collection('sentTracks')
-                                    .snapshots(),
-                                builder: (context, snapshot) {
-                                  final userSnapshot = snapshot.data?.docs;
-                                  return ListView.separated(
-                                    padding: scaffoldPadding,
-                                    itemCount: userSnapshot != null
-                                        ? userSnapshot.length
-                                        : 0,
-                                    shrinkWrap: true,
-                                    separatorBuilder: (context, index) {
-                                      return Divider(
-                                        color: Colors.grey.withOpacity(0.2),
-                                      );
-                                    },
-                                    itemBuilder: (context, index) {
-                                      String doc_id = userSnapshot![index].id;
-                                      return FutureBuilder<DocumentSnapshot>(
-                                          future: FirebaseFirestore.instance
-                                              .collection('sentTracks')
-                                              .doc(doc_id)
-                                              .get(),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasError) {
-                                              return Text(
-                                                  "Something went wrong");
-                                            }
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: defaultMargin),
+                        child: Container(
+                          // height: 450,
+                          decoration: BoxDecoration(
+                              color: const Color(0xFF241D1E),
+                              borderRadius: BorderRadius.circular(0)),
+                          child: StreamBuilder<QuerySnapshot>(
+                              //TODO: Change to user profile
+                              stream: FirebaseFirestore.instance
+                                  .collection('userSentTracks')
+                                  .doc('6')
+                                  .collection('sentTracks')
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                final userSnapshot = snapshot.data?.docs;
+                                return ListView.separated(
+                                  padding: scaffoldPadding,
+                                  itemCount: userSnapshot != null
+                                      ? userSnapshot.length
+                                      : 0,
+                                  shrinkWrap: true,
+                                  separatorBuilder: (context, index) {
+                                    return Divider(
+                                      color: Colors.grey.withOpacity(0.2),
+                                    );
+                                  },
+                                  itemBuilder: (context, index) {
+                                    String doc_id = userSnapshot![index].id;
+                                    return FutureBuilder<DocumentSnapshot>(
+                                        future: FirebaseFirestore.instance
+                                            .collection('sentTracks')
+                                            .doc(doc_id)
+                                            .get(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasError) {
+                                            return Text("Something went wrong");
+                                          }
 
-                                            if (snapshot.data != null &&
-                                                snapshot.hasData &&
-                                                !snapshot.data!.exists) {
-                                              return const SizedBox.shrink();
-                                            }
+                                          if (snapshot.data != null &&
+                                              snapshot.hasData &&
+                                              !snapshot.data!.exists) {
+                                            return const SizedBox.shrink();
+                                          }
 
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.done) {
-                                              Map<String, dynamic> data =
-                                                  snapshot.data!.data()
-                                                      as Map<String, dynamic>;
-                                              return VinylSentCard(
-                                                  vinyl: VinylModel.fromJson(
-                                                      data, doc_id));
-                                            }
-                                            return SpinKitPulse(
-                                              color: Colors.grey,
-                                            );
-                                          });
-                                    },
-                                  );
-                                }),
-                          ),
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.done) {
+                                            Map<String, dynamic> data =
+                                                snapshot.data!.data()
+                                                    as Map<String, dynamic>;
+                                            return VinylSentCard(
+                                                vinyl: VinylModel.fromJson(
+                                                    data, doc_id));
+                                          }
+                                          return SpinKitPulse(
+                                            color: Colors.grey,
+                                          );
+                                        });
+                                  },
+                                );
+                              }),
                         ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
           ),
         ),
       ),

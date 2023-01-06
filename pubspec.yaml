@@ -33,6 +33,7 @@ dependencies:
   assorted_layout_widgets: ^7.0.0
   build_runner: ^2.0.0
   cached_network_image: ^3.2.2
+  clay_containers: ^0.3.2
   cloud_firestore: null
   cron: ^0.5.1
   cupertino_icons: ^1.0.2

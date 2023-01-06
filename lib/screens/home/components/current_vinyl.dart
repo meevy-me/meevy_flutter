@@ -67,31 +67,25 @@ class _MusicActions extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
       child: InkWell(
         onTap: onPress,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-              horizontal: defaultMargin, vertical: defaultPadding),
-          decoration: BoxDecoration(
-              color: const Color(0xFF613A3F),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [defaultBoxShadow]),
-          child: Center(
-            child: Row(
-              children: [
-                Icon(
-                  iconData,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(
-                  width: defaultPadding,
-                ),
-                Text(
-                  text,
-                  style: Theme.of(context).textTheme.caption!.copyWith(
-                      color: Colors.white, fontWeight: FontWeight.w600),
-                )
-              ],
-            ),
+        child: Center(
+          child: Row(
+            children: [
+              Icon(
+                iconData,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              const SizedBox(
+                width: defaultPadding,
+              ),
+              Text(
+                text,
+                style: Theme.of(context)
+                    .textTheme
+                    .caption!
+                    .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+              )
+            ],
           ),
         ),
       ),
@@ -132,8 +126,7 @@ class _CurrentlySelected extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: defaultMargin, vertical: defaultMargin * 2),
                   decoration: BoxDecoration(
-                      gradient: defaultGradient,
-                      boxShadow: [],
+                      color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(20)),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,

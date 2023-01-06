@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/controllers/SoulController.dart';
 
 class SoulBottomNavigationBar extends StatefulWidget {
   const SoulBottomNavigationBar({
@@ -24,63 +28,86 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
       width: size.width,
       // margin: const EdgeInsets.fromLTRB(
       //     defaultMargin * 3, 0, defaultMargin * 3, defaultMargin),
-      decoration: const BoxDecoration(
-        color: Colors.black,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer,
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Flexible(
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  selectedIndex = 0;
-                  widget.onTap(0);
-                });
-              },
-              child: _BottomNavigationItem(
-                active: selectedIndex == 0 ? true : false,
-                icon: CupertinoIcons.house_alt_fill,
-                title: "Home",
-              ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                selectedIndex = 0;
+                widget.onTap(0);
+              });
+            },
+            child: _BottomNavigationItem(
+              active: selectedIndex == 0 ? true : false,
+              assetUrl: 'assets/images/home.svg',
+              title: "Home",
             ),
           ),
-          Flexible(
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  selectedIndex = 1;
-                  widget.onTap(1);
-                });
-              },
-              child: _BottomNavigationItem(
-                active: selectedIndex == 1 ? true : false,
-                child: SvgPicture.asset(
-                  'assets/images/paper.svg',
-                  height: selectedIndex == 1 ? 28 : 25,
-                  color: selectedIndex == 1 ? Colors.black : Colors.grey,
-                ),
-                title: "Messages",
-              ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                selectedIndex = 1;
+                widget.onTap(1);
+              });
+            },
+            child: _BottomNavigationItem(
+              active: selectedIndex == 1 ? true : false,
+              assetUrl: 'assets/images/headset.svg',
+              title: "Activity",
             ),
           ),
-          Flexible(
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  selectedIndex = 2;
-                  widget.onTap(2);
-                });
-              },
-              child: _BottomNavigationItem(
-                active: selectedIndex == 2 ? true : false,
-                child: SvgPicture.asset(
-                  'assets/images/disco.svg',
-                  height: selectedIndex == 2 ? 26 : 23,
-                  color: selectedIndex == 2 ? Colors.black : Colors.grey,
-                ),
-                title: "Discover",
-              ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                selectedIndex = 2;
+                widget.onTap(2);
+              });
+            },
+            child: _BottomNavigationItem(
+              active: selectedIndex == 2 ? true : false,
+              assetUrl: 'assets/images/album.svg',
+              title: "Playlists",
             ),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                selectedIndex = 3;
+                widget.onTap(3);
+              });
+            },
+            child: _BottomNavigationItem(
+              active: selectedIndex == 3 ? true : false,
+              assetUrl: 'assets/images/users-alt.svg',
+              title: "Friends",
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                selectedIndex = 4;
+                widget.onTap(4);
+              });
+            },
+            child: GetBuilder<SoulController>(
+                // stream: null,
+                builder: (controller) {
+              return _BottomNavigationItem(
+                active: selectedIndex == 4 ? true : false,
+                child: controller.profile != null
+                    ? SoulCircleAvatar(
+                        imageUrl: controller.profile!.profilePicture.image,
+                        radius: 12,
+                      )
+                    : null,
+                assetUrl: 'assets/images/user.svg',
+                title: "Profile",
+              );
+            }),
           ),
         ],
       ),
@@ -95,12 +122,14 @@ class _BottomNavigationItem extends StatefulWidget {
     this.icon,
     required this.title,
     this.child,
+    this.assetUrl,
   }) : super(key: key);
 
   final bool active;
   final IconData? icon;
   final String title;
   final Widget? child;
+  final String? assetUrl;
 
   @override
   State<_BottomNavigationItem> createState() => _BottomNavigationItemState();
@@ -109,33 +138,42 @@ class _BottomNavigationItem extends StatefulWidget {
 class _BottomNavigationItemState extends State<_BottomNavigationItem> {
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        decoration: BoxDecoration(
-            color: widget.active ? Colors.white : null,
-            borderRadius: BorderRadius.circular(20)),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              widget.child ??
-                  Icon(
-                    widget.icon,
-                    size: widget.active ? 28 : 25,
-                    color: widget.active ? Colors.black : Colors.grey,
-                  ),
-              Text(
-                widget.title,
-                style: Theme.of(context).textTheme.caption!.copyWith(
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 300),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          if (widget.child != null) widget.child!,
+          if (widget.child == null)
+            widget.assetUrl != null
+                ? SvgPicture.asset(
+                    widget.assetUrl!,
                     color: widget.active
                         ? Theme.of(context).primaryColor
                         : Colors.grey,
-                    fontWeight: widget.active ? FontWeight.w600 : null),
-              )
-            ],
+                    width: 18,
+                  )
+                : Icon(
+                    widget.icon,
+                    size: widget.active ? 22 : 20,
+                    color: widget.active ? Colors.black : Colors.grey,
+                  ),
+          const SizedBox(
+            width: defaultPadding,
           ),
-        ));
+          widget.active
+              ? Text(
+                  widget.title,
+                  style: Theme.of(context).textTheme.caption!.copyWith(
+                      color: widget.active
+                          ? Theme.of(context).primaryColor
+                          : Colors.grey,
+                      fontWeight: widget.active ? FontWeight.w600 : null),
+                )
+              : const SizedBox.shrink()
+        ],
+      ),
+    );
   }
 }

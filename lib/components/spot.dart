@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/cached_image_error.dart';
+import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/spots.dart';
 import 'package:soul_date/screens/spot_screen.dart';
@@ -32,24 +33,18 @@ class SpotWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(0.7),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: spotifyGreen, width: 0.7)),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                        color: Theme.of(context).primaryColor, width: 0.7)),
                 child: Container(
                   padding: const EdgeInsets.all(0.5),
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: spotifyGreen, width: 0.5)),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: spot.profile.images.isNotEmpty
-                        ? SoulCachedNetworkImage(
-                            imageUrl: spot.profile.images.last.image,
-                            fit: BoxFit.cover,
-                            width: 50,
-                            height: 50,
-                          )
-                        : const SoulCachedNetworkImage(
-                            width: 50, height: 50, imageUrl: defaultAvatarUrl),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: Theme.of(context).primaryColor, width: 0.5)),
+                  child: SoulCircleAvatar(
+                    imageUrl: spot.profile.profilePicture.image,
+                    radius: 27,
                   ),
                 ),
               ),
@@ -69,7 +64,7 @@ class SpotWidget extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .caption!
-                  .copyWith(color: Colors.black)),
+                  .copyWith(color: Colors.black, fontWeight: FontWeight.w600)),
         )
       ],
     );
