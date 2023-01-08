@@ -9,7 +9,7 @@ import 'package:soul_date/screens/Chat/messages.dart';
 import 'package:soul_date/screens/discover.dart';
 import 'package:soul_date/screens/home/vinyls.dart';
 import 'package:soul_date/screens/match.dart';
-import 'package:soul_date/screens/playlists.dart';
+import 'package:soul_date/screens/Playlists/playlists.dart';
 import 'package:soul_date/screens/profile_home.dart';
 
 import 'settings_home.dart';

@@ -46,7 +46,8 @@ class SoulController extends GetxController {
     getFriends();
     setSpotifyToken();
     registerDevice();
-    fetchMatches();
+    // fetchMatches();
+    //TODO:: CAll this on relevant pages
     getProfile();
     currentlyPlaying();
     super.onInit();
@@ -59,7 +60,7 @@ class SoulController extends GetxController {
     return data;
   }
 
-  currentlyPlaying() {
+  void currentlyPlaying() {
     Timer.periodic(const Duration(minutes: 1), (timer) async {
       if (profile != null) {
         SpotifyDetails? data = await spotify.currentlyPlaying();
@@ -72,7 +73,7 @@ class SoulController extends GetxController {
     });
   }
 
-  registerDevice() async {
+  void registerDevice() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (preferences.containsKey('firebase_token')) {
       String? firebaseToken = preferences.getString('firebase_token');
@@ -106,8 +107,20 @@ class SoulController extends GetxController {
 
   void getFriends() async {
     http.Response response = await client.get(fetchFriendsUrl);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     if (response.statusCode <= 210) {
       friends = friendsFromJson(response.body);
+      int? profileID = prefs.getInt('profileID');
+      if (profileID != null) {
+        for (Friends friend in friends) {
+          FirebaseFirestore.instance
+              .collection('userFriends')
+              .doc(profileID.toString())
+              .collection('friends')
+              .doc(friend.friendsProfile.user.id.toString())
+              .set(friend.toJson(), SetOptions(merge: true));
+        }
+      }
       update();
     }
   }
@@ -149,14 +162,14 @@ class SoulController extends GetxController {
     }
   }
 
-  void fetchChats() async {
-    http.Response res = await client.get(fetchChatsUrl);
-    if (res.statusCode <= 210) {
-      chats.value = chatFromJson(utf8.decode(res.bodyBytes));
-    } else {
-      log(res.body, name: "CHATS ERROR");
-    }
-  }
+  // void fetchChats() async {
+  //   http.Response res = await client.get(fetchChatsUrl);
+  //   if (res.statusCode <= 210) {
+  //     chats.value = chatFromJson(utf8.decode(res.bodyBytes));
+  //   } else {
+  //     log(res.body, name: "CHATS ERROR");
+  //   }
+  // }
 
   fetchRequests() async {
     http.Response res = await client.get(fetchFriendRequestsUrl);

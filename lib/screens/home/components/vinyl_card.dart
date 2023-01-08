@@ -72,7 +72,7 @@ class _VinylSentCardState extends State<VinylSentCard> {
                             color: Colors.white, fontWeight: FontWeight.w600),
                       ),
                       RowSuper(innerDistance: -10, children: [
-                        for (Profile profile in widget.vinyl.audience)
+                        for (Profile profile in widget.vinyl.audience.take(4))
                           SoulCircleAvatar(
                             imageUrl: profile.profilePicture.image,
                             radius: 10,

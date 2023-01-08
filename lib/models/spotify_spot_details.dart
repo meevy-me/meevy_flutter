@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'Spotify/base_model.dart';
+
 SpotifyDetails spotifyDetailsFromJson(String str) =>
     SpotifyDetails.fromJson(json.decode(str));
 
@@ -73,11 +75,10 @@ class ExternalUrls {
       };
 }
 
-class Item {
+class Item extends SpotifyData {
   Item({
     required this.album,
     required this.artists,
-    required this.availableMarkets,
     required this.discNumber,
     required this.durationMs,
     required this.explicit,
@@ -95,7 +96,6 @@ class Item {
 
   Album album;
   List<Artist> artists;
-  List<String> availableMarkets;
   int discNumber;
   int durationMs;
   bool explicit;
@@ -114,8 +114,6 @@ class Item {
         album: Album.fromJson(json["album"]),
         artists:
             List<Artist>.from(json["artists"].map((x) => Artist.fromJson(x))),
-        availableMarkets:
-            List<String>.from(json["available_markets"].map((x) => x)),
         discNumber: json["disc_number"],
         durationMs: json["duration_ms"],
         explicit: json["explicit"],
@@ -134,7 +132,6 @@ class Item {
   Map<String, dynamic> toJson() => {
         "album": album.toJson(),
         "artists": List<dynamic>.from(artists.map((x) => x.toJson())),
-        "available_markets": List<dynamic>.from(availableMarkets.map((x) => x)),
         "disc_number": discNumber,
         "duration_ms": durationMs,
         "explicit": explicit,
@@ -154,13 +151,24 @@ class Item {
   String toString() {
     return name;
   }
+
+  @override
+  String get caption => artists.join(", ");
+
+  @override
+  String get image => album.images.first.url;
+
+  @override
+  String get itemName => name;
+
+  @override
+  String get url => externalUrls.spotify;
 }
 
 class Album {
   Album({
     required this.albumType,
     required this.artists,
-    required this.availableMarkets,
     required this.href,
     required this.id,
     required this.images,
@@ -175,7 +183,7 @@ class Album {
 
   String albumType;
   List<Artist> artists;
-  List<String> availableMarkets;
+  // List<String> availableMarkets;
   ExternalUrls externalUrls;
   String href;
   String id;
@@ -191,8 +199,7 @@ class Album {
         albumType: json["album_type"],
         artists:
             List<Artist>.from(json["artists"].map((x) => Artist.fromJson(x))),
-        availableMarkets:
-            List<String>.from(json["available_markets"].map((x) => x)),
+
         externalUrls: ExternalUrls.fromJson(json["external_urls"]),
         href: json["href"],
         id: json["id"],
@@ -208,7 +215,7 @@ class Album {
   Map<String, dynamic> toJson() => {
         "album_type": albumType,
         "artists": List<dynamic>.from(artists.map((x) => x.toJson())),
-        "available_markets": List<dynamic>.from(availableMarkets.map((x) => x)),
+        // "available_markets": List<dynamic>.from(availableMarkets.map((x) => x)),
         "external_urls": externalUrls.toJson(),
         "href": href,
         "id": id,
@@ -224,19 +231,19 @@ class Album {
 }
 
 class Artist {
-  Artist(
-      {required this.externalUrls,
-      required this.href,
-      required this.id,
-      required this.name,
-      required this.uri,
-      required this.type});
+  Artist({
+    required this.externalUrls,
+    required this.href,
+    required this.id,
+    required this.name,
+    required this.uri,
+  });
 
   ExternalUrls externalUrls;
   String href;
   String id;
   String name;
-  String type;
+  // String type;
   String uri;
 
   factory Artist.fromJson(Map<String, dynamic> json) => Artist(
@@ -244,7 +251,7 @@ class Artist {
         href: json["href"],
         id: json["id"],
         name: json["name"],
-        type: json["type"],
+        // type: json["type"],
         uri: json["uri"],
       );
 
@@ -253,7 +260,7 @@ class Artist {
         "href": href,
         "id": id,
         "name": name,
-        "type": type,
+        // "type": type,
         "uri": uri,
       };
 

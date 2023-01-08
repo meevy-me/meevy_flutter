@@ -74,6 +74,7 @@ class SpotifyTrack extends SpotifyData {
         uri: json["uri"],
       );
 
+  @override
   Map<String, dynamic> toJson() => {
         "album": album.toJson(),
         "artists": List<dynamic>.from(artists.map((x) => x.toJson())),
@@ -105,6 +106,9 @@ class SpotifyTrack extends SpotifyData {
 
   @override
   String get url => externalUrls.spotify;
+
+  @override
+  SpotifyDataType get spotifyDataType => SpotifyDataType.track;
 }
 
 class Album {

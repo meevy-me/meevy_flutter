@@ -69,6 +69,7 @@ dependencies:
   path: ^1.8.1
   path_provider: ^2.0.11
   pinput: ^2.2.11
+  receive_sharing_intent: ^1.4.5
   share_extend: ^2.0.0
   share_plus: ^4.1.0
   shared_preferences: ^2.0.15

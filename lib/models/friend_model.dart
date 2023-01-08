@@ -86,4 +86,12 @@ class Friends extends Comparable<Friends> {
       return profile1;
     }
   }
+
+  Profile friendsProfileSafe(int id) {
+    if (id == profile1.id) {
+      return profile2;
+    } else {
+      return profile1;
+    }
+  }
 }

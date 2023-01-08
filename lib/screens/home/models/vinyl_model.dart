@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/services/date_format.dart';

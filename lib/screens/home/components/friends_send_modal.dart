@@ -17,6 +17,7 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:soul_date/screens/home/models/chat_model.dart';
+import 'package:soul_date/services/spotify_utils.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 class FriendsModal extends StatefulWidget {
@@ -199,42 +200,45 @@ class _FriendsModalState extends State<FriendsModal> {
                                         Theme.of(context).primaryColor,
                                     shape: const CircleBorder()),
                                 onPressed: () async {
-                                  Map<String, dynamic> sendToProfile = {
-                                    "track": widget.item.toJson(),
-                                    "audience": selectedFriends
-                                        .map((e) => e.friendsProfile.toJson())
-                                        .toList(),
-                                    "date_sent": DateTime.now().toString(),
-                                    "opened": false,
-                                    "sender": soulController.profile!.toJson(),
-                                    "caption": captionText.text
-                                  };
-                                  var doc_ref = await FirebaseFirestore.instance
-                                      .collection('sentTracks')
-                                      .add(sendToProfile);
+                                  sendSpotifyItem(
+                                      item: widget.item,
+                                      friends: selectedFriends);
+                                  // Map<String, dynamic> sendToProfile = {
+                                  //   "track": widget.item.toJson(),
+                                  //   "audience": selectedFriends
+                                  //       .map((e) => e.friendsProfile.toJson())
+                                  //       .toList(),
+                                  //   "date_sent": DateTime.now().toString(),
+                                  //   "opened": false,
+                                  //   "sender": soulController.profile!.toJson(),
+                                  //   "caption": captionText.text
+                                  // };
+                                  // var doc_ref = await FirebaseFirestore.instance
+                                  //     .collection('sentTracks')
+                                  //     .add(sendToProfile);
 
-                                  VinylChat vinylChat = VinylChat(
-                                      sender: soulController.profile!,
-                                      message: captionText.text,
-                                      dateSent: DateTime.now());
+                                  // VinylChat vinylChat = VinylChat(
+                                  //     sender: soulController.profile!,
+                                  //     message: captionText.text,
+                                  //     dateSent: DateTime.now());
 
-                                  FirebaseFirestore.instance
-                                      .collection('sentTracks')
-                                      .doc(doc_ref.id)
-                                      .collection('messages')
-                                      .add(vinylChat.toJson());
+                                  // FirebaseFirestore.instance
+                                  //     .collection('sentTracks')
+                                  //     .doc(doc_ref.id)
+                                  //     .collection('messages')
+                                  //     .add(vinylChat.toJson());
 
-                                  for (var element in selectedFriends) {
-                                    FirebaseFirestore.instance
-                                        .collection('userSentTracks')
-                                        .doc(element.friendsProfile.user.id
-                                            .toString())
-                                        .collection('sentTracks')
-                                        .doc(doc_ref.id)
-                                        .set({
-                                      "date_sent": DateTime.now().toString()
-                                    });
-                                  }
+                                  // for (var element in selectedFriends) {
+                                  //   FirebaseFirestore.instance
+                                  //       .collection('userSentTracks')
+                                  //       .doc(element.friendsProfile.user.id
+                                  //           .toString())
+                                  //       .collection('sentTracks')
+                                  //       .doc(doc_ref.id)
+                                  //       .set({
+                                  //     "date_sent": DateTime.now().toString()
+                                  //   });
+                                  // }
                                   captionText.clear();
                                   Navigator.pop(context);
                                 },

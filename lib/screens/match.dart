@@ -23,6 +23,11 @@ class MatchScreen extends StatefulWidget {
 
 class _MatchScreenState extends State<MatchScreen> {
   final SoulController controller = Get.find<SoulController>();
+  @override
+  void initState() {
+    controller.getFriends();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
