@@ -8,15 +8,34 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
 import 'package:soul_date/services/spotify_utils.dart';
 import 'package:text_scroll/text_scroll.dart';
 import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 
-class VinylModal extends StatelessWidget {
-  const VinylModal({Key? key, required this.vinyl}) : super(key: key);
-  final VinylModel vinyl;
+import '../../../models/profile_model.dart';
+
+class VinylModal extends StatefulWidget {
+  const VinylModal({
+    Key? key,
+    required this.spotifyData,
+    required this.sender,
+    this.vinylModel,
+  }) : super(key: key);
+  final SpotifyData spotifyData;
+  final Profile sender;
+  final VinylModel? vinylModel;
+
+  @override
+  State<VinylModal> createState() => _VinylModalState();
+}
+
+class _VinylModalState extends State<VinylModal> {
+  final SoulController soulController = Get.find<SoulController>();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -34,7 +53,7 @@ class VinylModal extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CachedNetworkImage(
-                  imageUrl: vinyl.item.album.images.first.url,
+                  imageUrl: widget.spotifyData.image,
                   width: 140,
                   height: 140,
                 ),
@@ -42,14 +61,14 @@ class VinylModal extends StatelessWidget {
                   height: defaultMargin,
                 ),
                 TextScroll(
-                  vinyl.item.name,
+                  widget.spotifyData.itemName,
                   style: Theme.of(context).textTheme.bodyText1!.copyWith(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: defaultPadding),
                   child: Text(
-                    vinyl.item.artists.first.name,
+                    widget.spotifyData.caption,
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1!
@@ -62,7 +81,7 @@ class VinylModal extends StatelessWidget {
           Column(
             children: [
               FutureBuilder<bool>(
-                  future: isVinylLiked(vinyl),
+                  future: isTrackLiked(widget.spotifyData),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.data != null) {
@@ -73,9 +92,9 @@ class VinylModal extends StatelessWidget {
                         text: snapshot.data! ? "Remove from liked" : "Like",
                         onPress: () {
                           if (!snapshot.data!) {
-                            vinylLike(context, vinyl);
+                            trackLike(context, widget.spotifyData);
                           } else {
-                            vinylLikeRemove(context, vinyl);
+                            trackLikeRemove(context, widget.spotifyData);
                           }
                           Navigator.pop(context);
                         },
@@ -87,7 +106,8 @@ class VinylModal extends StatelessWidget {
                   }),
               VinylModalAction(
                 onPress: () {
-                  vinylPlay(context, vinyl);
+                  trackPlay(context, widget.spotifyData,
+                      vinyl: widget.vinylModel);
                   Navigator.pop(context);
                 },
                 icon: CupertinoIcons.play_fill,
@@ -97,12 +117,14 @@ class VinylModal extends StatelessWidget {
                 icon: Icons.queue_music_outlined,
                 text: "Add to Queue",
                 onPress: () {
-                  vinylQueue(context, vinyl);
+                  vinylQueue(context, widget.spotifyData,
+                      vinyl: widget.vinylModel);
                   Navigator.pop(context);
                 },
               ),
               FutureBuilder<bool>(
-                  future: isVinylInPlaylist(vinyl),
+                  future: isTrackInPlaylist(
+                      sender: widget.sender, item: widget.spotifyData),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.data != null) {
@@ -112,8 +134,14 @@ class VinylModal extends StatelessWidget {
                             : Icons.playlist_add,
                         onPress: () {
                           snapshot.data!
-                              ? vinylPlaylistRemove(context, vinyl)
-                              : vinylPlaylist(context, vinyl);
+                              ? trackPlaylistRemove(
+                                  sender: widget.sender,
+                                  receiver: soulController.profile!,
+                                  item: widget.spotifyData)
+                              : trackAddToPlaylist(
+                                  sender: widget.sender,
+                                  receiver: soulController.profile!,
+                                  item: widget.spotifyData);
                           Navigator.pop(context);
                         },
                         text: snapshot.data!
@@ -127,7 +155,7 @@ class VinylModal extends StatelessWidget {
                   }),
               VinylModalAction(
                 onPress: () {
-                  vinylOpenSpotify(context, vinyl);
+                  trackOpenSpotify(context, widget.spotifyData);
                   Navigator.pop(context);
                 },
                 icon: FontAwesomeIcons.spotify,

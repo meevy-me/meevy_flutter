@@ -88,7 +88,7 @@ class Spotify {
     if (res.statusCode <= 210 && res.body.isNotEmpty) {
       var detail = Spot.SpotifyDetails.fromJson(json.decode(res.body));
       if (navigate) {
-        Get.to(() => MySpotScreen(details: detail));
+        Get.to(() => MySpotScreen(details: detail.item));
       }
       return detail;
     } else if (res.statusCode <= 210 && res.body.isEmpty) {

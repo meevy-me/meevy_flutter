@@ -6,15 +6,11 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:soul_date/components/cached_image_error.dart';
-import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
-import 'package:soul_date/models/meevy_playlists.dart';
-import 'package:soul_date/screens/Playlists/models/firebase_playlist.dart';
 import 'package:soul_date/screens/Playlists/models/meevy_playlist_detail.dart';
-import 'package:text_scroll/text_scroll.dart';
 
 import 'components/playlist_song_card.dart';
 
@@ -23,9 +19,13 @@ class PlaylistDetailPage extends StatelessWidget {
     Key? key,
     required this.meevyBasePlaylist,
     this.tracksFn,
+    this.onPlay,
+    this.onSpotify,
   }) : super(key: key);
   final MeevyBasePlaylist meevyBasePlaylist;
   final Future<List<SpotifyData>> Function()? tracksFn;
+  final void Function()? onPlay;
+  final void Function()? onSpotify;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +78,8 @@ class PlaylistDetailPage extends StatelessWidget {
                           child: Row(
                             children: [
                               RowSuper(
-                                  children: meevyBasePlaylist.contributors
+                                  innerDistance: -10,
+                                  children: meevyBasePlaylist.contributors!
                                       .map((e) => SoulCircleAvatar(
                                             imageUrl: e.profilePicture.image,
                                             radius: 12,
@@ -100,20 +101,21 @@ class PlaylistDetailPage extends StatelessWidget {
                             children: [
                               PlaylistDetailAction(
                                 iconData: CupertinoIcons.play_fill,
-                                onPress: (() {}),
+                                onPress: onPlay,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: defaultMargin),
-                                child: PlaylistDetailAction(
-                                  iconData: FontAwesomeIcons.spotify,
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                  onPress: (() {}),
-                                ),
-                              ),
-                              PlaylistDetailAction(
-                                  iconData: CupertinoIcons.hand_thumbsup_fill,
-                                  onPress: () {})
+                              onSpotify != null
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: defaultMargin),
+                                      child: PlaylistDetailAction(
+                                        iconData: FontAwesomeIcons.spotify,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .tertiary,
+                                        onPress: onSpotify,
+                                      ),
+                                    )
+                                  : SizedBox.shrink(),
                             ],
                           ),
                         )
@@ -149,6 +151,7 @@ class PlaylistDetailPage extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                     vertical: defaultMargin),
                                 child: PlaylistDetailSongCard(
+                                    sender: meevyBasePlaylist.contributors![0],
                                     spotifyData: spotifyData),
                               );
                             },
@@ -188,15 +191,15 @@ class PlaylistDetailAction extends StatelessWidget {
     return InkWell(
       onTap: onPress,
       child: Container(
-        width: 70,
+        // width: 70,
         padding: const EdgeInsets.all(defaultPadding),
         decoration: BoxDecoration(
-            // color: color ?? Theme.of(context).primaryColor,
-            borderRadius: BorderRadius.circular(15)),
+            color: color ?? Theme.of(context).primaryColor,
+            shape: BoxShape.circle),
         child: Center(
             child: Icon(
           iconData,
-          size: 30,
+          size: 35,
           color: Colors.white,
         )),
       ),

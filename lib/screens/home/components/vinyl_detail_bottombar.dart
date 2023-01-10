@@ -70,14 +70,15 @@ class VinylBottomBar extends StatelessWidget {
                   _VinylBottomItem(
                     color: bgColor,
                     onPress: () {
-                      vinylPlay(context, vinylModel);
+                      trackPlay(context, vinylModel.item);
                     },
                     iconColor: iconColor,
                     iconData: CupertinoIcons.play_arrow_solid,
                     title: "Play",
                   ),
                   FutureBuilder<bool>(
-                      future: isVinylInPlaylist(vinylModel),
+                      future: isTrackInPlaylist(
+                          item: vinylModel.item, sender: vinylModel.sender),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done &&
                             snapshot.data != null) {

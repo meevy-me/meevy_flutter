@@ -15,6 +15,7 @@ import 'package:soul_date/models/Spotify/track_model.dart';
 import 'package:soul_date/screens/Playlists/models/meevy_playlist_detail.dart';
 import 'package:soul_date/screens/Playlists/playlists_detail.dart';
 import 'package:soul_date/services/navigation.dart';
+import 'package:soul_date/services/spotify_utils.dart';
 
 import '../constants/constants.dart';
 import '../models/spotify_spot_details.dart';
@@ -37,12 +38,17 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
         .collection('likedPlaylist')
         .doc(profileID.toString())
         .collection('tracks')
+        .orderBy('date_added', descending: true)
         .get();
     return collection.docs.map((e) {
       // print(e.data());
       var item = Item.fromJson(e.data()['track']);
       return item;
     }).toList();
+  }
+
+  void onPlay() {
+    favouritesPlayAll(context);
   }
 
   final SoulController soulController = Get.find<SoulController>();
@@ -60,6 +66,7 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
             onTap: () => Navigation.push(context,
                 customPageTransition: PageTransition(
                     child: PlaylistDetailPage(
+                      onPlay: onPlay,
                       tracksFn: getTracks,
                       meevyBasePlaylist: MeevyBasePlaylist(
                           name: "Meevy Favourites",
@@ -160,7 +167,9 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
                   ),
                   const Spacer(),
                   IconContainer(
-                    onPress: () {},
+                    onPress: () {
+                      favouritesPlayAll(context);
+                    },
                     icon: Icon(
                       CupertinoIcons.play_fill,
                       color: Colors.white,

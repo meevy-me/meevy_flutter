@@ -101,6 +101,7 @@ class _VinylsPageState extends State<VinylsPage> {
                                   .collection('userSentTracks')
                                   .doc('6')
                                   .collection('sentTracks')
+                                  .orderBy('date_sent', descending: true)
                                   .snapshots(),
                               builder: (context, snapshot) {
                                 final userSnapshot = snapshot.data?.docs;

@@ -5,13 +5,20 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:soul_date/animations/animations.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/screens/home/components/friends_send_modal.dart';
+import 'package:soul_date/screens/my_spot_screen.dart';
+import 'package:soul_date/services/navigation.dart';
+import 'package:soul_date/services/spotify_utils.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 import '../../../components/icon_container.dart';
 import '../../../components/image_circle.dart';
 import '../../../constants/constants.dart';
 import '../../../models/spotify_spot_details.dart' as Spotify;
+import 'current_vinyl_actions.dart';
 
 class CurrentVinyl extends StatelessWidget {
   const CurrentVinyl({Key? key}) : super(key: key);
@@ -49,68 +56,30 @@ Widget buildCurrentVinyl(BuildContext context) {
       });
 }
 
-class _MusicActions extends StatelessWidget {
-  const _MusicActions({
-    Key? key,
-    required this.iconData,
-    this.onPress,
-    this.icon,
-    required this.text,
-  }) : super(key: key);
-  final IconData iconData;
-  final void Function()? onPress;
-  final Widget? icon;
-  final String text;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
-      child: InkWell(
-        onTap: onPress,
-        child: Center(
-          child: Row(
-            children: [
-              Icon(
-                iconData,
-                color: Theme.of(context).primaryColor,
-                size: 20,
-              ),
-              const SizedBox(
-                width: defaultPadding,
-              ),
-              Text(
-                text,
-                style: Theme.of(context)
-                    .textTheme
-                    .caption!
-                    .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CurrentlySelected extends StatelessWidget {
+class _CurrentlySelected extends StatefulWidget {
   const _CurrentlySelected({
     Key? key,
     this.item,
   }) : super(key: key);
 
   final Spotify.Item? item;
+
+  @override
+  State<_CurrentlySelected> createState() => _CurrentlySelectedState();
+}
+
+class _CurrentlySelectedState extends State<_CurrentlySelected> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return item != null
+    return widget.item != null
         ? SizedBox(
             width: size.width,
             child: Row(children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: CachedNetworkImage(
-                  imageUrl: item!.album.images.first.url,
+                  imageUrl: widget.item!.album.images.first.url,
                   height: 110,
                   width: 110,
                   fit: BoxFit.cover,
@@ -142,7 +111,7 @@ class _CurrentlySelected extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Text(
-                                    item!.name,
+                                    widget.item!.name,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1!
@@ -161,7 +130,7 @@ class _CurrentlySelected extends StatelessWidget {
                                         shape: BoxShape.circle),
                                   ),
                                   TextScroll(
-                                    item!.artists.join(", "),
+                                    widget.item!.artists.join(", "),
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyText1!
@@ -177,7 +146,7 @@ class _CurrentlySelected extends StatelessWidget {
                                   vertical: defaultPadding / 2),
                               child: FittedBox(
                                 child: Text(
-                                  item!.album.name,
+                                  widget.item!.album.name,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1!
@@ -196,12 +165,35 @@ class _CurrentlySelected extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      _MusicActions(
-                                        text: "Like",
-                                        iconData: CupertinoIcons.heart_fill,
-                                        onPress: () {},
-                                      ),
-                                      // _MusicActions(
+                                      FutureBuilder<bool>(
+                                          future: isTrackLiked(widget.item!),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                    ConnectionState.done &&
+                                                snapshot.data != null) {
+                                              var status = snapshot.data!;
+                                              return MusicActions(
+                                                text:
+                                                    status ? "Unlike" : "Like",
+                                                iconData: status
+                                                    ? CupertinoIcons
+                                                        .heart_slash_fill
+                                                    : CupertinoIcons.heart_fill,
+                                                onPress: () {
+                                                  if (status) {
+                                                    trackLikeRemove(
+                                                        context, widget.item!);
+                                                  } else {
+                                                    trackLike(
+                                                        context, widget.item!);
+                                                  }
+                                                  setState(() {});
+                                                },
+                                              );
+                                            }
+                                            return LoadingPulse();
+                                          }),
+                                      // MusicActions(
                                       //   icon: SvgPicture.asset(
                                       //     'assets/images/playlist_add.svg',
                                       //     width: 20,
@@ -211,7 +203,7 @@ class _CurrentlySelected extends StatelessWidget {
                                       //   iconData: CupertinoIcons.music_albums_fill,
                                       //   onPress: () {},
                                       // ),
-                                      _MusicActions(
+                                      MusicActions(
                                         text: "Send",
                                         iconData:
                                             CupertinoIcons.paperplane_fill,
@@ -219,11 +211,30 @@ class _CurrentlySelected extends StatelessWidget {
                                           showModalBottomSheet(
                                             context: context,
                                             builder: (context) => FriendsModal(
-                                              item: item!,
+                                              item: widget.item!,
                                             ),
                                           );
                                         },
                                       ),
+                                      MusicActions(
+                                        iconData: CupertinoIcons.sparkles,
+                                        text: "Spot",
+                                        icon: SvgPicture.asset(
+                                          'assets/images/status.svg',
+                                          color: Theme.of(context).primaryColor,
+                                          width: 20,
+                                        ),
+                                        onPress: () {
+                                          Navigation.push(context,
+                                              customPageTransition:
+                                                  PageTransition(
+                                                      child: MySpotScreen(
+                                                          details:
+                                                              widget.item!),
+                                                      type: PageTransitionType
+                                                          .fadeIn));
+                                        },
+                                      )
                                     ],
                                   ),
                                 ),

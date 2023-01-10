@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/models.dart';
+import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/network_utils.dart';
 
 class MeevyPlaylist {
@@ -48,7 +51,17 @@ class MeevyPlaylist {
     return await getProfileImages(profile2);
   }
 
+  Future<int> get friendID async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    int profileID = preferences.getInt('profileID')!;
+
+    if (profile1 != profileID) {
+      return profile1;
+    }
+    return profile2;
+  }
+
   String get description {
-    return "";
+    return "Music buddy playlist by Meevy.";
   }
 }

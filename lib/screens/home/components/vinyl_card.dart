@@ -134,7 +134,13 @@ class _VinylSentCardState extends State<VinylSentCard> {
             ),
             InkWell(
               onTap: () {
-                showModal(context, VinylModal(vinyl: widget.vinyl));
+                showModal(
+                    context,
+                    VinylModal(
+                      spotifyData: widget.vinyl.item,
+                      sender: widget.vinyl.sender,
+                      vinylModel: widget.vinyl,
+                    ));
               },
               child: const Icon(
                 FeatherIcons.moreHorizontal,

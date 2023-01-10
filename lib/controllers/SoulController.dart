@@ -37,7 +37,7 @@ class SoulController extends GetxController {
   List<FavouritePlaylist?> favouritePlaylist = [];
   Spotify spotify = Spotify();
   RxList<Friends> friendRequest = <Friends>[].obs;
-
+  Map<int, Profile> profileCache = {};
   Cron cron = Cron();
 
   @override
@@ -46,7 +46,7 @@ class SoulController extends GetxController {
     getFriends();
     setSpotifyToken();
     registerDevice();
-    // fetchMatches();
+    fetchMatches();
     //TODO:: CAll this on relevant pages
     getProfile();
     currentlyPlaying();
@@ -103,6 +103,26 @@ class SoulController extends GetxController {
     } else {
       log(res.body, name: "PROFILE FETCH ERROR");
     }
+  }
+
+  Profile? profileInCache(int id) {
+    var profile = profileCache[id];
+    return profile;
+  }
+
+  Future<Profile?> getOtherProfile(int id) async {
+    Profile? profile = profileInCache(id);
+    if (profile == null) {
+      http.Response res = await client.get("$profileUrl$id/");
+      if (res.statusCode <= 210) {
+        var profile = Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)));
+        profileCache[id] = profile;
+        return profile;
+      }
+    } else {
+      return profile;
+    }
+    return null;
   }
 
   void getFriends() async {

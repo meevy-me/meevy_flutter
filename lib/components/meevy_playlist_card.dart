@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:soul_date/animations/animations.dart';
+import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/models/images.dart';
 import 'package:soul_date/models/meevy_playlists.dart';
@@ -10,10 +12,12 @@ import 'package:soul_date/screens/Playlists/playlists_detail.dart';
 import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/services/network_utils.dart';
 import 'package:soul_date/models/spotify_spot_details.dart';
+import 'package:soul_date/services/spotify_utils.dart';
 import '../constants/constants.dart';
+import '../models/profile_model.dart';
 import 'image_circle.dart';
 
-class MeevyPlaylistCard extends StatelessWidget {
+class MeevyPlaylistCard extends StatefulWidget {
   const MeevyPlaylistCard({
     Key? key,
     required this.meevyPlaylist,
@@ -21,15 +25,21 @@ class MeevyPlaylistCard extends StatelessWidget {
 
   final MeevyPlaylist meevyPlaylist;
 
+  @override
+  State<MeevyPlaylistCard> createState() => _MeevyPlaylistCardState();
+}
+
+class _MeevyPlaylistCardState extends State<MeevyPlaylistCard> {
+  final SoulController soulController = Get.find<SoulController>();
   Future<List<SpotifyData>> getTracks() async {
     var collection = await FirebaseFirestore.instance
         .collection('meevyPlaylists')
-        .doc(meevyPlaylist.id)
+        .doc(widget.meevyPlaylist.id)
         .collection('tracks')
+        .orderBy('date_added', descending: true)
         .get();
     return collection.docs.map((e) {
       var item = Item.fromJson(e.data()['track']);
-      print(item);
       return item;
     }).toList();
   }
@@ -37,15 +47,29 @@ class MeevyPlaylistCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigation.push(context,
-          customPageTransition: PageTransition(
-              child: PlaylistDetailPage(
-                  tracksFn: getTracks,
-                  meevyBasePlaylist: MeevyBasePlaylist(
-                      name: meevyPlaylist.name,
-                      description: meevyPlaylist.description,
-                      contributors: [])),
-              type: PageTransitionType.fromBottom)),
+      onTap: () async {
+        Profile? profile = await soulController
+            .getOtherProfile(await widget.meevyPlaylist.friendID);
+        if (profile != null) {
+          Navigation.push(context,
+              customPageTransition: PageTransition(
+                  child: PlaylistDetailPage(
+                      onPlay: () => mutualPlaylistPlayAll(
+                          context, widget.meevyPlaylist.id),
+                      tracksFn: getTracks,
+                      meevyBasePlaylist: MeevyBasePlaylist(
+                          name: widget.meevyPlaylist.name,
+                          description: widget.meevyPlaylist.description,
+                          contributors: [
+                            profile,
+                            soulController.profile!,
+                          ])),
+                  type: PageTransitionType.fromBottom));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("An error has occured")));
+        }
+      },
       child: Column(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -83,7 +107,7 @@ class MeevyPlaylistCard extends StatelessWidget {
                 left: defaultMargin * 2,
                 top: defaultMargin * 2,
                 child: FutureBuilder<ProfileImages>(
-                    future: getProfileImages(meevyPlaylist.profile1),
+                    future: getProfileImages(widget.meevyPlaylist.profile1),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done &&
                           snapshot.data != null) {
@@ -101,7 +125,7 @@ class MeevyPlaylistCard extends StatelessWidget {
                 right: defaultMargin * 2,
                 bottom: defaultMargin * 2,
                 child: FutureBuilder<ProfileImages>(
-                    future: getProfileImages(meevyPlaylist.profile2),
+                    future: getProfileImages(widget.meevyPlaylist.profile2),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done &&
                           snapshot.data != null) {
@@ -121,7 +145,7 @@ class MeevyPlaylistCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: defaultPadding),
               child: Text(
-                meevyPlaylist.name,
+                widget.meevyPlaylist.name,
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),

@@ -16,7 +16,7 @@ import '../controllers/SoulController.dart';
 
 class MySpotScreen extends StatefulWidget {
   const MySpotScreen({Key? key, required this.details}) : super(key: key);
-  final SpotifyDetails details;
+  final Item details;
 
   @override
   State<MySpotScreen> createState() => _MySpotScreenState();
@@ -137,7 +137,7 @@ class _BottomSection extends StatelessWidget {
     required this.spotController,
   }) : super(key: key);
   final TextEditingController controller;
-  final SpotifyDetails details;
+  final Item details;
   final SpotController spotController;
   @override
   Widget build(BuildContext context) {
@@ -255,7 +255,7 @@ class _SongWithImage extends StatelessWidget {
       {Key? key, required this.details, required this.controller})
       : super(key: key);
 
-  final SpotifyDetails details;
+  final Item details;
   final TextEditingController controller;
 
   @override
@@ -268,7 +268,7 @@ class _SongWithImage extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: CachedNetworkImage(
-              imageUrl: details.item.album.images[0].url,
+              imageUrl: details.album.images[0].url,
               height: 300,
               width: 300,
               fit: BoxFit.cover,
@@ -292,14 +292,14 @@ class _SongDetails extends StatelessWidget {
     required this.details,
   }) : super(key: key);
 
-  final SpotifyDetails details;
+  final Item details;
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SoulController>(builder: (controller) {
       return InkWell(
         onDoubleTap: () =>
-            controller.spotify.openSpotify(details.item.uri, details.item.href),
+            controller.spotify.openSpotify(details.uri, details.href),
         child: SizedBox(
           height: 100,
           child: Row(
@@ -328,7 +328,7 @@ class _SongDetails extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          details.item.name,
+                          details.name,
                           style: Theme.of(context)
                               .textTheme
                               .headline6!
@@ -339,7 +339,7 @@ class _SongDetails extends StatelessWidget {
                         height: defaultMargin / 2,
                       ),
                       Text(
-                        details.item.artists.join(", "),
+                        details.artists.join(", "),
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1!
@@ -349,7 +349,7 @@ class _SongDetails extends StatelessWidget {
                         height: defaultMargin,
                       ),
                       Text(
-                        details.item.album.name,
+                        details.album.name,
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1!
@@ -375,7 +375,7 @@ class SpotScreenBackground extends StatelessWidget {
   }) : super(key: key);
 
   final Size size;
-  final SpotifyDetails details;
+  final Item details;
 
   @override
   Widget build(BuildContext context) {
@@ -390,8 +390,7 @@ class SpotScreenBackground extends StatelessWidget {
             child: Container(
               color: Colors.black.withOpacity(0),
               child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: details.item.album.images[0].url),
+                  fit: BoxFit.cover, imageUrl: details.album.images[0].url),
             ),
           ),
         ),

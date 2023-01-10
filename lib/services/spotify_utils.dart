@@ -4,9 +4,11 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
+import 'package:soul_date/models/Spotify/playlist_model.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:soul_date/screens/home/models/chat_model.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
@@ -14,13 +16,11 @@ import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/spotify.dart';
 import '../../../models/spotify_spot_details.dart' as Spot;
 
-void vinylPlay(BuildContext context, VinylModel vinyl,
-    {List<VinylModel>? vinyls}) async {
+void trackPlay(BuildContext context, SpotifyData item,
+    {List<SpotifyData>? items, VinylModel? vinyl}) async {
   final SoulController controller = Get.find<SoulController>();
   bool res = await Spotify().startTrack({
-    "uris": vinyls != null
-        ? vinyls.map((e) => e.item.uri).toList()
-        : [vinyl.item.uri],
+    "uris": items != null ? items.map((e) => e.uri).toList() : [item.uri],
   });
 
   if (!res) {
@@ -29,15 +29,16 @@ void vinylPlay(BuildContext context, VinylModel vinyl,
   } else {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text("Great:) That was a success")));
+    if (vinyl != null) {
+      if (!vinyl.opened) {
+        FirebaseFirestore.instance
+            .collection('sentTracks')
+            .doc(vinyl.id)
+            .update({'opened': true});
 
-    if (!vinyl.opened) {
-      FirebaseFirestore.instance
-          .collection('sentTracks')
-          .doc(vinyl.id)
-          .update({'opened': true});
-
-      controller.sendNotification(
-          vinyl.sender, "Played your song: ${vinyl.item.itemName}");
+        controller.sendNotification(
+            vinyl.sender, "Played your song: ${vinyl.item.itemName}");
+      }
     }
   }
 }
@@ -52,19 +53,22 @@ void _statusCheck(BuildContext context, bool status) {
   }
 }
 
-void vinylQueue(BuildContext context, VinylModel vinyl) async {
+void vinylQueue(BuildContext context, SpotifyData item,
+    {VinylModel? vinyl}) async {
   final SoulController controller = Get.find<SoulController>();
 
-  bool res = await Spotify().queueTrack(vinyl.item.uri);
+  bool res = await Spotify().queueTrack(item.uri);
   _statusCheck(context, res);
-  if (!vinyl.opened) {
-    FirebaseFirestore.instance
-        .collection('sentTracks')
-        .doc(vinyl.id)
-        .update({'opened': true});
+  if (vinyl != null) {
+    if (!vinyl.opened) {
+      FirebaseFirestore.instance
+          .collection('sentTracks')
+          .doc(vinyl.id)
+          .update({'opened': true});
 
-    controller.sendNotification(
-        vinyl.sender, "Queued your song: ${vinyl.item.itemName}");
+      controller.sendNotification(
+          vinyl.sender, "Queued your song: ${vinyl.item.itemName}");
+    }
   }
 }
 
@@ -183,8 +187,8 @@ void vinylPlaylist(BuildContext context, VinylModel vinyl) async {
   }
 }
 
-void vinylOpenSpotify(BuildContext context, VinylModel vinyl) {
-  Spotify().openSpotify(vinyl.item.uri, vinyl.item.url);
+void trackOpenSpotify(BuildContext context, SpotifyData item) {
+  Spotify().openSpotify(item.uri, item.url);
 }
 
 void trackPlaylistRemove(
@@ -200,6 +204,8 @@ void trackPlaylistRemove(
       .doc(item.id)
       .delete();
 }
+
+void trackPlaylistRemoveID(String id, SpotifyData data) {}
 
 void vinylPlaylistRemove(BuildContext context, VinylModel vinyl) {
   final SoulController controller = Get.find<SoulController>();
@@ -223,14 +229,31 @@ Future<bool> isVinylLiked(VinylModel vinyl) async {
   return doc.exists;
 }
 
-Future<bool> isVinylInPlaylist(VinylModel vinyl) async {
-  String playlistID = _getPlaylistID(vinyl);
+Future<bool> isTrackLiked(SpotifyData item) async {
+  final SoulController controller = Get.find<SoulController>();
+
+  String userID = controller.profile!.user.id.toString();
+  var ref = FirebaseFirestore.instance
+      .collection('likedPlaylist')
+      .doc(controller.profile!.user.id.toString())
+      .collection('tracks')
+      .doc(item.id);
+
+  var doc = await ref.get();
+  return doc.exists;
+}
+
+Future<bool> isTrackInPlaylist(
+    {required Profile sender, required SpotifyData item}) async {
+  final SoulController controller = Get.find<SoulController>();
+
+  String playlistID = getPlaylistID(sender, controller.profile!);
 
   var ref = FirebaseFirestore.instance
       .collection('meevyPlaylists')
       .doc(playlistID)
       .collection('tracks')
-      .doc(vinyl.item.id);
+      .doc(item.id);
 
   var doc = await ref.get();
   return doc.exists;
@@ -322,4 +345,43 @@ void sendSpotifyItem(
       }
     }
   }
+}
+
+void favouritesPlayAll(BuildContext context) async {
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  int profileID = preferences.getInt('profileID')!;
+  var collection = await FirebaseFirestore.instance
+      .collection('likedPlaylist')
+      .doc(profileID.toString())
+      .collection('tracks')
+      .orderBy('date_added', descending: true)
+      .get();
+  var items = collection.docs.map((e) {
+    // print(e.data());
+    var item = Item.fromJson(e.data()['track']);
+    return item;
+  }).toList();
+
+  trackPlay(context, items[0], items: items);
+}
+
+void sharedPlaylistPlayAll(
+    BuildContext context, SpotifyData spotifyPlaylist) async {
+  bool res = await Spotify().startTrack({"context_uri": spotifyPlaylist.uri});
+  _statusCheck(context, res);
+}
+
+void mutualPlaylistPlayAll(BuildContext context, String documentID) async {
+  var collection = await FirebaseFirestore.instance
+      .collection('meevyPlaylists')
+      .doc(documentID)
+      .collection('tracks')
+      .orderBy('date_added', descending: true)
+      .get();
+
+  var items =
+      collection.docs.map((e) => Item.fromJson(e.data()['track'])).toList();
+
+  trackPlay(context, items[0], items: items);
 }

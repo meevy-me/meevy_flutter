@@ -17,6 +17,7 @@ import 'package:soul_date/services/formatting.dart';
 import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/services/network_utils.dart';
 import 'package:soul_date/services/spotify.dart';
+import 'package:soul_date/services/spotify_utils.dart';
 
 import '../../../components/cached_image_error.dart';
 import '../../../components/icon_container.dart';
@@ -60,6 +61,8 @@ class _SharedPlaylistCardState extends State<SharedPlaylistCard> {
               onTap: () => Navigation.push(context,
                   customPageTransition: PageTransition(
                       child: PlaylistDetailPage(
+                        onPlay: () => sharedPlaylistPlayAll(
+                            context, firebasePlaylist.item),
                         tracksFn: getTracks,
                         meevyBasePlaylist: MeevyBasePlaylist(
                             imageUrl: firebasePlaylist.item.image,
@@ -137,7 +140,8 @@ class _SharedPlaylistCardState extends State<SharedPlaylistCard> {
                     ),
                     const Spacer(),
                     IconContainer(
-                      onPress: () => firebasePlaylist.play(),
+                      onPress: () =>
+                          sharedPlaylistPlayAll(context, firebasePlaylist.item),
                       size: 35,
                       icon: const Icon(
                         CupertinoIcons.play_fill,

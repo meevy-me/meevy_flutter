@@ -25,7 +25,7 @@ class _MatchScreenState extends State<MatchScreen> {
   final SoulController controller = Get.find<SoulController>();
   @override
   void initState() {
-    controller.getFriends();
+    // controller.fetchMatches();
     super.initState();
   }
 
