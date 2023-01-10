@@ -47,4 +47,8 @@ class MeevyPlaylist {
   Future<ProfileImages> get profile2Images async {
     return await getProfileImages(profile2);
   }
+
+  String get description {
+    return "";
+  }
 }

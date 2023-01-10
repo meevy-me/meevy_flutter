@@ -1,9 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:soul_date/animations/animations.dart';
+import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/models/images.dart';
 import 'package:soul_date/models/meevy_playlists.dart';
+import 'package:soul_date/screens/Playlists/models/meevy_playlist_detail.dart';
+import 'package:soul_date/screens/Playlists/playlists_detail.dart';
+import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/services/network_utils.dart';
-
+import 'package:soul_date/models/spotify_spot_details.dart';
 import '../constants/constants.dart';
 import 'image_circle.dart';
 
@@ -15,87 +21,113 @@ class MeevyPlaylistCard extends StatelessWidget {
 
   final MeevyPlaylist meevyPlaylist;
 
+  Future<List<SpotifyData>> getTracks() async {
+    var collection = await FirebaseFirestore.instance
+        .collection('meevyPlaylists')
+        .doc(meevyPlaylist.id)
+        .collection('tracks')
+        .get();
+    return collection.docs.map((e) {
+      var item = Item.fromJson(e.data()['track']);
+      print(item);
+      return item;
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      // crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              height: 130,
-              width: 120,
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(20)),
-            ),
-            Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
-            ),
-            // Container(
-            //   height: 90,
-            //   width: 90,
-            //   decoration: BoxDecoration(
-            //       color: Colors.white.withOpacity(0.4), shape: BoxShape.circle),
-            // ),
-            Container(
-              height: 120,
-              width: 120,
-              decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1), shape: BoxShape.circle),
-            ),
-            Positioned(
-              left: defaultMargin * 2,
-              top: defaultMargin * 2,
-              child: FutureBuilder<ProfileImages>(
-                  future: getProfileImages(meevyPlaylist.profile1),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.data != null) {
-                      return SoulCircleAvatar(
-                        imageUrl: snapshot.data!.image,
-                        radius: 28,
+    return GestureDetector(
+      onTap: () => Navigation.push(context,
+          customPageTransition: PageTransition(
+              child: PlaylistDetailPage(
+                  tracksFn: getTracks,
+                  meevyBasePlaylist: MeevyBasePlaylist(
+                      name: meevyPlaylist.name,
+                      description: meevyPlaylist.description,
+                      contributors: [])),
+              type: PageTransitionType.fromBottom)),
+      child: Column(
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                height: 130,
+                width: 120,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(20)),
+              ),
+              Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle),
+              ),
+              // Container(
+              //   height: 90,
+              //   width: 90,
+              //   decoration: BoxDecoration(
+              //       color: Colors.white.withOpacity(0.4), shape: BoxShape.circle),
+              // ),
+              Container(
+                height: 120,
+                width: 120,
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    shape: BoxShape.circle),
+              ),
+              Positioned(
+                left: defaultMargin * 2,
+                top: defaultMargin * 2,
+                child: FutureBuilder<ProfileImages>(
+                    future: getProfileImages(meevyPlaylist.profile1),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          snapshot.data != null) {
+                        return SoulCircleAvatar(
+                          imageUrl: snapshot.data!.image,
+                          radius: 28,
+                        );
+                      }
+                      return SpinKitPulse(
+                        color: Colors.grey,
                       );
-                    }
-                    return SpinKitPulse(
-                      color: Colors.grey,
-                    );
-                  }),
-            ),
-            Positioned(
-              right: defaultMargin * 2,
-              bottom: defaultMargin * 2,
-              child: FutureBuilder<ProfileImages>(
-                  future: getProfileImages(meevyPlaylist.profile2),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.data != null) {
-                      return SoulCircleAvatar(
-                        imageUrl: snapshot.data!.image,
-                        radius: 28,
+                    }),
+              ),
+              Positioned(
+                right: defaultMargin * 2,
+                bottom: defaultMargin * 2,
+                child: FutureBuilder<ProfileImages>(
+                    future: getProfileImages(meevyPlaylist.profile2),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          snapshot.data != null) {
+                        return SoulCircleAvatar(
+                          imageUrl: snapshot.data!.image,
+                          radius: 28,
+                        );
+                      }
+                      return const SpinKitPulse(
+                        color: Colors.grey,
                       );
-                    }
-                    return const SpinKitPulse(
-                      color: Colors.grey,
-                    );
-                  }),
-            )
-          ],
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultPadding),
-            child: Text(
-              meevyPlaylist.name,
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
+                    }),
+              )
+            ],
           ),
-        )
-      ],
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+              child: Text(
+                meevyPlaylist.name,
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 }

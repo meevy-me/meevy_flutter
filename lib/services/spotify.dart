@@ -16,7 +16,7 @@ import 'package:soul_date/models/Spotify/track_model.dart';
 import 'package:soul_date/models/Spotify/user_model.dart';
 import 'package:soul_date/models/SpotifySearch/my_spotify_playlists.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_search.dart';
-import 'package:soul_date/models/spotify_spot_details.dart';
+import 'package:soul_date/models/spotify_spot_details.dart' as Spot;
 import 'package:soul_date/models/spotifyuser.dart';
 import 'package:soul_date/screens/my_spot_screen.dart';
 import 'package:soul_date/services/analytics.dart';
@@ -32,11 +32,7 @@ class Spotify {
     getCurrentUser();
   }
 
-  HttpClient client = HttpClient();
-
-  String _basicAuth(String username, String password) {
-    return 'Basic ' + base64Encode(utf8.encode('$username:$password'));
-  }
+  SpotifyClient client = SpotifyClient();
 
   String get _clientSecret {
     return "edbd307b1b064e91a8974698bb9b0a8f";
@@ -44,14 +40,14 @@ class Spotify {
 
   Future<Map?> getTokens(String code) async {
     http.Response res =
-        await client.post(spotifyTokenEndpoint, useToken: false, body: {
+        await client.client.post(spotifyTokenEndpoint, useToken: false, body: {
       'code': code,
       'clientId': clientId,
       'grant_type': 'authorization_code',
       'redirect_uri': 'souldate:/'
     }, headers: {
       'Content-type': 'application/x-www-form-urlencoded',
-      'Authorization': _basicAuth(clientId, _clientSecret)
+      'Authorization': client.basicAuth(clientId, _clientSecret)
     });
 
     if (res.statusCode <= 210) {
@@ -67,68 +63,30 @@ class Spotify {
     this.refreshToken = refreshToken;
   }
 
-  Future<bool> refreshAccessToken() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var spotRefresh = preferences.getString("spotify_refreshtoken");
-    http.Response res =
-        await client.post(spotifyTokenEndpoint, useToken: false, body: {
-      'grant_type': 'refresh_token',
-      'refresh_token': spotRefresh!,
-      'redirect_uri': 'souldate:/',
-    }, headers: {
-      'Content-type': 'application/x-www-form-urlencoded',
-      'Authorization': _basicAuth(clientId, _clientSecret)
-    });
-    if (res.statusCode <= 210) {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      preferences.setString(
-          "spotify_accesstoken", json.decode(res.body)['access_token']);
-      accessToken = json.decode(res.body)['access_token'];
-      return true;
-    } else {
-      log(res.body, name: "REFRESH TOKEN ERROR");
-      return false;
-    }
-  }
-
-  Future<SpotifyDetails?> currentlyPlaying() async {
+  Future<Spot.SpotifyDetails?> currentlyPlaying() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     accessToken = preferences.getString("spotify_accesstoken")!;
     refreshToken = preferences.getString("spotify_refreshtoken")!;
-    http.Response res = await client.get(playerUrl,
-        headers: {
-          'Authorization': "Bearer $accessToken",
-          "Content-Type": "application/json"
-        },
-        useToken: false);
+    http.Response res = await client.get(
+      playerUrl,
+    );
 
     if (res.statusCode <= 210 && res.body.isNotEmpty) {
-      return SpotifyDetails.fromJson(json.decode(res.body));
-    } else if (res.statusCode <= 401 &&
-        json.decode(res.body)['error']['message'] ==
-            "The access token expired") {
-      await refreshAccessToken();
-      currentlyPlaying();
+      return Spot.SpotifyDetails.fromJson(json.decode(res.body));
     } else {
       log(res.body, name: "CURRENTLY PLAYING");
     }
     return null;
   }
 
-  Future<SpotifyDetails?> fetchCurrentPlaying(
+  Future<Spot.SpotifyDetails?> fetchCurrentPlaying(
       {BuildContext? context, navigate = true}) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    accessToken = preferences.getString("spotify_accesstoken")!;
-    refreshToken = preferences.getString("spotify_refreshtoken")!;
-    http.Response res = await client.get(playerUrl,
-        headers: {
-          'Authorization': "Bearer $accessToken",
-          "Content-Type": "application/json"
-        },
-        useToken: false);
+    http.Response res = await client.get(
+      playerUrl,
+    );
 
     if (res.statusCode <= 210 && res.body.isNotEmpty) {
-      var detail = SpotifyDetails.fromJson(json.decode(res.body));
+      var detail = Spot.SpotifyDetails.fromJson(json.decode(res.body));
       if (navigate) {
         Get.to(() => MySpotScreen(details: detail));
       }
@@ -138,11 +96,6 @@ class Spotify {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("You're not playing any song currently.")));
       }
-    } else if (res.statusCode <= 401 &&
-        json.decode(res.body)['error']['message'] ==
-            "The access token expired") {
-      await refreshAccessToken();
-      fetchCurrentPlaying(context: context);
     } else {
       Analytics.log_error("Spot Error", {'error': res.body});
     }
@@ -154,18 +107,14 @@ class Spotify {
 
     accessToken = preferences.getString("spotify_accesstoken")!;
     refreshToken = preferences.getString("spotify_refreshtoken")!;
-    http.Response res = await client.post(queueUrl,
-        body: {},
-        parameters: {"uri": uri},
-        useToken: false,
-        headers: {'Authorization': "Bearer $accessToken"});
+    http.Response res = await client.post(
+      queueUrl,
+      body: {},
+      parameters: {"uri": uri},
+      // useToken: false,
+    );
     if (res.statusCode <= 210) {
       showSnackBar(context, "Song added to your queue");
-    } else if (res.statusCode == 401 &&
-        json.decode(res.body)['error']['message'] ==
-            "The access token expired") {
-      await refreshAccessToken();
-      playTrack(uri, context: context);
     } else if (res.statusCode == 404) {
       showSnackBar(context, "Your spotify player is not active");
     } else if (res.statusCode >= 500) {
@@ -189,11 +138,8 @@ class Spotify {
     } else {
       endpoint = "https://api.spotify.com/v1/users/";
     }
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var spotToken = preferences.getString("spotify_accesstoken");
 
-    http.Response res = await client.get("$endpoint$id",
-        useToken: false, headers: {'Authorization': "Bearer $spotToken"});
+    http.Response res = await client.get("$endpoint$id");
 
     if (res.statusCode <= 210) {
       Map<String, dynamic> data = json.decode(res.body);
@@ -208,11 +154,6 @@ class Spotify {
       } else if (key == 'user') {
         return Spotifyuser.fromJson(data);
       }
-    } else if (res.statusCode == 401 &&
-        json.decode(res.body)['error']['message'] ==
-            "The access token expired") {
-      await refreshAccessToken();
-      getItem(key, id);
     } else {
       log(res.body, name: "SPOTIFY ERROR");
     }
@@ -225,18 +166,14 @@ class Spotify {
 
     spotToken = accessToken ?? preferences.getString("spotify_accesstoken");
 
-    http.Response res = await client.get(spotifyMeEndpoint,
-        useToken: false, headers: {'Authorization': "Bearer $spotToken"});
+    http.Response res = await client.get(
+      spotifyMeEndpoint,
+    );
 
     if (res.statusCode <= 210) {
       var currentSpot = SpotifyUser.fromJson(jsonDecode(res.body));
       currentUser = currentSpot;
       return currentSpot;
-    } else if (res.statusCode == 401 &&
-        json.decode(res.body)['error']['message'] ==
-            "The access token expired") {
-      await refreshAccessToken();
-      getCurrentUser();
     } else {
       log(res.body, name: "SPOTIFY ERROR");
     }
@@ -248,18 +185,7 @@ class Spotify {
     var spotToken = preferences.getString("spotify_accesstoken");
 
     http.Response res = await client.get(spotifySearchEndpoint,
-        useToken: false,
-        headers: {'Authorization': "Bearer $spotToken"},
         parameters: {'q': query, 'type': type ?? 'track', 'limit': '5'});
-
-    if (res.statusCode <= 210) {
-      return res;
-    } else if (res.statusCode == 401 &&
-        json.decode(res.body)['error']['message'] ==
-            "The access token expired") {
-      await refreshAccessToken();
-      _searchItem(query, type: type);
-    }
 
     return res;
   }
@@ -268,15 +194,9 @@ class Spotify {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var spotToken = preferences.getString("spotify_accesstoken");
 
-    http.Response res = await client.get(nextEndpoint ?? favouritePlaylistsUrl,
-        useToken: false, headers: {'Authorization': "Bearer $spotToken"});
+    http.Response res = await client.get(nextEndpoint ?? favouritePlaylistsUrl);
     if (res.statusCode <= 210) {
       return res;
-    } else if (res.statusCode == 401 &&
-        json.decode(res.body)['error']['message'] ==
-            "The access token expired") {
-      await refreshAccessToken();
-      _getPlaylists(nextEndpoint: nextEndpoint);
     }
     return res;
   }
@@ -318,52 +238,48 @@ class Spotify {
   }
 
   Future<bool> queueTrack(String uri) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    accessToken = preferences.getString("spotify_accesstoken")!;
-    refreshToken = preferences.getString("spotify_refreshtoken")!;
-    http.Response res = await client.post(queueUrl,
-        body: {},
-        parameters: {"uri": uri},
-        useToken: false,
-        headers: {'Authorization': "Bearer $accessToken"});
+    http.Response res = await client.post(
+      queueUrl,
+      body: {},
+      parameters: {"uri": uri},
+    );
     if (res.statusCode <= 210) {
       return true;
       // showSnackBar(context, "Song added to your queue");
-    } else if (res.statusCode == 401 &&
-        json.decode(res.body)['error']['message'] ==
-            "The access token expired") {
-      await refreshAccessToken();
-      queueTrack(
-        uri,
-      );
+
     }
     return false;
   }
 
   Future<bool> startTrack(Map<String, dynamic> body) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    var spotToken = preferences.getString("spotify_accesstoken");
 
-    http.Response res = await client.put(spotifyPlayUrl,
-        useToken: false,
-        headers: {
-          'Authorization': "Bearer $spotToken",
-          "Content-Type": "application/json"
-        },
-        bodyRaw: jsonEncode(body));
+    http.Response res =
+        await client.put(spotifyPlayUrl, bodyRaw: jsonEncode(body));
 
     if (res.statusCode <= 210) {
       return true;
-    } else if (res.statusCode == 401 &&
-        json.decode(res.body)['error']['message'] ==
-            "The access token expired") {
-      await refreshAccessToken();
-      startTrack(body);
     } else {
       log(res.body);
       return false;
     }
-    return false;
+  }
+
+  Future<List<SpotifyData>> playlistTracks(String playlistID) async {
+    String endpoint =
+        "https://api.spotify.com/v1/playlists/${playlistID}/tracks";
+
+    http.Response res = await client.get(endpoint);
+    if (res.statusCode <= 210) {
+      var jsonData = json.decode(utf8.decode(res.bodyBytes))['items'] as List;
+      return List<SpotifyData>.from(jsonData.map((e) {
+        try {
+          return Spot.Item.fromJson(e['track']);
+        } catch (error, stack) {
+          print(stack);
+        }
+      }));
+    }
+    return [];
   }
 }

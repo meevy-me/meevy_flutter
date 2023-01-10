@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 
 class SoulChatText {
@@ -33,5 +36,14 @@ class SoulChatText {
       return field;
     }
     return text;
+  }
+}
+
+String utf8Format(String str) {
+  try {
+    return utf8.decode(str.runes.toList());
+  } catch (e) {
+    log(e.toString());
+    return str;
   }
 }

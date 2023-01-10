@@ -69,7 +69,7 @@ class SpotifyPlaylist extends SpotifyData {
       };
 
   @override
-  String get caption => owner.displayName;
+  String get caption => description;
 
   @override
   String get image => images.first.url;

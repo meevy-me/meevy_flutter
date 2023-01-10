@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../constants/constants.dart';
 
 class HttpClient {
   String _formatEndpoint(String endpoint, Map<String, String>? parameters) {
@@ -121,6 +126,146 @@ class HttpClient {
         headers: _headers,
         body: body ?? bodyRaw);
 
+    return res;
+  }
+}
+
+class SpotifyClient {
+  HttpClient client = HttpClient();
+  String basicAuth(String username, String password) {
+    return 'Basic ' + base64Encode(utf8.encode('$username:$password'));
+  }
+
+  String get _clientSecret {
+    return "edbd307b1b064e91a8974698bb9b0a8f";
+  }
+
+  Future<Map?> getTokens(String code) async {
+    http.Response res =
+        await client.post(spotifyTokenEndpoint, useToken: false, body: {
+      'code': code,
+      'clientId': clientId,
+      'grant_type': 'authorization_code',
+      'redirect_uri': 'souldate:/'
+    }, headers: {
+      'Content-type': 'application/x-www-form-urlencoded',
+      'Authorization': basicAuth(clientId, _clientSecret)
+    });
+
+    if (res.statusCode <= 210) {
+      return jsonDecode(res.body);
+    } else {
+      log(res.body, name: "SPOTIFY ERROR");
+    }
+    return null;
+  }
+
+  Future<bool> refreshAccessToken() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var spotRefresh = preferences.getString("spotify_refreshtoken");
+    http.Response res =
+        await client.post(spotifyTokenEndpoint, useToken: false, body: {
+      'grant_type': 'refresh_token',
+      'refresh_token': spotRefresh!,
+      'redirect_uri': 'souldate:/',
+    }, headers: {
+      'Content-type': 'application/x-www-form-urlencoded',
+      'Authorization': basicAuth(clientId, _clientSecret)
+    });
+    if (res.statusCode <= 210) {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setString(
+          "spotify_accesstoken", json.decode(res.body)['access_token']);
+      // accessToken = json.decode(res.body)['access_token'];
+      return true;
+    } else {
+      log(res.body, name: "REFRESH TOKEN ERROR");
+      return false;
+    }
+  }
+
+  Future<http.Response> get(String endpoint,
+      {Map<String, String>? parameters}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var accessToken = preferences.getString("spotify_accesstoken")!;
+    var refreshToken = preferences.getString("spotify_refreshtoken")!;
+    http.Response res = await client.get(endpoint,
+        parameters: parameters,
+        headers: {
+          'Authorization': "Bearer $accessToken",
+          "Content-Type": "application/json"
+        },
+        useToken: false);
+
+    if (res.statusCode == 401 &&
+        json.decode(res.body)['error']['message'] ==
+            "The access token expired") {
+      await refreshAccessToken();
+      get(endpoint);
+    }
+    return res;
+  }
+
+  Future<http.Response> post(
+    String endpoint, {
+    required Map<String, String> body,
+    Map<String, String>? headers,
+    Map<String, String>? parameters,
+  }) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var accessToken = preferences.getString("spotify_accesstoken")!;
+    var refreshToken = preferences.getString("spotify_refreshtoken")!;
+
+    headers ??= {'Authorization': "Bearer $accessToken"};
+
+    http.Response res = await client.post(endpoint,
+        body: body, parameters: parameters, headers: headers, useToken: false);
+
+    if (res.statusCode == 401 &&
+        json.decode(res.body)['error']['message'] ==
+            "The access token expired") {
+      await refreshAccessToken();
+      post(endpoint, body: body, headers: headers, parameters: parameters);
+    }
+
+    return res;
+  }
+
+  Future<http.Response> put(
+    String endpoint, {
+    Map<String, String>? body,
+    Object? bodyRaw,
+    Map<String, String>? headers,
+    Map<String, String>? parameters,
+  }) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    var accessToken = preferences.getString("spotify_accesstoken")!;
+    // var refreshToken = preferences.getString("spotify_refreshtoken")!;
+
+    headers ??= {
+      'Authorization': "Bearer $accessToken",
+      "Content-Type": "application/json"
+    };
+
+    http.Response res = await client.put(endpoint,
+        body: body,
+        bodyRaw: bodyRaw,
+        headers: headers,
+        parameters: parameters,
+        useToken: false);
+
+    if (res.statusCode == 401 &&
+        json.decode(res.body)['error']['message'] ==
+            "The access token expired") {
+      await refreshAccessToken();
+      put(
+        endpoint,
+        body: body,
+        bodyRaw: bodyRaw,
+        parameters: parameters,
+        headers: headers,
+      );
+    }
     return res;
   }
 }

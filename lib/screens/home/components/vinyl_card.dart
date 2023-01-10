@@ -5,12 +5,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/screens/home/components/vinyl_modal.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
 import 'package:soul_date/screens/home/vinyl_detail.dart';
 import 'package:soul_date/services/modal.dart';
+import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/services/spotify.dart';
 import 'package:text_scroll/text_scroll.dart';
 
@@ -36,11 +38,10 @@ class _VinylSentCardState extends State<VinylSentCard> {
       padding: const EdgeInsets.symmetric(vertical: defaultMargin),
       child: InkWell(
         onTap: () async {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => VinylDetail(vinyl: widget.vinyl),
-              ));
+          Navigation.push(context,
+              customPageTransition: PageTransition(
+                  child: VinylDetail(vinyl: widget.vinyl),
+                  type: PageTransitionType.fadeIn));
         },
         child: Row(
           children: [

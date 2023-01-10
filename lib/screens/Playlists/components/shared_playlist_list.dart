@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:soul_date/screens/Playlists/components/shared_playlist_card.dart';
 
 import '../../../components/cached_image_error.dart';
 import '../../../components/icon_container.dart';
@@ -23,85 +24,28 @@ class SharedPlaylistList extends StatelessWidget {
             .collection('sentPlaylists')
             .snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.data != null) {
+          // print(snapshot.data);
+          if (snapshot.data != null) {
             return ListView.builder(
               shrinkWrap: true,
-              itemCount: 1,
+              itemCount: snapshot.data!.size,
               primary: false,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-                  child: Container(
-                    padding: scaffoldPadding,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              offset: Offset(1, 1),
-                              blurRadius: 1,
-                              color: Colors.grey.withOpacity(0.3)),
-                        ],
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: SoulCachedNetworkImage(
-                            imageUrl: defaultArtistUrl,
-                            width: 50,
-                            height: 50,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: defaultMargin,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Hidden Gems",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(fontSize: 15),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: defaultPadding),
-                              child: Row(
-                                children: [
-                                  SoulCircleAvatar(
-                                    imageUrl: defaultGirlUrl,
-                                    radius: 10,
-                                  ),
-                                  const SizedBox(
-                                    width: defaultPadding,
-                                  ),
-                                  Text(
-                                    "Colinreece Kipkorir",
-                                    style: Theme.of(context).textTheme.caption,
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const Spacer(),
-                        IconContainer(
-                          size: 35,
-                          icon: Icon(
-                            CupertinoIcons.play_fill,
-                            color: Colors.white,
-                            size: 25,
-                          ),
-                          color: Theme.of(context).primaryColor,
-                        )
-                      ],
-                    ),
+                  child: SharedPlaylistCard(
+                    documentId: snapshot.data!.docs[index].id,
                   ),
                 );
               },
+            );
+          } else if (snapshot.hasError) {
+            return Text(
+              "An error has occured",
+              style: Theme.of(context)
+                  .textTheme
+                  .caption!
+                  .copyWith(color: Colors.red),
             );
           }
           return SpinKitPulse(
