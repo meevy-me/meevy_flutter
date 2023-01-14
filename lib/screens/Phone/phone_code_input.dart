@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/friends/friends_import.dart';
+import 'package:soul_date/screens/home.dart';
 
 class PhoneCodeScreen extends StatefulWidget {
   const PhoneCodeScreen({Key? key, required this.phoneNumber})
@@ -18,7 +21,7 @@ class _PhoneCodeScreenState extends State<PhoneCodeScreen> {
   String? verificationId;
   int? resendToken;
   String? error;
-  @override
+  final SoulController soulController = Get.find<SoulController>();
   void verificationCompleted() {
     FirebaseAuth.instance.currentUser!.linkWithPhoneNumber(widget.phoneNumber);
 
@@ -31,6 +34,7 @@ class _PhoneCodeScreenState extends State<PhoneCodeScreen> {
 
   void verificationFailed(e) {}
 
+  @override
   void initState() {
     FirebaseAuth.instance.verifyPhoneNumber(
         timeout: const Duration(seconds: 60),
@@ -130,15 +134,28 @@ class _PhoneCodeScreenState extends State<PhoneCodeScreen> {
                 padding:
                     const EdgeInsets.symmetric(vertical: defaultMargin * 2),
                 child: PrimaryButton(
-                    onPress: () {
+                    onPress: () async {
                       if (verificationId != null) {
                         PhoneAuthCredential credential =
                             PhoneAuthProvider.credential(
                                 verificationId: verificationId!,
                                 smsCode: pinInput.text);
-
-                        FirebaseAuth.instance.currentUser!
-                            .linkWithCredential(credential);
+                        try {
+                          var user = FirebaseAuth.instance.currentUser!
+                              .linkWithCredential(credential);
+                        } catch (e) {
+                        } finally {
+                          bool res = await soulController.linkPhoneNumber();
+                          if (res) {
+                            Get.offAll(() => const HomePage(
+                                  initialIndex: 0,
+                                ));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("An error has occcured")));
+                          }
+                        }
                       }
                     },
                     text: "Verify Phone Number"),

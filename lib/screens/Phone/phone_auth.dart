@@ -1,8 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_sim_country_code/flutter_sim_country_code.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -10,8 +6,6 @@ import 'package:soul_date/components/authfield.dart';
 import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import 'package:soul_date/screens/Phone/phone_code_input.dart';
 

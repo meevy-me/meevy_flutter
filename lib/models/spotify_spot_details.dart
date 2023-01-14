@@ -20,12 +20,15 @@ class SpotifyDetails {
   // Context? context;
   Item item;
 
-  factory SpotifyDetails.fromJson(Map<String, dynamic> json) => SpotifyDetails(
-        // context:
-        //     json['context'] == null ? null : Context.fromJson(json["context"]),
-        item: Item.fromJson(json["item"]),
-      );
-
+  factory SpotifyDetails.fromJson(Map<String, dynamic> json) {
+    return SpotifyDetails(
+      // context:
+      //     json['context'] == null ? null : Context.fromJson(json["context"]),
+      item: json.containsKey('item')
+          ? Item.fromJson(json['item'])
+          : Item.fromJson(json),
+    );
+  }
   Map<String, dynamic> toJson() => {
         "item": item.toJson(),
       };
@@ -102,12 +105,15 @@ class Item extends SpotifyData {
   ExternalIds externalIds;
   ExternalUrls externalUrls;
   String href;
+  @override
   String id;
   bool isLocal;
   String name;
   int popularity;
   int trackNumber;
+  @override
   String type;
+  @override
   String uri;
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
@@ -129,6 +135,7 @@ class Item extends SpotifyData {
         uri: json["uri"],
       );
 
+  @override
   Map<String, dynamic> toJson() => {
         "album": album.toJson(),
         "artists": List<dynamic>.from(artists.map((x) => x.toJson())),
@@ -266,7 +273,7 @@ class Artist {
 
   @override
   String toString() {
-    return this.name;
+    return name;
   }
 }
 

@@ -38,6 +38,7 @@ class SpotifyAlbum extends SpotifyData {
   ExternalUrls externalUrls;
   List<dynamic> genres;
   String href;
+  @override
   String id;
   List<Image> images;
   String label;
@@ -51,6 +52,7 @@ class SpotifyAlbum extends SpotifyData {
   String type;
   @override
   String uri;
+  @override
   SpotifyDataType get spotifyDataType => SpotifyDataType.album;
 
   factory SpotifyAlbum.fromJson(Map<String, dynamic> json) => SpotifyAlbum(
@@ -75,6 +77,7 @@ class SpotifyAlbum extends SpotifyData {
         uri: json["uri"],
       );
 
+  @override
   Map<String, dynamic> toJson() => {
         "artists": List<dynamic>.from(artists.map((x) => x.toJson())),
         "copyrights": List<dynamic>.from(copyrights.map((x) => x.toJson())),

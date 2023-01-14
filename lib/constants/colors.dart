@@ -9,7 +9,7 @@ const Color textBlack97 = Color.fromARGB(255, 93, 93, 93);
 
 const LinearGradient defaultGradient = LinearGradient(
     colors: [Color(0xFF633941), Color(0xFF874C57), Color(0xFF91535D)]);
-const BoxShadow defaultBoxShadow = const BoxShadow(
+const BoxShadow defaultBoxShadow = BoxShadow(
     color: Color.fromARGB(255, 27, 19, 18),
     blurRadius: 4,
     spreadRadius: 2,

@@ -128,7 +128,7 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
                 return SpotifyTrackResult(
                   key: ValueKey(e.id),
                   disabled: selected.first != null,
-                  onSelected: ((item) {
+                  onSelected: (item) {
                     if (selected.isNotEmpty) {
                       setState(() {
                         selected[0] = item;
@@ -138,7 +138,7 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text("Cannot add more than one item")));
                     }
-                  }),
+                  },
                   onDeselect: (item) {
                     setState(() {
                       var index = selected.indexWhere((element) {

@@ -34,6 +34,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
     name.text = _profile.name;
     bio.text = _profile.bio;
     target = _profile.looking_for;
+    selectedDate = _profile.dateOfBirth;
     super.initState();
   }
 

@@ -41,6 +41,7 @@ class SpotifyTrack extends SpotifyData {
   ExternalIds externalIds;
   ExternalUrls externalUrls;
   String href;
+  @override
   String id;
   bool isLocal;
   // Artist linkedFrom;

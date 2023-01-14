@@ -27,7 +27,11 @@ class _MySpotScreenState extends State<MySpotScreen> {
   final SpotController controller = Get.find<SpotController>();
   final SoulController soulController = Get.find<SoulController>();
 
-  //TODO: Implement Dispose
+  @override
+  void dispose() {
+    caption.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -15,7 +15,11 @@ import 'package:soul_date/screens/profile_home.dart';
 import 'settings_home.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({
+    Key? key,
+    this.initialIndex = 0,
+  }) : super(key: key);
+  final int initialIndex;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -28,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   final MessageController msgController = Get.put(MessageController());
   final PageController _pageController = PageController();
   int selectedIndex = 0;
+
   List<Widget> pages = const [
     DiscoverPage(),
     VinylsPage(),
@@ -37,6 +42,9 @@ class _HomePageState extends State<HomePage> {
   ];
   @override
   void initState() {
+    setState(() {
+      selectedIndex = widget.initialIndex;
+    });
     super.initState();
   }
 

@@ -1,13 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/chat_item.dart';
-import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/reorderable_firebase_list.dart';
 import 'package:soul_date/components/spot.dart';
@@ -18,7 +15,6 @@ import 'package:soul_date/controllers/SpotController.dart';
 import 'package:collection/collection.dart';
 import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/screens/Chat/chat.dart';
-import 'package:soul_date/screens/friend_requests.dart';
 import 'package:soul_date/screens/friends/friends.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -268,11 +264,11 @@ class _MessagesSection extends StatelessWidget {
                   .collection('chats'),
               indexKey: 'position',
               itemBuilder: (context, index, doc) {
-                var chat_id = int.parse(doc['chat_id']);
+                var chatId = int.parse(doc['chat_id']);
                 return FutureBuilder<Friends>(
                     key: UniqueKey(),
-                    initialData: messageController.friends[chat_id],
-                    future: messageController.getFriend(chat_id),
+                    initialData: messageController.friends[chatId],
+                    future: messageController.getFriend(chatId),
                     builder: (context, snapshot) {
                       return snapshot.data != null &&
                               snapshot.hasData &&

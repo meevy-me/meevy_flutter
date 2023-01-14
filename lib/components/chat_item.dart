@@ -2,9 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -173,7 +171,7 @@ class _ListeningActivityState extends State<ListeningActivity>
               ],
             ),
           )
-        : SizedBox.shrink();
+        : const SizedBox.shrink();
     // : Row(
     //     children: [
     //       const Icon(

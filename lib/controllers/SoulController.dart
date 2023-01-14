@@ -36,20 +36,19 @@ class SoulController extends GetxController {
   FavouriteTrack? favouriteTrack;
   List<FavouritePlaylist?> favouritePlaylist = [];
   Spotify spotify = Spotify();
-  RxList<Friends> friendRequest = <Friends>[].obs;
   Map<int, Profile> profileCache = {};
   Cron cron = Cron();
 
   @override
   void onInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-    getFriends();
     setSpotifyToken();
     registerDevice();
     fetchMatches();
     //TODO:: CAll this on relevant pages
     getProfile();
     currentlyPlaying();
+    getFriends();
     super.onInit();
   }
 
@@ -191,23 +190,23 @@ class SoulController extends GetxController {
   //   }
   // }
 
-  fetchRequests() async {
+  Future<List<Friends>> fetchRequests() async {
     http.Response res = await client.get(fetchFriendRequestsUrl);
     if (res.statusCode <= 210) {
-      friendRequest.value = friendsFromJson(res.body);
-    } else {
-      log(res.body);
+      return friendsFromJson(res.body);
     }
+    return [];
   }
 
-  acceptRequests(Friends friend, {required BuildContext context}) async {
+  Future<bool> acceptRequests(
+    Friends friend,
+  ) async {
     http.Response res = await client
         .post(acceptRequestUrl, body: {'requestID': friend.id.toString()});
     if (res.statusCode <= 210) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Friend Request accepted")));
-      friendRequest.remove(friend);
-      fetchRequests();
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -221,6 +220,16 @@ class SoulController extends GetxController {
       Get.back();
       fetchMatches();
     }
+  }
+
+  Future<bool> sendFriendRequest(Profile profile) async {
+    http.Response res =
+        await client.post(requestUrl, body: {"profile2": profile.id});
+
+    if (res.statusCode <= 210) {
+      return true;
+    }
+    return false;
   }
 
   Future<SpotsView?> fetchMySpot() async {
@@ -302,6 +311,7 @@ class SoulController extends GetxController {
       {String type = 'track'}) async {
     http.Response res = await client.post(myFavouriteUrl,
         body: {"type": type, "details": jsonEncode(item).toString()});
+
     if (res.statusCode <= 210) {
       return true;
     }
@@ -402,5 +412,14 @@ class SoulController extends GetxController {
       return true;
     }
     return false;
+  }
+
+  Future<bool> linkPhoneNumber() async {
+    var res = await client.get(phoneNumberRegisterUrl);
+    if (res.statusCode <= 210) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -21,21 +21,20 @@ import '../../../models/spotify_spot_details.dart' as Spotify;
 import 'current_vinyl_actions.dart';
 
 class CurrentVinyl extends StatelessWidget {
-  const CurrentVinyl({Key? key}) : super(key: key);
-
+  const CurrentVinyl({Key? key, required this.profileID}) : super(key: key);
+  final int profileID;
   @override
   Widget build(BuildContext context) {
-    return buildCurrentVinyl(context);
+    return buildCurrentVinyl(context, profileID: profileID);
   }
 }
 
-Widget buildCurrentVinyl(BuildContext context) {
+Widget buildCurrentVinyl(BuildContext context, {required int profileID}) {
   return StreamBuilder<Spotify.Item?>(
       stream: FirebaseDatabase.instance
           .ref()
           .child('currentlyPlaying')
-          //TODO: USE My current listening
-          .child('1')
+          .child(profileID.toString())
           .onValue
           .map((event) {
         final data = jsonDecode(jsonEncode(event.snapshot.value))

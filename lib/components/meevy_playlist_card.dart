@@ -116,7 +116,7 @@ class _MeevyPlaylistCardState extends State<MeevyPlaylistCard> {
                           radius: 28,
                         );
                       }
-                      return SpinKitPulse(
+                      return const SpinKitPulse(
                         color: Colors.grey,
                       );
                     }),

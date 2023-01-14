@@ -54,7 +54,6 @@ class SpotController extends GetxController {
   void createSpot(Map<String, String> body,
       {required BuildContext context}) async {
     http.Response res = await client.post(fetchSpotsUrl, body: body);
-    log(res.body);
     if (res.statusCode <= 210) {
       fetchMySpot();
       ScaffoldMessenger.of(context)

@@ -7,6 +7,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -24,6 +25,23 @@ class VinylsPage extends StatefulWidget {
 }
 
 class _VinylsPageState extends State<VinylsPage> {
+  late int profileID;
+
+  @override
+  void initState() {
+    getProfileID();
+    super.initState();
+  }
+
+  void getProfileID() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    int id = preferences.getInt('profileID')!;
+    setState(() {
+      profileID = profileID;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -46,11 +64,6 @@ class _VinylsPageState extends State<VinylsPage> {
                           .headline4!
                           .copyWith(fontWeight: FontWeight.w600),
                     ),
-                    IconContainer(
-                        icon: Icon(
-                      CupertinoIcons.music_albums_fill,
-                      color: Colors.white,
-                    ))
                   ],
                 ),
               ),
@@ -59,7 +72,9 @@ class _VinylsPageState extends State<VinylsPage> {
               ),
               Padding(
                 padding: scaffoldPadding,
-                child: CurrentVinyl(),
+                child: CurrentVinyl(
+                  profileID: profileID,
+                ),
               ),
               SizedBox(
                 height: defaultMargin * 2,
@@ -96,10 +111,9 @@ class _VinylsPageState extends State<VinylsPage> {
                               color: const Color(0xFF241D1E),
                               borderRadius: BorderRadius.circular(0)),
                           child: StreamBuilder<QuerySnapshot>(
-                              //TODO: Change to user profile
                               stream: FirebaseFirestore.instance
                                   .collection('userSentTracks')
-                                  .doc('6')
+                                  .doc(profileID.toString())
                                   .collection('sentTracks')
                                   .orderBy('date_sent', descending: true)
                                   .snapshots(),

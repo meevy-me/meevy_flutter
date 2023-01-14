@@ -5,8 +5,6 @@ import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/profile_home.dart';
 
-import 'logo.dart';
-
 AppBar buildHomeAppBar(BuildContext context) {
   return AppBar(
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,

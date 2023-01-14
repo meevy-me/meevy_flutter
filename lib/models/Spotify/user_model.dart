@@ -29,6 +29,7 @@ class Spotifyuser extends SpotifyData {
   ExternalUrls externalUrls;
   Followers followers;
   String href;
+  @override
   String id;
   List<dynamic> images;
   @override
@@ -47,6 +48,7 @@ class Spotifyuser extends SpotifyData {
         uri: json["uri"],
       );
 
+  @override
   Map<String, dynamic> toJson() => {
         "display_name": displayName,
         "external_urls": externalUrls.toJson(),

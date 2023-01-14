@@ -30,6 +30,7 @@ class SpotifyArtist extends SpotifyData {
   Followers followers;
   List<String> genres;
   String href;
+  @override
   String id;
   List<Image> images;
   String name;
@@ -52,6 +53,7 @@ class SpotifyArtist extends SpotifyData {
         uri: json["uri"],
       );
 
+  @override
   Map<String, dynamic> toJson() => {
         "external_urls": externalUrls.toJson(),
         "followers": followers.toJson(),

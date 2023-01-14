@@ -1,4 +1,4 @@
-const String baseUrl = 'https://souldate.herokuapp.com/';
+const String baseUrl = 'https://meevy.herokuapp.com/';
 const String callbackUrl = baseUrl + 'users/callback/';
 const String spotifyMeEndpoint = "https://api.spotify.com/v1/me";
 const String spotifyTokenEndpoint = "https://accounts.spotify.com/api/token";
@@ -25,8 +25,8 @@ const String fetchMessagesUrl = baseUrl + "socials/fetch/messages/";
 const String playerUrl =
     "https://api.spotify.com/v1/me/player/currently-playing/";
 const String queueUrl = "https://api.spotify.com/v1/me/player/queue";
-const String spotsWs = 'ws://souldate.herokuapp.com/ws/spots/';
-const String messagesWs = 'ws://souldate.herokuapp.com/ws/chats/';
+const String spotsWs = 'ws://meevy.herokuapp.com/ws/spots/';
+const String messagesWs = 'ws://meevy.herokuapp.com/ws/chats/';
 const String requestUrl = baseUrl + 'socials/friend/request/';
 const String uploadImageUrl = baseUrl + 'users/pictures/add/';
 const String picturesUrl = baseUrl + 'users/pictures/';
@@ -41,3 +41,5 @@ const String secondaryAvatarUrl =
 const String notifyUrl = baseUrl + "socials/notify/";
 const String friendCheckUrl = baseUrl + "socials/friend/requested/";
 const String spotifyPlayUrl = "https://api.spotify.com/v1/me/player/play";
+const String phoneNumberSearchUrl = baseUrl + "users/profile/phone/search/";
+const String phoneNumberRegisterUrl = baseUrl + "users/profile/phone/register/";

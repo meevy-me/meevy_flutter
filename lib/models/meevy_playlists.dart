@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/models.dart';
-import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/network_utils.dart';
 
 class MeevyPlaylist {

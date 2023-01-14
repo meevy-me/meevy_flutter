@@ -50,9 +50,11 @@ class HttpClient {
   }
 
   Future<http.Response> post(String endpoint,
-      {required Map<String, String> body,
+      {required Map<String, dynamic>? body,
       Map<String, String>? headers,
       Map<String, String>? parameters,
+      Map<String, String>? headersAdd,
+      Object? bodyRaw,
       XFile? file,
       bool useToken = true}) async {
     String? token = await getToken();
@@ -63,6 +65,9 @@ class HttpClient {
     } else {
       _headers = {};
     }
+    if (headersAdd != null) {
+      _headers.addAll(headersAdd);
+    }
     if (token != null && useToken) {
       _headers['Authorization'] = "Token $token";
     }
@@ -71,12 +76,14 @@ class HttpClient {
           Uri.parse(
             _formatEndpoint(endpoint, parameters),
           ),
-          body: body,
+          body: bodyRaw ?? body,
           headers: _headers);
+
       return res;
     } else {
       var request = http.MultipartRequest("PUT", Uri.parse(endpoint));
       request.files.add(await http.MultipartFile.fromPath('image', file.path));
+      body = body as Map<String, String>;
       request.fields.addAll(body);
       request.headers.addAll(_headers);
       var streamedResponse = await request.send();

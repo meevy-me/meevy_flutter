@@ -35,7 +35,7 @@ class MatchImage extends StatelessWidget {
                     ]).createShader(bounds);
               },
               child: SoulCachedNetworkImage(
-                imageUrl: match.matched.images.last.image,
+                imageUrl: match.matched.profilePicture.image,
                 fit: BoxFit.cover,
                 progressIndicatorBuilder: (context, text, percentage) {
                   return const SizedBox(width: 20, child: Loading());

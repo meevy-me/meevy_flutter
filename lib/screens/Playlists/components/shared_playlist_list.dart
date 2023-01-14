@@ -12,15 +12,16 @@ import '../../../constants/constants.dart';
 class SharedPlaylistList extends StatelessWidget {
   const SharedPlaylistList({
     Key? key,
+    required this.profileID,
   }) : super(key: key);
+  final int profileID;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        //TODO: Change recepient
         stream: FirebaseFirestore.instance
             .collection('userSentPlaylists')
-            .doc('2')
+            .doc(profileID.toString())
             .collection('sentPlaylists')
             .snapshots(),
         builder: (context, snapshot) {

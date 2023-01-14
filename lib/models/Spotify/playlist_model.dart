@@ -29,6 +29,7 @@ class SpotifyPlaylist extends SpotifyData {
   ExternalUrls externalUrls;
   Followers followers;
   String href;
+  @override
   String id;
   List<Image> images;
   String name;
@@ -41,6 +42,7 @@ class SpotifyPlaylist extends SpotifyData {
   @override
   String uri;
 
+  @override
   SpotifyDataType get spotifyDataType => SpotifyDataType.playlist;
 
   factory SpotifyPlaylist.fromJson(Map<String, dynamic> json) =>
@@ -56,6 +58,7 @@ class SpotifyPlaylist extends SpotifyData {
         uri: json["uri"],
       );
 
+  @override
   Map<String, dynamic> toJson() => {
         "description": description,
         "external_urls": externalUrls.toJson(),

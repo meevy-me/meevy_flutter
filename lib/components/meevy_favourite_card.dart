@@ -1,5 +1,4 @@
 import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +7,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/image_circle.dart';
-import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
-import 'package:soul_date/models/Spotify/track_model.dart';
 import 'package:soul_date/screens/Playlists/models/meevy_playlist_detail.dart';
 import 'package:soul_date/screens/Playlists/playlists_detail.dart';
 import 'package:soul_date/services/navigation.dart';
@@ -24,19 +21,19 @@ import 'icon_container.dart';
 class MeevyFavouriteCard extends StatefulWidget {
   const MeevyFavouriteCard({
     Key? key,
+    required this.profileID,
   }) : super(key: key);
 
+  final int profileID;
   @override
   State<MeevyFavouriteCard> createState() => _MeevyFavouriteCardState();
 }
 
 class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
   Future<List<SpotifyData>> getTracks() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    int profileID = preferences.getInt('profileID')!;
     var collection = await FirebaseFirestore.instance
         .collection('likedPlaylist')
-        .doc(profileID.toString())
+        .doc(widget.profileID.toString())
         .collection('tracks')
         .orderBy('date_added', descending: true)
         .get();
@@ -57,11 +54,9 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
     return FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
             .collection('likedPlaylist')
-            .doc('1')
+            .doc(widget.profileID.toString())
             .get(),
         builder: (context, snapshot) {
-          bool isValid = snapshot.data != null &&
-              snapshot.connectionState == ConnectionState.done;
           return GestureDetector(
             onTap: () => Navigation.push(context,
                 customPageTransition: PageTransition(
@@ -114,8 +109,7 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
                           child: FutureBuilder<QuerySnapshot>(
                               future: FirebaseFirestore.instance
                                   .collection('likedPlaylist')
-                                  //TODO
-                                  .doc('1')
+                                  .doc(widget.profileID.toString())
                                   .collection('tracks')
                                   // .orderBy('date_added')
                                   .get(),
@@ -156,7 +150,7 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
                                   );
                                 }
 
-                                return SpinKitPulse(
+                                return const SpinKitPulse(
                                   color: Colors.grey,
                                   size: 15,
                                 );
@@ -170,7 +164,7 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
                     onPress: () {
                       favouritesPlayAll(context);
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       CupertinoIcons.play_fill,
                       color: Colors.white,
                       size: 30,

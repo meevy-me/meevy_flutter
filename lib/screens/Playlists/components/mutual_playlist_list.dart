@@ -9,15 +9,17 @@ import '../../../constants/constants.dart';
 class MutualPlaylistList extends StatelessWidget {
   const MutualPlaylistList({
     Key? key,
+    required this.profileID,
   }) : super(key: key);
-
+  final int profileID;
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
             .collection('meevyPlaylists')
-            .where('__name__', isGreaterThanOrEqualTo: '1')
-            .where('__name__', isLessThan: '1' '\uf8ff')
+            .where('__name__',
+                isGreaterThanOrEqualTo: "${profileID.toString()}-")
+            .where('__name__', isLessThan: "${profileID.toString()}-z")
             .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&

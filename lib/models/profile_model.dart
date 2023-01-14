@@ -4,6 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:soul_date/models/images.dart';
 import 'package:soul_date/models/user_model.dart';
 
+List<Profile> profileFromJson(String str) =>
+    List<Profile>.from(json.decode(str).map((x) => Profile.fromJson(x)));
+
 class Profile {
   final int id;
   final User user;

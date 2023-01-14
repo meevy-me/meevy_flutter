@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/cached_image_error.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
