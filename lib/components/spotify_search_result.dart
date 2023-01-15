@@ -6,17 +6,17 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';
 
 class SpotifyTrackResult extends StatefulWidget {
-  const SpotifyTrackResult(
-      {Key? key,
-      required this.result,
-      required this.onSelected,
-      required this.onDeselect,
-      this.disabled = false})
-      : super(key: key);
+  const SpotifyTrackResult({
+    Key? key,
+    required this.result,
+    this.selected = false,
+    this.disabled = false,
+    required this.onClick,
+  }) : super(key: key);
   final SpotifyFavouriteItem result;
-  final Function(SpotifyFavouriteItem item) onSelected;
-  final Function(SpotifyFavouriteItem item) onDeselect;
+  final Function(SpotifyFavouriteItem item) onClick;
   final bool disabled;
+  final bool selected;
 
   @override
   State<SpotifyTrackResult> createState() => _SpotifyTrackResultState();
@@ -24,13 +24,9 @@ class SpotifyTrackResult extends StatefulWidget {
 
 class _SpotifyTrackResultState extends State<SpotifyTrackResult>
     with AutomaticKeepAliveClientMixin {
-  bool selected = false;
   final SoulController controller = Get.find<SoulController>();
   @override
   void initState() {
-    if (controller.keyDb.containsValue(widget.result.id)) {
-      selected = true;
-    }
     super.initState();
   }
 
@@ -39,65 +35,81 @@ class _SpotifyTrackResultState extends State<SpotifyTrackResult>
     super.build(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: CachedNetworkImage(
-              imageUrl: widget.result.imageUrl,
-              width: 60,
-              height: 60,
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.result.title,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultMargin / 2),
-                    child: Text(
-                      widget.result.caption,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(fontSize: 14),
-                    ),
-                  )
-                ],
+      child: InkWell(
+        onTap: () => widget.onClick(widget.result),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: CachedNetworkImage(
+                imageUrl: widget.result.imageUrl,
+                width: widget.selected ? 70 : 60,
+                height: widget.selected ? 70 : 60,
               ),
             ),
-          ),
-          Checkbox(
-            value: selected,
-            onChanged: (value) {
-              if (!widget.disabled) {
-                setState(() {
-                  selected = value!;
-                });
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.result.title,
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                          color: widget.selected
+                              ? Theme.of(context).primaryColor
+                              : null),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: defaultMargin / 2),
+                      child: Text(
+                        widget.result.caption,
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontSize: 14,
+                            color: widget.selected
+                                ? Theme.of(context).primaryColor
+                                : null),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: widget.selected
+                      ? Theme.of(context).primaryColor
+                      : Colors.grey),
+            )
+            // Checkbox(
+            //   value: selected,
+            //   onChanged: (value) {
+            //     if (!widget.disabled) {
+            //       setState(() {
+            //         selected = value!;
+            //       });
 
-                selected
-                    ? widget.onSelected(widget.result)
-                    : widget.onDeselect(widget.result);
-              } else if (selected) {
-                setState(() {
-                  selected = false;
-                });
-                widget.onDeselect(widget.result);
-              }
-            },
-            activeColor: Theme.of(context).primaryColor,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-          )
-        ],
+            //       selected
+            //           ? widget.onSelected(widget.result)
+            //           : widget.onDeselect(widget.result);
+            //     } else if (selected) {
+            //       setState(() {
+            //         selected = false;
+            //       });
+            //       widget.onDeselect(widget.result);
+            //     }
+            //   },
+            //   activeColor: Theme.of(context).primaryColor,
+            //   shape:
+            //       RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+            // )
+          ],
+        ),
       ),
     );
   }

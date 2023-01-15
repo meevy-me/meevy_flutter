@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:soul_date/components/chatbox_spotify.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
@@ -141,10 +142,13 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
               Padding(
                 padding: const EdgeInsets.symmetric(
                     vertical: defaultMargin, horizontal: defaultMargin),
-                child: Text(
-                  DateFormat.jm().format(widget.message.datePosted),
-                  style: Theme.of(context).textTheme.caption,
-                ),
+                child: widget.message.datePosted != null
+                    ? Text(
+                        DateFormat.jm()
+                            .format(widget.message.datePosted!.toDate()),
+                        style: Theme.of(context).textTheme.caption,
+                      )
+                    : LoadingPulse(),
               )
           ],
         ),

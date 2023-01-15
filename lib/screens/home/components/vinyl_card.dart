@@ -7,12 +7,15 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/images.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/screens/home/components/vinyl_modal.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
 import 'package:soul_date/screens/home/vinyl_detail.dart';
+import 'package:soul_date/services/formatting.dart';
 import 'package:soul_date/services/modal.dart';
 import 'package:soul_date/services/navigation.dart';
+import 'package:soul_date/services/network_utils.dart';
 import 'package:soul_date/services/spotify.dart';
 import 'package:text_scroll/text_scroll.dart';
 
@@ -23,8 +26,10 @@ class VinylSentCard extends StatefulWidget {
   const VinylSentCard({
     Key? key,
     required this.vinyl,
+    this.mine = false,
   }) : super(key: key);
   final VinylModel vinyl;
+  final bool mine;
 
   @override
   State<VinylSentCard> createState() => _VinylSentCardState();
@@ -67,17 +72,19 @@ class _VinylSentCardState extends State<VinylSentCard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        widget.vinyl.sender.name,
+                      TextScroll(
+                        widget.mine
+                            ? joinList(widget.vinyl.audience, count: 1)
+                            : widget.vinyl.sender.name,
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             color: Colors.white, fontWeight: FontWeight.w600),
                       ),
                       RowSuper(innerDistance: -10, children: [
                         for (Profile profile in widget.vinyl.audience.take(4))
-                          SoulCircleAvatar(
-                            imageUrl: profile.profilePicture.image,
-                            radius: 10,
-                          ),
+                          ProfileAvatar(
+                            profileID: profile.id,
+                            radius: 9,
+                          )
                       ])
                     ],
                   ),
@@ -113,10 +120,8 @@ class _VinylSentCardState extends State<VinylSentCard> {
                   ),
                   Row(
                     children: [
-                      SoulCircleAvatar(
-                        imageUrl: widget.vinyl.sender.profilePicture.image,
-                        radius: 11,
-                      ),
+                      ProfileAvatar(
+                          profileID: widget.vinyl.sender.id, radius: 11),
                       const SizedBox(
                         width: defaultMargin,
                       ),

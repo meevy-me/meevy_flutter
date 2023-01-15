@@ -1,4 +1,4 @@
-const String baseUrl = 'https://meevy.herokuapp.com/';
+const String baseUrl = 'https://meevy.herokuapp.com/api/v1/';
 const String callbackUrl = baseUrl + 'users/callback/';
 const String spotifyMeEndpoint = "https://api.spotify.com/v1/me";
 const String spotifyTokenEndpoint = "https://accounts.spotify.com/api/token";
@@ -43,3 +43,4 @@ const String friendCheckUrl = baseUrl + "socials/friend/requested/";
 const String spotifyPlayUrl = "https://api.spotify.com/v1/me/player/play";
 const String phoneNumberSearchUrl = baseUrl + "users/profile/phone/search/";
 const String phoneNumberRegisterUrl = baseUrl + "users/profile/phone/register/";
+const String userProfileUrl = baseUrl + "users/profile/";

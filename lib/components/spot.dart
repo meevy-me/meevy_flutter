@@ -42,7 +42,7 @@ class SpotWidget extends StatelessWidget {
                       border: Border.all(
                           color: Theme.of(context).primaryColor, width: 0.5)),
                   child: SoulCircleAvatar(
-                    imageUrl: spot.profile.profilePicture.image,
+                    imageUrl: spot.details.item.album.images[0].url,
                     radius: 27,
                   ),
                 ),
@@ -52,7 +52,7 @@ class SpotWidget extends StatelessWidget {
                 backgroundColor: Colors.white,
                 radius: 10,
                 foregroundImage: CachedNetworkImageProvider(
-                    spot.details.item.album.images[0].url),
+                    spot.profile.profilePicture.image),
               )
             ],
           ),

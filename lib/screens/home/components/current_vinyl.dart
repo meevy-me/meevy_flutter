@@ -22,10 +22,12 @@ import 'current_vinyl_actions.dart';
 
 class CurrentVinyl extends StatelessWidget {
   const CurrentVinyl({Key? key, required this.profileID}) : super(key: key);
-  final int profileID;
+  final int? profileID;
   @override
   Widget build(BuildContext context) {
-    return buildCurrentVinyl(context, profileID: profileID);
+    return profileID != null
+        ? buildCurrentVinyl(context, profileID: profileID!)
+        : const LoadingPulse();
   }
 }
 

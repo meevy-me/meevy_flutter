@@ -68,31 +68,40 @@ class _DiscoverPageState extends State<DiscoverPage> {
       body: SafeArea(
         child: Padding(
           padding: scrollPadding,
-          child: CustomScrollView(
-            controller: scrollController,
-            slivers: [
-              _buildSliverAppbar(context),
-              Obx(() => controller.matches.isNotEmpty
-                  ? SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                      return OpenContainer(
-                        openBuilder: (context, action) =>
-                            MatchDetail(match: controller.matches[index]),
-                        closedBuilder: (context, action) => Padding(
-                          padding: const EdgeInsets.only(bottom: defaultMargin),
-                          child: MatchCard(
-                            onLiked: (match) {
-                              controller.matches.remove(match);
-                            },
-                            match: controller.matches[index],
+          child: RefreshIndicator(
+            onRefresh: () {
+              return Future.delayed(const Duration(seconds: 1), () {
+                controller.fetchMatches();
+              });
+            },
+            color: Theme.of(context).primaryColor,
+            child: CustomScrollView(
+              controller: scrollController,
+              slivers: [
+                _buildSliverAppbar(context),
+                Obx(() => controller.matches.isNotEmpty
+                    ? SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                        return OpenContainer(
+                          openBuilder: (context, action) =>
+                              MatchDetail(match: controller.matches[index]),
+                          closedBuilder: (context, action) => Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: defaultMargin),
+                            child: MatchCard(
+                              onLiked: (match) {
+                                controller.matches.remove(match);
+                              },
+                              match: controller.matches[index],
+                            ),
                           ),
-                        ),
-                      );
-                    }, childCount: controller.matches.length))
-                  : const SliverToBoxAdapter(
-                      child: EmptyWidget(text: "Oops, you have no matches"),
-                    ))
-            ],
+                        );
+                      }, childCount: controller.matches.length))
+                    : const SliverToBoxAdapter(
+                        child: EmptyWidget(text: "Oops, you have no matches"),
+                      ))
+              ],
+            ),
           ),
         ),
       ),

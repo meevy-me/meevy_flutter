@@ -9,12 +9,14 @@ class ProfileActionButton extends StatelessWidget {
     required this.onTap,
     required this.subtitle,
     this.color,
+    this.child1,
   }) : super(key: key);
   final IconData iconData;
   final String title;
   final Function onTap;
   final String subtitle;
   final Color? color;
+  final Widget? child1;
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +49,21 @@ class ProfileActionButton extends StatelessWidget {
                     Padding(
                       padding:
                           const EdgeInsets.symmetric(vertical: defaultPadding),
-                      child: Text(
-                        subtitle,
-                        style: Theme.of(context)
-                            .textTheme
-                            .caption!
-                            .copyWith(overflow: TextOverflow.ellipsis),
+                      child: Row(
+                        children: [
+                          child1 != null ? child1! : const SizedBox.shrink(),
+                          SizedBox(
+                            width: child1 != null ? defaultPadding : 0,
+                          ),
+                          Text(
+                            subtitle,
+                            maxLines: 1,
+                            style: Theme.of(context)
+                                .textTheme
+                                .caption!
+                                .copyWith(overflow: TextOverflow.ellipsis),
+                          ),
+                        ],
                       ),
                     )
                   ],

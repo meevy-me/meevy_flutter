@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/components/spotify_favourite.dart';
 import 'package:soul_date/components/spotify_search_result.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -20,12 +22,14 @@ class FavouritePlaylistScreen extends StatefulWidget {
 class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
   final SoulController controller = Get.find<SoulController>();
   MySpotifyPlaylists? results;
-  SoulQueue<SpotifyFavouriteItem?> selected =
-      SoulQueue.fromList(List.generate(4, (index) => null, growable: false));
+
+  List<SpotifyFavouriteItem?> selected = [];
   ScrollController scrollController = ScrollController();
-  Future<bool> updateItem(List<SpotifyFavouriteItem?> items) async {
+  Future<bool> uploadItems(List<SpotifyFavouriteItem?> items) async {
     return await controller.updateFavouritesPlaylist(items);
   }
+
+  bool loading = false;
 
   @override
   void dispose() {
@@ -37,12 +41,15 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
   void initState() {
     getPlaylists();
     if (controller.favouritePlaylist.isNotEmpty) {
-      var queue = SoulQueue.fromList(
-        controller.favouritePlaylist.map((e) => e!.details).toList(),
-      );
-
-      queue.fill(4);
-      selected = queue;
+      var dataList =
+          controller.favouritePlaylist.map((e) => e.details).toList();
+      // int deficit = 4 - dataList.length;
+      // for (int i = dataList.length - 1; i <= deficit; i++) {
+      //   dataList.add(null);
+      // }
+      setState(() {
+        selected = dataList;
+      });
     }
     scrollController.addListener(() async {
       var nextPageTrigger = scrollController.position.maxScrollExtent * 0.8;
@@ -74,6 +81,31 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      floatingActionButton: selected.isNotEmpty
+          ? FloatingActionButton(
+              child: !loading
+                  ? const Icon(CupertinoIcons.cloud_upload_fill)
+                  : const LoadingPulse(
+                      color: Colors.grey,
+                    ),
+              onPressed: () async {
+                setState(() {
+                  loading = true;
+                });
+                var res = await uploadItems(selected);
+                setState(() {
+                  loading = false;
+                });
+                if (res) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("That was a success")));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("An error has occured, Try again later")));
+                }
+              },
+            )
+          : const SizedBox.shrink(),
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         centerTitle: true,
@@ -83,25 +115,7 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
           "Favourite Playlists",
           style: Theme.of(context).textTheme.headline6,
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultPadding / 3),
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    backgroundColor: Theme.of(context).primaryColor,
-                    elevation: 0),
-                onPressed: () {
-                  if (selected.isNotEmpty) {
-                    updateItem(selected.flat);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text(":) Favourite Playlists updated")));
-                  }
-                },
-                child: const Text("Update")),
-          )
-        ],
+        actions: [],
       ),
       body: ListView(
         padding: scrollPadding,
@@ -116,26 +130,32 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
               padding: const EdgeInsets.symmetric(vertical: defaultMargin),
               child: Column(
                 children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: 4,
-                    itemBuilder: ((context, index) => SpotifyFavouriteWidget(
-                          height: 95,
-                          item: selected.get(index),
-                          onRemove: (item) {
-                            setState(() {
-                              selected.removeWhere((element) {
-                                if (element != null) {
-                                  return element.id == item.id;
-                                } else {
-                                  return false;
-                                }
-                              });
-                            });
-                          },
-                        )),
-                  ),
+                  selected.isNotEmpty
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: selected.length,
+                          itemBuilder: ((context, index) =>
+                              SpotifyFavouriteWidget(
+                                height: 95,
+                                item: selected[index],
+                                onRemove: (item) {
+                                  setState(() {
+                                    selected.remove(item);
+                                  });
+                                },
+                              )),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: defaultMargin),
+                          child: Center(
+                            child: Text(
+                              "No Favourite Playlist. :(",
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                          ),
+                        ),
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(vertical: defaultMargin),
@@ -144,27 +164,37 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
                       style: Theme.of(context).textTheme.headline6,
                     ),
                   ),
-                  if (results != null)
-                    ...results!.items
-                        .map(
-                          (e) => SpotifyTrackResult(
-                              disabled: selected.isFull,
+                  results != null
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          primary: false,
+                          itemCount: results!.items.length,
+                          itemBuilder: (context, index) {
+                            var e = results!.items[index];
+                            return SpotifyTrackResult(
+                              selected: selected.contains(e),
                               result: e,
-                              onSelected: (item) {
-                                setState(() {
-                                  if (!selected.contains(item)) {
+                              onClick: (item) {
+                                if (!selected.contains(e) &&
+                                    selected.length != 4) {
+                                  setState(() {
                                     selected.add(item);
-                                  }
-                                });
+                                  });
+                                } else if (selected.length == 4) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              "Only four playlists can be added")));
+                                } else {
+                                  setState(() {
+                                    selected.remove(item);
+                                  });
+                                }
                               },
-                              onDeselect: (item) {
-                                setState(() {
-                                  selected.removeWhere(
-                                      (element) => element!.id == item.id);
-                                });
-                              }),
+                            );
+                          },
                         )
-                        .toList()
+                      : SizedBox.shrink()
                 ],
               ),
             )

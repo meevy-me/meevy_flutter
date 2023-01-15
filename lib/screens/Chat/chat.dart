@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -26,7 +27,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final SoulController controller = Get.find<SoulController>();
   late Profile profile;
   FocusNode focus = FocusNode();
-
+  late Stream<QuerySnapshot>? _stream;
   Profile currentProfile() {
     if (controller.profile!.id == widget.friend.profile1.id) {
       return widget.friend.profile2;
@@ -44,6 +45,12 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
     messageController = Get.find<MessageController>();
+    _stream = FirebaseFirestore.instance
+        .collection('chatMessages')
+        .doc(widget.friend.id.toString())
+        .collection('messages')
+        .orderBy('date_sent', descending: true)
+        .snapshots();
     super.initState();
   }
 
@@ -73,9 +80,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         MediaQuery.of(context).viewInsets.bottom -
                         10) -
                     (replyTo != null ? 70 : 0),
-                child: StreamBuilder<List<Message>>(
-                    stream: messageController
-                        .fetchMessages(widget.friend.id.toString()),
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: _stream,
                     builder: (context, snapshot) {
                       return ListView.builder(
                           reverse: true,
@@ -83,28 +89,24 @@ class _ChatScreenState extends State<ChatScreen> {
                           shrinkWrap: true,
                           controller: scrollController,
                           itemCount:
-                              snapshot.data != null ? snapshot.data!.length : 1,
+                              snapshot.data != null ? snapshot.data!.size : 0,
                           itemBuilder: (context, index) {
-                            if (snapshot.data != null &&
-                                snapshot.data!.isNotEmpty) {
-                              var element = snapshot.data![index];
-                              return ChatBox(
-                                key: UniqueKey(),
-                                friends: widget.friend,
-                                profile: profile,
-                                message: element,
-                                width: size.width * 0.65,
-                                onSwipe: ((message) {
-                                  setState(() {
-                                    replyTo = message;
-                                    focus.requestFocus();
-                                  });
-                                }),
-                              );
-                            } else {
-                              return const Center(
-                                  child: Text("There's nothing here"));
-                            }
+                            var docs = snapshot.data!.docs;
+                            var data =
+                                docs[index].data() as Map<String, dynamic>;
+                            return ChatBox(
+                              key: UniqueKey(),
+                              friends: widget.friend,
+                              profile: profile,
+                              message: Message.fromJson(data),
+                              width: size.width * 0.65,
+                              onSwipe: ((message) {
+                                setState(() {
+                                  replyTo = message;
+                                  focus.requestFocus();
+                                });
+                              }),
+                            );
                           });
                     })),
             Positioned(

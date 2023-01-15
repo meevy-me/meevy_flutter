@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 List<Message> messageFromJson(String str) =>
     List<Message>.from(json.decode(str).map((x) => Message.fromJson(x)));
 
@@ -14,16 +16,17 @@ class Message {
   });
   String id = "";
   String content;
-  DateTime datePosted;
+  Timestamp? datePosted;
   int sender;
   Map<String, dynamic>? replyTo;
   // dynamic spot;
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-        id: json["id"],
+        id: json.containsKey('id') ? json["id"] : "",
         content: json["message"],
-        datePosted: DateTime.parse(json["date_sent"]),
+        datePosted:
+            json['date_sent'] != null ? json["date_sent"] as Timestamp : null,
         sender: int.parse(json["sender"]),
         replyTo: json['reply_to']);
   }
@@ -32,7 +35,7 @@ class Message {
   Map<String, dynamic> toJson() => {
         "id": id,
         "message": content,
-        "date_sent": datePosted.toIso8601String(),
+        "date_sent": datePosted,
         "sender": sender.toString(),
 
         // "spot": spot,

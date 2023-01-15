@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/inputfield.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/components/spotify_favourite.dart';
 import 'package:soul_date/components/spotify_search_result.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -19,16 +22,16 @@ class FavouriteSongScreen extends StatefulWidget {
 class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
   final SoulController controller = Get.find<SoulController>();
   SpotifySearch? results;
-  List<SpotifyFavouriteItem?> selected = List.generate(1, (index) => null);
-
-  Future<bool> updateItem(SpotifyFavouriteItem item) async {
+  SpotifyFavouriteItem? selected;
+  bool loading = false;
+  Future<bool> uploadItem(SpotifyFavouriteItem item) async {
     return await controller.updateFavouritesTrack(item);
   }
 
   @override
   void initState() {
     if (controller.favouriteTrack != null) {
-      selected[0] = controller.favouriteTrack!.details;
+      selected = controller.favouriteTrack!.details;
     }
     super.initState();
   }
@@ -38,6 +41,31 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      floatingActionButton: selected != null
+          ? FloatingActionButton(
+              child: !loading
+                  ? const Icon(CupertinoIcons.cloud_upload_fill)
+                  : const LoadingPulse(
+                      color: Colors.grey,
+                    ),
+              onPressed: () async {
+                setState(() {
+                  loading = true;
+                });
+                var res = await uploadItem(selected!);
+                setState(() {
+                  loading = false;
+                });
+                if (res) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text(":) That was a success")));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("An error has occured, Try again later")));
+                }
+              },
+            )
+          : const SizedBox.shrink(),
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         centerTitle: true,
@@ -47,23 +75,7 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
           "Favourite Song",
           style: Theme.of(context).textTheme.headline6,
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultPadding / 3),
-            child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    backgroundColor: Theme.of(context).primaryColor,
-                    elevation: 0),
-                onPressed: () {
-                  if (selected[0] != null) {
-                    updateItem(selected[0]!);
-                  }
-                },
-                child: const Text("Update")),
-          )
-        ],
+        actions: [],
       ),
       body: Container(
         height: size.height * 0.8,
@@ -82,17 +94,10 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
                 child: Column(
                   children: [
                     SpotifyFavouriteWidget(
-                      item: selected[0],
+                      item: selected,
                       onRemove: (item) {
                         setState(() {
-                          var index = selected.indexWhere((element) {
-                            if (element != null) {
-                              return element.id == item.id;
-                            } else {
-                              return false;
-                            }
-                          });
-                          selected[index] = null;
+                          selected = null;
                         });
                       },
                     ),
@@ -125,34 +130,19 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
             ),
             if (results != null)
               ...results!.tracks.items.map((e) {
-                return SpotifyTrackResult(
-                  key: ValueKey(e.id),
-                  disabled: selected.first != null,
-                  onSelected: (item) {
-                    if (selected.isNotEmpty) {
+                return SlideAnimation(
+                  child: SpotifyTrackResult(
+                    key: ValueKey(e.id),
+                    selected: selected != null ? e.id == selected!.id : false,
+                    // disabled: selected.first != null,
+
+                    onClick: (item) {
                       setState(() {
-                        selected[0] = item;
-                        controller.keyDb['searchTrack'] = item.id;
+                        selected = item;
                       });
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Cannot add more than one item")));
-                    }
-                  },
-                  onDeselect: (item) {
-                    setState(() {
-                      var index = selected.indexWhere((element) {
-                        if (element != null) {
-                          return element.id == item.id;
-                        } else {
-                          return false;
-                        }
-                      });
-                      selected[index] = null;
-                      controller.keyDb.remove('searchTrack');
-                    });
-                  },
-                  result: e,
+                    },
+                    result: e,
+                  ),
                 );
               })
           ],

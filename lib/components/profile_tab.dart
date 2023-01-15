@@ -1,13 +1,18 @@
+import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/profile_action_button.dart';
 import 'package:soul_date/components/profile_tab_button.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/favourite_model.dart';
 import 'package:soul_date/screens/favourite_playlists.dart';
 import 'package:soul_date/screens/favourite_song.dart';
 import 'package:soul_date/screens/my_images.dart';
 import 'package:soul_date/screens/profile2.dart';
+import 'package:soul_date/services/formatting.dart';
 
 import '../constants/constants.dart';
 
@@ -51,7 +56,7 @@ class _ProfileTabViewState extends State<ProfileTabView> {
                   child: ProfileTabButton(
                       color: Theme.of(context).primaryColor,
                       icon: const Icon(
-                        CupertinoIcons.person,
+                        CupertinoIcons.person_fill,
                         color: defaultGrey,
                         size: iconSize,
                       ),
@@ -74,12 +79,12 @@ class _ProfileTabViewState extends State<ProfileTabView> {
                   child: ProfileTabButton(
                     color: spotifyGreen,
                     icon: const Icon(
-                      CupertinoIcons.heart,
+                      CupertinoIcons.sparkles,
                       size: iconSize,
                       color: defaultGrey,
                     ),
                     activeIcon: const Icon(
-                      CupertinoIcons.heart_fill,
+                      CupertinoIcons.sparkles,
                       size: iconSize,
                       color: spotifyGreen,
                     ),
@@ -138,36 +143,75 @@ class _ProfileDetails extends StatelessWidget {
   }
 }
 
-class _FavouriteDetails extends StatelessWidget {
+class _FavouriteDetails extends StatefulWidget {
   const _FavouriteDetails({Key? key}) : super(key: key);
 
   @override
+  State<_FavouriteDetails> createState() => _FavouriteDetailsState();
+}
+
+class _FavouriteDetailsState extends State<_FavouriteDetails> {
+  final SoulController soulController = Get.find<SoulController>();
+  @override
   Widget build(BuildContext context) {
-    return GetBuilder<SoulController>(builder: (controller) {
-      return Column(
-        children: [
-          ProfileActionButton(
-              color: spotifyGreen,
-              iconData: CupertinoIcons.music_mic,
-              title: "Songs",
-              onTap: () {
-                Get.to(() => const FavouriteSongScreen());
-              },
-              subtitle: controller.favouriteTrack == null
-                  ? "No favourite song. :("
-                  : "${controller.favouriteTrack!.details.name} - ${controller.favouriteTrack!.details.artists.join(', ')}"),
-          ProfileActionButton(
-              color: spotifyGreen,
-              iconData: CupertinoIcons.music_albums,
-              title: "Playlists",
-              onTap: () {
-                Get.to(() => const FavouritePlaylistScreen());
-              },
-              subtitle: controller.favouritePlaylist.isEmpty
-                  ? "No favourite Playlist. :("
-                  : controller.favouritePlaylist.first!.details!.name)
-        ],
-      );
-    });
+    return Column(
+      children: [
+        FutureBuilder<FavouriteTrack?>(
+            future: soulController.getFavouriteSong(),
+            builder: (context, snapshot) {
+              return snapshot.connectionState == ConnectionState.done
+                  ? ProfileActionButton(
+                      color: spotifyGreen,
+                      iconData: CupertinoIcons.music_mic,
+                      title: "Songs",
+                      onTap: () {
+                        Get.to(() => const FavouriteSongScreen());
+                      },
+                      child1: snapshot.data != null
+                          ? SoulCircleAvatar(
+                              imageUrl:
+                                  snapshot.data!.details.album.images.first.url,
+                              radius: 12,
+                            )
+                          : null,
+                      subtitle: snapshot.data == null
+                          ? "No favourite song. :("
+                          : snapshot.data!.details.name)
+                  : const LoadingPulse(
+                      color: spotifyGreen,
+                    );
+            }),
+        FutureBuilder<List<FavouritePlaylist>>(
+            future: soulController.getFavouritePlaylist(),
+            builder: (context, snapshot) {
+              return snapshot.connectionState == ConnectionState.done &&
+                      snapshot.data != null
+                  ? ProfileActionButton(
+                      color: spotifyGreen,
+                      iconData: CupertinoIcons.music_albums,
+                      title: "Playlists",
+                      onTap: () {
+                        Get.to(() => const FavouritePlaylistScreen());
+                      },
+                      child1: snapshot.data != null
+                          ? RowSuper(
+                              innerDistance: -10,
+                              children: snapshot.data!
+                                  .take(4)
+                                  .map((e) => SoulCircleAvatar(
+                                        imageUrl: e.details!.imageUrl,
+                                        radius: 10,
+                                      ))
+                                  .toList())
+                          : null,
+                      subtitle: snapshot.data!.isEmpty
+                          ? "No favourite Playlist. :("
+                          : joinList(snapshot.data!, count: 1))
+                  : const LoadingPulse(
+                      color: spotifyGreen,
+                    );
+            })
+      ],
+    );
   }
 }

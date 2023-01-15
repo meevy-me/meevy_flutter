@@ -17,7 +17,7 @@ class PlaylistsPage extends StatefulWidget {
 }
 
 class _PlaylistsPageState extends State<PlaylistsPage> {
-  late int profileID;
+  int? profileID;
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
 
     int id = preferences.getInt('profileID')!;
     setState(() {
-      profileID = profileID;
+      profileID = id;
     });
   }
 
@@ -45,13 +45,13 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
           style: Theme.of(context).textTheme.headline5,
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
-            child: AppbarIconContainer(
-              iconData: FeatherIcons.search,
-              onPress: () {},
-            ),
-          )
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
+          //   child: AppbarIconContainer(
+          //     iconData: FeatherIcons.search,
+          //     onPress: () {},
+          //   ),
+          // )
         ],
       ),
       body: SafeArea(

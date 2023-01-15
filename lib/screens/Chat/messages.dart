@@ -4,8 +4,10 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/components/chat_item.dart';
 import 'package:soul_date/components/icon_container.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/components/reorderable_firebase_list.dart';
 import 'package:soul_date/components/spot.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -16,6 +18,9 @@ import 'package:collection/collection.dart';
 import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/screens/Chat/chat.dart';
 import 'package:soul_date/screens/friends/friends.dart';
+import 'package:soul_date/services/modal.dart';
+
+import 'components/message_list.dart';
 
 class MessagesPage extends StatefulWidget {
   const MessagesPage({Key? key}) : super(key: key);
@@ -31,9 +36,20 @@ class _MessagesPageState extends State<MessagesPage> {
   final SoulController soulController = Get.find<SoulController>();
   @override
   void initState() {
+    getProfileID();
     spotController.fetchSpots();
     // messageController.fetchChats();
     super.initState();
+  }
+
+  int? profileID;
+  void getProfileID() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    int id = preferences.getInt('profileID')!;
+    setState(() {
+      profileID = id;
+    });
   }
 
   @override
@@ -48,11 +64,13 @@ class _MessagesPageState extends State<MessagesPage> {
         // centerTitle: true,
         actions: [
           IconContainer(
-            onPress: () {},
+            onPress: () {
+              showModal(context, Scaffold());
+            },
             size: 40,
             icon: const Center(
               child: Icon(
-                FeatherIcons.search,
+                FeatherIcons.upload,
                 color: Colors.black,
                 size: 20,
               ),
@@ -124,12 +142,18 @@ class _MessagesPageState extends State<MessagesPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const _SpotSection(),
-            Expanded(child: _MessagesSection(
-              onRefresh: () {
-                spotController.fetchSpots();
-                // messageController.refreshChats();
-              },
-            ))
+            Expanded(
+                child: profileID != null
+                    ? MessagesSection(
+                        profileID: profileID!,
+                        onRefresh: () {
+                          spotController.fetchSpots();
+                          // messageController.refreshChats();
+                        },
+                      )
+                    : LoadingPulse(
+                        color: Theme.of(context).primaryColor,
+                      ))
           ],
         ),
       ),
@@ -235,76 +259,5 @@ class _SpotSectionState extends State<_SpotSection> {
         )
       ],
     );
-  }
-}
-
-class _MessagesSection extends StatelessWidget {
-  _MessagesSection({Key? key, required this.onRefresh}) : super(key: key);
-  final Function onRefresh;
-  final MessageController messageController = Get.find<MessageController>();
-
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    const Radius radius = Radius.circular(30);
-    return Container(
-        padding: const EdgeInsets.fromLTRB(
-            defaultMargin, defaultMargin, defaultMargin, 0),
-        decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.vertical(top: radius)),
-        child: RefreshIndicator(
-            onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
-                  onRefresh();
-                }),
-            child: ReorderableFirebaseList(
-              collection: FirebaseFirestore.instance
-                  .collection('userChats')
-                  .doc(messageController.userID)
-                  .collection('chats'),
-              indexKey: 'position',
-              itemBuilder: (context, index, doc) {
-                var chatId = int.parse(doc['chat_id']);
-                return FutureBuilder<Friends>(
-                    key: UniqueKey(),
-                    initialData: messageController.friends[chatId],
-                    future: messageController.getFriend(chatId),
-                    builder: (context, snapshot) {
-                      return snapshot.data != null &&
-                              snapshot.hasData &&
-                              !snapshot.hasError
-                          ? InkWell(
-                              key: UniqueKey(),
-                              onTap: () {},
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: defaultMargin / 2),
-                                child: InkWell(
-                                    onTap: () {
-                                      Get.to(() => ChatScreen(
-                                            friend: snapshot.data!,
-                                          ));
-                                    },
-                                    child: Column(
-                                      children: [
-                                        ChatItem(
-                                            friend: snapshot.data!, size: size),
-                                        const Divider()
-                                      ],
-                                    )),
-                              ),
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: defaultMargin),
-                              child: SpinKitRing(
-                                color: Theme.of(context).primaryColor,
-                                size: 20,
-                                lineWidth: 2,
-                              ),
-                            );
-                    });
-              },
-            )));
   }
 }

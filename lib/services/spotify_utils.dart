@@ -311,14 +311,14 @@ void sendSpotifyItem(
           .collection('messages')
           .add(vinylChat.toJson());
 
-      for (var element in friends) {
-        FirebaseFirestore.instance
-            .collection('userSentTracks')
-            .doc(element.friendsProfile.user.id.toString())
-            .collection('sentTracks')
-            .doc(doc_ref.id)
-            .set({"date_sent": DateTime.now().toString()});
-      }
+      // for (var element in friends) {
+      //   FirebaseFirestore.instance
+      //       .collection('userSentTracks')
+      //       .doc(element.friendsProfile.user.id.toString())
+      //       .collection('sentTracks')
+      //       .doc(doc_ref.id)
+      //       .set({"date_sent": DateTime.now().toString()});
+      // }
     } else if (item.spotifyDataType == SpotifyDataType.playlist) {
       var doc_ref = await FirebaseFirestore.instance
           .collection('sentPlaylists')
@@ -335,14 +335,14 @@ void sendSpotifyItem(
       //   "message": caption,
       //   "date_sent": DateTime.now()
       // });
-      for (var element in friends) {
-        FirebaseFirestore.instance
-            .collection('userSentPlaylists')
-            .doc(element.friendsProfile.user.id.toString())
-            .collection('sentPlaylists')
-            .doc(doc_ref.id)
-            .set({"date_sent": DateTime.now().toString()});
-      }
+      // for (var element in friends) {
+      //   FirebaseFirestore.instance
+      //       .collection('userSentPlaylists')
+      //       .doc(element.friendsProfile.user.id.toString())
+      //       .collection('sentPlaylists')
+      //       .doc(doc_ref.id)
+      //       .set({"date_sent": DateTime.now().toString()});
+      // }
     }
   }
 }

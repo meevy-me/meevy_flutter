@@ -13,4 +13,12 @@ class FavouritePlaylist {
   final PlaylistItem? details;
 
   FavouritePlaylist(this.id, this.details);
+
+  @override
+  String toString() {
+    if (details != null) {
+      return details!.name;
+    }
+    return super.toString();
+  }
 }

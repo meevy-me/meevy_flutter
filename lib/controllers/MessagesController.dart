@@ -41,14 +41,14 @@ class MessageController extends GetxController {
       {required int chatID,
       required String msg,
       Profile? receiver,
-      Message? replyTo}) {
+      Message? replyTo}) async {
     Map<String, dynamic> toSend = {
       "sender": userID,
       "message": msg,
-      "date_sent": DateTime.now().toString(),
+      "date_sent": FieldValue.serverTimestamp(),
       "reply_to": replyTo?.toJson()
     };
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('chatMessages')
         .doc(chatID.toString())
         .collection('messages')
@@ -57,7 +57,10 @@ class MessageController extends GetxController {
     FirebaseFirestore.instance
         .collection('chats')
         .doc(chatID.toString())
-        .update({"last_message": toSend});
+        .update({
+      "last_message": toSend,
+      "timestamp": FieldValue.serverTimestamp()
+    });
     if (receiver != null) {
       controller.sendNotification(receiver, msg);
     }

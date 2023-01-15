@@ -64,6 +64,10 @@ class SoulQueue<T> extends Iterable {
     }
   }
 
+  void remove(T? item) {
+    items.remove(item);
+  }
+
   @override
   int get length {
     return items.length;

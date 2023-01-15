@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 class SoulChatText {
   String? key;
@@ -46,4 +47,17 @@ String utf8Format(String str) {
     log(e.toString());
     return str;
   }
+}
+
+String joinList(List<Object> items, {int count = 3}) {
+  String namesTemp = items.take(count).join(", ");
+  int remainingCount = items.length - count;
+  if (items.length > count) {
+    return namesTemp + " & ${remainingCount} more";
+  }
+  return namesTemp;
+}
+
+String timeFormat(DateTime time) {
+  return DateFormat.jm().format(time);
 }

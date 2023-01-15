@@ -6,11 +6,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
+import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/screens/home/components/vinyl_list.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
 import 'package:soul_date/services/images.dart';
 
@@ -25,7 +29,7 @@ class VinylsPage extends StatefulWidget {
 }
 
 class _VinylsPageState extends State<VinylsPage> {
-  late int profileID;
+  int? profileID;
 
   @override
   void initState() {
@@ -38,7 +42,7 @@ class _VinylsPageState extends State<VinylsPage> {
 
     int id = preferences.getInt('profileID')!;
     setState(() {
-      profileID = profileID;
+      profileID = id;
     });
   }
 
@@ -57,13 +61,15 @@ class _VinylsPageState extends State<VinylsPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Hello, Edwin",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline4!
-                          .copyWith(fontWeight: FontWeight.w600),
-                    ),
+                    GetBuilder<SoulController>(builder: (controller) {
+                      return Text(
+                        "Hello, ${controller.profile?.name}",
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline5!
+                            .copyWith(fontWeight: FontWeight.w600),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -94,11 +100,11 @@ class _VinylsPageState extends State<VinylsPage> {
                                 .headline6!
                                 .copyWith(fontWeight: FontWeight.w600),
                           ),
-                          Icon(
-                            CupertinoIcons.play,
-                            size: 20,
-                            color: Colors.black,
-                          )
+                          // Icon(
+                          //   CupertinoIcons.play,
+                          //   size: 20,
+                          //   color: Colors.black,
+                          // )
                         ],
                       ),
                     ),
@@ -110,60 +116,11 @@ class _VinylsPageState extends State<VinylsPage> {
                           decoration: BoxDecoration(
                               color: const Color(0xFF241D1E),
                               borderRadius: BorderRadius.circular(0)),
-                          child: StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('userSentTracks')
-                                  .doc(profileID.toString())
-                                  .collection('sentTracks')
-                                  .orderBy('date_sent', descending: true)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                final userSnapshot = snapshot.data?.docs;
-                                return ListView.separated(
-                                  padding: scaffoldPadding,
-                                  itemCount: userSnapshot != null
-                                      ? userSnapshot.length
-                                      : 0,
-                                  shrinkWrap: true,
-                                  separatorBuilder: (context, index) {
-                                    return Divider(
-                                      color: Colors.grey.withOpacity(0.2),
-                                    );
-                                  },
-                                  itemBuilder: (context, index) {
-                                    String doc_id = userSnapshot![index].id;
-                                    return FutureBuilder<DocumentSnapshot>(
-                                        future: FirebaseFirestore.instance
-                                            .collection('sentTracks')
-                                            .doc(doc_id)
-                                            .get(),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasError) {
-                                            return Text("Something went wrong");
-                                          }
-
-                                          if (snapshot.data != null &&
-                                              snapshot.hasData &&
-                                              !snapshot.data!.exists) {
-                                            return const SizedBox.shrink();
-                                          }
-
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                            Map<String, dynamic> data =
-                                                snapshot.data!.data()
-                                                    as Map<String, dynamic>;
-                                            return VinylSentCard(
-                                                vinyl: VinylModel.fromJson(
-                                                    data, doc_id));
-                                          }
-                                          return SpinKitPulse(
-                                            color: Colors.grey,
-                                          );
-                                        });
-                                  },
-                                );
-                              }),
+                          child: profileID != null
+                              ? VinylList(profileID: profileID!)
+                              : LoadingPulse(
+                                  color: Theme.of(context).primaryColor,
+                                ),
                         ),
                       ),
                     )

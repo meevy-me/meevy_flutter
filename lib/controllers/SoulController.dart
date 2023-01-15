@@ -34,7 +34,7 @@ class SoulController extends GetxController {
   Map<String, dynamic> keyDb = {};
   List<Friends> friends = [];
   FavouriteTrack? favouriteTrack;
-  List<FavouritePlaylist?> favouritePlaylist = [];
+  List<FavouritePlaylist> favouritePlaylist = [];
   Spotify spotify = Spotify();
   Map<int, Profile> profileCache = {};
   Cron cron = Cron();
@@ -313,6 +313,7 @@ class SoulController extends GetxController {
         body: {"type": type, "details": jsonEncode(item).toString()});
 
     if (res.statusCode <= 210) {
+      await getFavouriteSong(update: true);
       return true;
     }
     return false;
@@ -323,35 +324,43 @@ class SoulController extends GetxController {
         body: {"type": 'playlist', "details": jsonEncode(items).toString()});
 
     if (res.statusCode <= 210) {
-      getFavouritePlaylist();
+      await getFavouritePlaylist(update: true);
       return true;
     }
     return false;
   }
 
-  Future<FavouriteTrack?> getFavouriteSong() async {
-    http.Response res = await client.get(myFavouriteUrl);
-    if (res.statusCode <= 210) {
-      Map<String, dynamic> data = json.decode(res.body)[0];
-      favouriteTrack = FavouriteTrack(
-          data['id'], spotifySearch.SongItem.fromJson(data['details']));
-
-      update();
+  Future<FavouriteTrack?> getFavouriteSong({bool update = false}) async {
+    if (!update && favouriteTrack != null) {
+      return favouriteTrack;
+    } else {
+      http.Response res = await client.get(myFavouriteUrl);
+      if (res.statusCode <= 210) {
+        Map<String, dynamic> data = json.decode(res.body)[0];
+        favouriteTrack = FavouriteTrack(
+            data['id'], spotifySearch.SongItem.fromJson(data['details']));
+        return favouriteTrack;
+      }
+      return null;
     }
-    return null;
   }
 
-  Future<FavouritePlaylist?> getFavouritePlaylist() async {
-    http.Response res =
-        await client.get(myFavouriteUrl, parameters: {"type": 'playlist'});
-    if (res.statusCode <= 210) {
-      var data = json.decode(res.body);
-      data as List;
-      favouritePlaylist = List<FavouritePlaylist>.from(data.map((e) =>
-          FavouritePlaylist(e['id'], PlaylistItem.fromJson(e['details']))));
-      update();
+  Future<List<FavouritePlaylist>> getFavouritePlaylist(
+      {bool update = false}) async {
+    if (!update && favouritePlaylist.isNotEmpty) {
+      return favouritePlaylist;
+    } else {
+      http.Response res =
+          await client.get(myFavouriteUrl, parameters: {"type": 'playlist'});
+      if (res.statusCode <= 210) {
+        var data = json.decode(res.body);
+        data as List;
+        favouritePlaylist = List<FavouritePlaylist>.from(data.map((e) =>
+            FavouritePlaylist(e['id'], PlaylistItem.fromJson(e['details']))));
+        return favouritePlaylist;
+      }
+      return [];
     }
-    return null;
   }
 
   Future<FavouriteTrack?> getFriendFavouriteTrack(int id) async {
