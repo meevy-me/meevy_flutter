@@ -45,8 +45,20 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
     }).toList();
   }
 
+  bool exists = false;
+
   void onPlay() {
     favouritesPlayAll(context);
+  }
+
+  void isValid() async {
+    var docRef = await FirebaseFirestore.instance
+        .collection('likedPlaylist')
+        .doc(widget.profileID.toString())
+        .get();
+    setState(() {
+      exists = docRef.exists;
+    });
   }
 
   final SoulController soulController = Get.find<SoulController>();
@@ -60,18 +72,22 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
                 .get(),
             builder: (context, snapshot) {
               return GestureDetector(
-                onTap: () => Navigation.push(context,
-                    customPageTransition: PageTransition(
-                        child: PlaylistDetailPage(
-                          onPlay: onPlay,
-                          tracksFn: getTracks,
-                          meevyBasePlaylist: MeevyBasePlaylist(
-                              name: "Meevy Favourites",
-                              description:
-                                  "Songs you have liked while using meevy",
-                              contributors: [soulController.profile!]),
-                        ),
-                        type: PageTransitionType.fromBottom)),
+                onTap: () {
+                  if (snapshot.data != null && snapshot.data!.exists) {
+                    Navigation.push(context,
+                        customPageTransition: PageTransition(
+                            child: PlaylistDetailPage(
+                              onPlay: onPlay,
+                              tracksFn: getTracks,
+                              meevyBasePlaylist: MeevyBasePlaylist(
+                                  name: "Meevy Favourites",
+                                  description:
+                                      "Songs you have liked while using meevy",
+                                  contributors: [soulController.profile!]),
+                            ),
+                            type: PageTransitionType.fromBottom));
+                  }
+                },
                 child: Container(
                   padding: scaffoldPadding,
                   height: 100,
@@ -109,73 +125,86 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: defaultPadding),
-                              child: FutureBuilder<QuerySnapshot>(
-                                  future: FirebaseFirestore.instance
-                                      .collection('likedPlaylist')
-                                      .doc(widget.profileID.toString())
-                                      .collection('tracks')
-                                      // .orderBy('date_added')
-                                      .get(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      List<Item> items = snapshot.data!.docs
-                                          .map((e) =>
-                                              Item.fromJson(e.get('track')))
-                                          .toList();
-                                      // print(data);
-                                      // List<Item> items = data.map((key, value) => Item.fromJson(json))
-                                      return Row(
-                                        children: [
-                                          RowSuper(
-                                            innerDistance: -10,
+                              child: snapshot.data != null &&
+                                      snapshot.data!.exists
+                                  ? FutureBuilder<QuerySnapshot>(
+                                      future: FirebaseFirestore.instance
+                                          .collection('likedPlaylist')
+                                          .doc(widget.profileID.toString())
+                                          .collection('tracks')
+                                          // .orderBy('date_added')
+                                          .get(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          List<Item> items = snapshot.data!.docs
+                                              .map((e) =>
+                                                  Item.fromJson(e.get('track')))
+                                              .toList();
+                                          // print(data);
+                                          // List<Item> items = data.map((key, value) => Item.fromJson(json))
+                                          return Row(
                                             children: [
-                                              for (Item item in items.take(4))
-                                                SoulCircleAvatar(
-                                                  imageUrl: item
-                                                      .album.images.first.url,
-                                                  radius: 12,
-                                                )
+                                              RowSuper(
+                                                innerDistance: -10,
+                                                children: [
+                                                  for (Item item
+                                                      in items.take(4))
+                                                    SoulCircleAvatar(
+                                                      imageUrl: item.album
+                                                          .images.first.url,
+                                                      radius: 12,
+                                                    )
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            defaultPadding),
+                                                child: Text(
+                                                  "Contains ${items.length} tracks",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .caption!
+                                                      .copyWith(
+                                                          color: Colors.grey),
+                                                ),
+                                              )
                                             ],
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: defaultPadding),
-                                            child: Text(
-                                              "Contains ${items.length} tracks",
-                                              overflow: TextOverflow.ellipsis,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .caption!
-                                                  .copyWith(color: Colors.grey),
-                                            ),
-                                          )
-                                        ],
-                                      );
-                                    }
+                                          );
+                                        }
 
-                                    return const SpinKitPulse(
-                                      color: Colors.grey,
-                                      size: 15,
-                                    );
-                                  }),
+                                        return const SpinKitPulse(
+                                          color: Colors.grey,
+                                          size: 15,
+                                        );
+                                      })
+                                  : Text(
+                                      "Like a song to have favourites",
+                                      style:
+                                          Theme.of(context).textTheme.caption,
+                                    ),
                             )
                           ],
                         ),
                       ),
                       const Spacer(),
-                      IconContainer(
-                        onPress: () {
-                          favouritesPlayAll(context);
-                        },
-                        icon: const Icon(
-                          CupertinoIcons.play_fill,
-                          color: Colors.white,
-                          size: 30,
-                        ),
-                        color: Theme.of(context).primaryColor,
-                        size: 40,
-                      )
+                      if (snapshot.data != null && snapshot.data!.exists)
+                        IconContainer(
+                          onPress: () {
+                            favouritesPlayAll(context);
+                          },
+                          icon: const Icon(
+                            CupertinoIcons.play_fill,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          color: Theme.of(context).primaryColor,
+                          size: 40,
+                        )
                     ],
                   ),
                 ),

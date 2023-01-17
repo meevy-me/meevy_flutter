@@ -70,7 +70,7 @@ void vinylQueue(BuildContext context, SpotifyData item,
   }
 }
 
-void trackLike(BuildContext context, SpotifyData item) {
+void trackLike(BuildContext context, SpotifyData item, {Profile? sender}) {
   final SoulController controller = Get.find<SoulController>();
 
   String userID = controller.profile!.user.id.toString();
@@ -88,12 +88,19 @@ void trackLike(BuildContext context, SpotifyData item) {
 
   ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Yayy:) Track added to your playlist")));
+
+  if (sender != null) {
+    controller.sendNotification(sender, "Liked a song you sent them");
+  }
 }
 
 void vinylLike(BuildContext context, VinylModel vinyl) {
+  final SoulController controller = Get.find<SoulController>();
+
   // DateTime now = DateTime.now();
 
   trackLike(context, vinyl.item);
+  controller.sendNotification(vinyl.sender, "Liked a song you sent them");
 }
 
 void trackLikeRemove(BuildContext context, SpotifyData item) {
@@ -133,8 +140,9 @@ void trackAddToPlaylist(
     {required Profile sender,
     required Profile receiver,
     required SpotifyData item}) {
+  final SoulController controller = Get.find<SoulController>();
+
   String playlistID = getPlaylistID(sender, receiver);
-  log(playlistID);
   FirebaseFirestore.instance
       .collection('meevyPlaylists')
       .doc(playlistID)
@@ -144,6 +152,8 @@ void trackAddToPlaylist(
     "track": item.toJson(),
     "date_added": DateTime.now().toIso8601String()
   });
+
+  controller.sendNotification(sender, "Liked a song you sent them.");
 }
 
 void _addToPlaylist(String playlistID, VinylModel vinyl) {
@@ -284,63 +294,54 @@ void sendSpotifyItem(
   HttpClient client = HttpClient();
 
   var res = await client.get(profileMeUrl);
-  if (res.statusCode <= 210) {
-    Profile me = Profile.fromJson(json.decode(res.body));
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  int? profileID = preferences.getInt('profileID');
+  if (profileID != null) {
+    if (res.statusCode <= 210) {
+      Profile me = Profile.fromJson(json.decode(res.body));
 
-    Map<String, dynamic> sendToProfile = {
-      "track": item.toJson(),
-      "audience": friends.map((e) => e.friendsProfile.toJson()).toList(),
-      "date_sent": DateTime.now().toString(),
-      "opened": false,
-      "sender": me.toJson(),
-      "caption": caption
-    };
+      Map<String, dynamic> sendToProfile = {
+        "track": item.toJson(),
+        "audience": friends.map((e) => e.friendsProfile.toJson()).toList(),
+        "date_sent": DateTime.now().toString(),
+        "opened": false,
+        "sender": me.toJson(),
+        "caption": caption
+      };
 
-    if (item.spotifyDataType == SpotifyDataType.track) {
-      var doc_ref = await FirebaseFirestore.instance
-          .collection('sentTracks')
-          .add(sendToProfile);
-      VinylChat vinylChat =
-          VinylChat(sender: me, message: caption, dateSent: DateTime.now());
+      if (item.spotifyDataType == SpotifyDataType.track) {
+        var docRef = await FirebaseFirestore.instance
+            .collection('sentTracks')
+            .add(sendToProfile);
+        VinylChat vinylChat =
+            VinylChat(sender: me, message: caption, dateSent: DateTime.now());
 
-      FirebaseFirestore.instance
-          .collection('sentTracks')
-          .doc(doc_ref.id)
-          .collection('messages')
-          .add(vinylChat.toJson());
+        FirebaseFirestore.instance
+            .collection('sentTracks')
+            .doc(docRef.id)
+            .collection('messages')
+            .add(vinylChat.toJson());
 
-      // for (var element in friends) {
-      //   FirebaseFirestore.instance
-      //       .collection('userSentTracks')
-      //       .doc(element.friendsProfile.user.id.toString())
-      //       .collection('sentTracks')
-      //       .doc(doc_ref.id)
-      //       .set({"date_sent": DateTime.now().toString()});
-      // }
-    } else if (item.spotifyDataType == SpotifyDataType.playlist) {
-      var doc_ref = await FirebaseFirestore.instance
-          .collection('sentPlaylists')
-          .doc(item.id);
+        for (var element in friends) {
+          await client.post(notifyUrl, body: {
+            'receiver': element.friendsProfileSafe(profileID).id.toString(),
+            'message': "Sent you a track"
+          });
+        }
+      } else if (item.spotifyDataType == SpotifyDataType.playlist) {
+        var docRef = await FirebaseFirestore.instance
+            .collection('sentPlaylists')
+            .doc(item.id);
 
-      doc_ref.set(sendToProfile);
+        docRef.set(sendToProfile);
 
-      // FirebaseFirestore.instance
-      //     .collection('sentPlaylists')
-      //     .doc(doc_ref.id)
-      //     .collection('messages')
-      //     .add({
-      //   "sender": me.toJson(),
-      //   "message": caption,
-      //   "date_sent": DateTime.now()
-      // });
-      // for (var element in friends) {
-      //   FirebaseFirestore.instance
-      //       .collection('userSentPlaylists')
-      //       .doc(element.friendsProfile.user.id.toString())
-      //       .collection('sentPlaylists')
-      //       .doc(doc_ref.id)
-      //       .set({"date_sent": DateTime.now().toString()});
-      // }
+        for (var element in friends) {
+          await client.post(notifyUrl, body: {
+            'receiver': element.friendsProfileSafe(profileID).id.toString(),
+            'message': "Sent you a playlist"
+          });
+        }
+      }
     }
   }
 }

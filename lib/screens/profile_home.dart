@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/profile_tab.dart';
@@ -33,7 +35,7 @@ class MyProfileScreen extends StatelessWidget {
                           },
                           iconSize: 25,
                           icon: const Icon(
-                            Icons.message_rounded,
+                            FeatherIcons.messageCircle,
                             size: 25,
                           )),
                       IconButton(
@@ -112,8 +114,8 @@ class MyProfileScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         child: CachedNetworkImage(
                           imageUrl: controller.profile!.images.isNotEmpty
-                              ? controller.profile!.images.last.image
-                              : defaultAvatarUrl,
+                              ? controller.profile!.profilePicture.image
+                              : secondaryAvatarUrl,
                           height: 125,
                           width: 120,
                           fit: BoxFit.cover,

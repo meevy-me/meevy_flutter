@@ -72,6 +72,6 @@ class Profile {
   }
 
   ProfileImages get profilePicture {
-    return images.last;
+    return images.first;
   }
 }

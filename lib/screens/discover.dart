@@ -5,12 +5,15 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/match_card.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/profile_model.dart';
+import 'package:soul_date/services/navigation.dart';
 
 import '../components/inputfield.dart';
 import '../components/search_profile_dialog.dart';
@@ -82,24 +85,47 @@ class _DiscoverPageState extends State<DiscoverPage> {
                 Obx(() => controller.matches.isNotEmpty
                     ? SliverList(
                         delegate: SliverChildBuilderDelegate((context, index) {
-                        return OpenContainer(
-                          openBuilder: (context, action) =>
-                              MatchDetail(match: controller.matches[index]),
-                          closedBuilder: (context, action) => Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: defaultMargin),
-                            child: MatchCard(
+                        Match match = controller.matches[index];
+                        return InkWell(
+                          onTap: () => Navigation.push(context,
+                              customPageTransition: PageTransition(
+                                  child: MatchDetail(
+                                      matchDetails: match.details,
+                                      profile: match.matched),
+                                  type: PageTransitionType.fromTop)),
+                          child: MatchCard(
+                              match: match,
                               onLiked: (match) {
-                                controller.matches.remove(match);
-                              },
-                              match: controller.matches[index],
-                            ),
-                          ),
+                                // controller.matches.remove(match);
+                              }),
                         );
                       }, childCount: controller.matches.length))
-                    : const SliverToBoxAdapter(
-                        child: EmptyWidget(text: "Oops, you have no matches"),
+                    : SliverToBoxAdapter(
+                        child: EmptyWidget(
+                          text: "You have no matches",
+                        ),
                       ))
+                // Obx(() => controller.matches.isNotEmpty
+                //     ? SliverList(
+                //         delegate: SliverChildBuilderDelegate((context, index) {
+                //         return OpenContainer(
+                //           openBuilder: (context, action) =>
+                //               MatchDetail(profile:,),
+                //           closedBuilder: (context, action) => Padding(
+                //             padding:
+                //                 const EdgeInsets.only(bottom: defaultMargin),
+                //             child: MatchCard(
+                //               onLiked: (match) {
+                //                 controller.matches.remove(match);
+                //               },
+                //               match: controller.matches[index],
+                //             ),
+                //           ),
+                //         );
+                //       }, childCount: controller.matches.length))
+                //     : const SliverToBoxAdapter(
+                //         child: EmptyWidget(text: "Oops, you have no matches"),
+                //       ))
               ],
             ),
           ),

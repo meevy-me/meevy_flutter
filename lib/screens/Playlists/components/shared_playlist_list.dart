@@ -29,20 +29,34 @@ class SharedPlaylistList extends StatelessWidget {
             builder: (context, snapshot) {
               // print(snapshot.data);
               if (snapshot.data != null) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.size,
-                  primary: false,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: defaultMargin),
-                      child: SharedPlaylistCard(
-                        documentId: snapshot.data!.docs[index].id,
-                      ),
-                    );
-                  },
-                );
+                return snapshot.data!.size != 0
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.size,
+                        primary: false,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: defaultMargin),
+                            child: SharedPlaylistCard(
+                              documentId: snapshot.data!.docs[index].id,
+                            ),
+                          );
+                        },
+                      )
+                    : Padding(
+                        padding:
+                            const EdgeInsets.symmetric(vertical: defaultMargin),
+                        child: Center(
+                          child: Text(
+                            "Its Empty.\nPlaylists sent to you by friends will appear here.\nTell your friend to send you one.",
+                            style: Theme.of(context)
+                                .textTheme
+                                .caption!
+                                .copyWith(height: 2),
+                          ),
+                        ),
+                      );
               } else if (snapshot.hasError) {
                 return Text(
                   "An error has occured",

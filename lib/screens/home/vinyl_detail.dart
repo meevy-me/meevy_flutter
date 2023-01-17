@@ -3,10 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+
 import 'package:get/get.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:soul_date/components/Chat/chat_field.dart';
@@ -21,7 +18,6 @@ import 'package:text_scroll/text_scroll.dart';
 import '../../constants/constants.dart';
 import 'components/vinyl_chat_section.dart';
 import 'components/vinyl_detail_bottombar.dart';
-import 'components/vinyl_message_card.dart';
 
 class VinylDetail extends StatefulWidget {
   const VinylDetail({Key? key, required this.vinyl}) : super(key: key);
@@ -90,10 +86,9 @@ class _VinylDetailState extends State<VinylDetail> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SoulCircleAvatar(
+                                ProfileAvatar(
                                     radius: 15,
-                                    imageUrl: widget
-                                        .vinyl.sender.profilePicture.image),
+                                    profileID: widget.vinyl.sender.id),
                                 const SizedBox(
                                   width: defaultMargin,
                                 ),
@@ -115,9 +110,8 @@ class _VinylDetailState extends State<VinylDetail> {
                                   child: RowSuper(
                                       innerDistance: -10,
                                       children: widget.vinyl.audience
-                                          .map((e) => SoulCircleAvatar(
-                                              radius: 10,
-                                              imageUrl: e.profilePicture.image))
+                                          .map((e) => ProfileAvatar(
+                                              radius: 10, profileID: e.id))
                                           .toList()),
                                 ),
                               ),
@@ -195,9 +189,8 @@ class _VinylDetailState extends State<VinylDetail> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  SoulCircleAvatar(
-                                    imageUrl: widget
-                                        .vinyl.sender.profilePicture.image,
+                                  ProfileAvatar(
+                                    profileID: widget.vinyl.sender.id,
                                     radius: 15,
                                   ),
                                   const SizedBox(
@@ -219,7 +212,10 @@ class _VinylDetailState extends State<VinylDetail> {
                                             ),
                                       ),
                                       Text(
-                                        widget.vinyl.caption ?? "No Caption",
+                                        widget.vinyl.caption == null &&
+                                                widget.vinyl.caption!.isEmpty
+                                            ? "No Caption"
+                                            : widget.vinyl.caption!,
                                         overflow: TextOverflow.ellipsis,
                                         style:
                                             Theme.of(context).textTheme.caption,
@@ -266,11 +262,20 @@ class _VinylDetailState extends State<VinylDetail> {
                                   children: [
                                     ChatTextField(
                                       // autoFocus: true,
+                                      filled: true,
+                                      fillColor: snapshot.connectionState ==
+                                                  ConnectionState.done &&
+                                              snapshot.data != null
+                                          ? snapshot.data!.dominantColor!.color
+                                              .withOpacity(0.5)
+                                          : Theme.of(context)
+                                              .primaryColor
+                                              .withOpacity(0.5),
                                       textColor: Colors.white,
                                       captionText: messageText,
                                       border: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white),
+                                          // borderSide: const BorderSide(
+                                          //     color: Colors.white),
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       focusedBorder: OutlineInputBorder(

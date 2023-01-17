@@ -16,7 +16,8 @@ class PlaylistsPage extends StatefulWidget {
   State<PlaylistsPage> createState() => _PlaylistsPageState();
 }
 
-class _PlaylistsPageState extends State<PlaylistsPage> {
+class _PlaylistsPageState extends State<PlaylistsPage>
+    with AutomaticKeepAliveClientMixin<PlaylistsPage> {
   int? profileID;
 
   @override
@@ -100,4 +101,7 @@ class _PlaylistsPageState extends State<PlaylistsPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

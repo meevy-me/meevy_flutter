@@ -10,14 +10,25 @@ import 'package:soul_date/services/spotify_utils.dart';
 
 import '../../../constants/constants.dart';
 
-class VinylBottomBar extends StatelessWidget {
+class VinylBottomBar extends StatefulWidget {
   const VinylBottomBar({Key? key, required this.vinylModel}) : super(key: key);
   final VinylModel vinylModel;
+
+  @override
+  State<VinylBottomBar> createState() => _VinylBottomBarState();
+}
+
+class _VinylBottomBarState extends State<VinylBottomBar> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return FutureBuilder<PaletteGenerator>(
-        future: getImageColors(vinylModel.item.album.images.first.url),
+        future: getImageColors(widget.vinylModel.item.album.images.first.url),
         builder: (context, snapshot) {
           final Color bgColor =
               snapshot.hasData && snapshot.data!.dominantColor != null
@@ -43,7 +54,7 @@ class VinylBottomBar extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   FutureBuilder<bool>(
-                      future: isVinylLiked(vinylModel),
+                      future: isVinylLiked(widget.vinylModel),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done &&
                             snapshot.data != null) {
@@ -51,10 +62,11 @@ class VinylBottomBar extends StatelessWidget {
                             color: bgColor,
                             onPress: () {
                               if (!snapshot.data!) {
-                                vinylLike(context, vinylModel);
+                                vinylLike(context, widget.vinylModel);
                               } else {
-                                vinylLikeRemove(context, vinylModel);
+                                vinylLikeRemove(context, widget.vinylModel);
                               }
+                              setState(() {});
                             },
                             iconColor: iconColor,
                             iconData: snapshot.data!
@@ -70,7 +82,7 @@ class VinylBottomBar extends StatelessWidget {
                   _VinylBottomItem(
                     color: bgColor,
                     onPress: () {
-                      trackPlay(context, vinylModel.item);
+                      trackPlay(context, widget.vinylModel.item);
                     },
                     iconColor: iconColor,
                     iconData: CupertinoIcons.play_arrow_solid,
@@ -78,7 +90,8 @@ class VinylBottomBar extends StatelessWidget {
                   ),
                   FutureBuilder<bool>(
                       future: isTrackInPlaylist(
-                          item: vinylModel.item, sender: vinylModel.sender),
+                          item: widget.vinylModel.item,
+                          sender: widget.vinylModel.sender),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done &&
                             snapshot.data != null) {
@@ -86,8 +99,10 @@ class VinylBottomBar extends StatelessWidget {
                             color: bgColor,
                             onPress: () {
                               snapshot.data!
-                                  ? vinylPlaylistRemove(context, vinylModel)
-                                  : vinylPlaylist(context, vinylModel);
+                                  ? vinylPlaylistRemove(
+                                      context, widget.vinylModel)
+                                  : vinylPlaylist(context, widget.vinylModel);
+                              setState(() {});
                             },
                             iconColor: iconColor,
                             iconData: snapshot.data!
@@ -103,7 +118,7 @@ class VinylBottomBar extends StatelessWidget {
                   _VinylBottomItem(
                     color: bgColor,
                     onPress: () {
-                      vinylPlaylist(context, vinylModel);
+                      vinylQueue(context, widget.vinylModel.item);
                     },
                     iconColor: iconColor,
                     iconData: Icons.queue_music,

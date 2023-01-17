@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -24,6 +25,7 @@ class FirebaseController extends GetxController {
       //   hasChat = true;
       //   update(['hasChat']);
       // }
+      log(message.notification!.title!);
       NotificationApi.showNotification(
           title: message.notification!.title, body: message.notification!.body);
     });

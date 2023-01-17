@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:soul_date/screens/invite_page.dart';
 import 'package:soul_date/screens/send_spot_screen.dart';
 import 'package:soul_date/screens/splash_screen.dart';
 import 'package:soul_date/services/notifications.dart';
@@ -27,7 +28,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 const String homeRoute = "home";
 const String shareData = "shareData";
-
+const String inviteRoute = 'invite';
 Future<InitData> init() async {
   String sharedText = "";
   String routeName = homeRoute;
@@ -35,7 +36,9 @@ Future<InitData> init() async {
   String? sharedValue = await ReceiveSharingIntent.getInitialText();
   if (sharedValue != null) {
     sharedText = sharedValue;
-    routeName = shareData;
+    routeName = routeName.contains("https://meevy.me/app/invite/")
+        ? inviteRoute
+        : shareData;
   }
   return InitData(sharedText, routeName);
 }
@@ -49,6 +52,10 @@ void main() async {
   InitData initData = await init();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    NotificationApi.showNotification(
+        title: message.notification!.title, body: message.notification!.body);
+  });
 
   if (!kIsWeb) {
     channel = const AndroidNotificationChannel(
@@ -78,6 +85,21 @@ void main() async {
   }
 }
 
+bool isInviteLink(String? inviteLink) {
+  final pattern = RegExp(r'^meevy\.me\/app\/invite\/([A-Za-z0-9-_]+)$');
+  if (inviteLink == null) {
+    return false;
+  }
+  return inviteLink.contains("/app/invite");
+}
+
+bool isSpotifyLink(String? spotifyLink) {
+  if (spotifyLink == null) {
+    return false;
+  }
+  return spotifyLink.contains("https://open.spotify.com/");
+}
+
 class MyApp extends StatefulWidget {
   const MyApp({Key? key, required this.initData}) : super(key: key);
 
@@ -95,11 +117,12 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((value) {
-      log(value);
-      _navKey.currentState!.pushNamed(
-        shareData,
-        arguments: ShowDataArgument(value),
-      );
+      if (isSpotifyLink(value)) {
+        _navKey.currentState!.pushNamed(
+          shareData,
+          arguments: ShowDataArgument(value),
+        );
+      }
     });
   } // This widget is the root of your application.
 
@@ -118,29 +141,40 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.primary(),
       onGenerateRoute: (RouteSettings settings) {
-        switch (settings.name) {
-          case shareData:
-            {
-              if (settings.arguments != null) {
-                final args = settings.arguments as ShowDataArgument;
-                return MaterialPageRoute(
-                    builder: (_) => ShareDataScreen(
-                          sharedText: args.sharedText,
-                        ));
-              } else {
-                return MaterialPageRoute(
-                    builder: (_) => ShareDataScreen(
-                          sharedText: widget.initData.sharedText,
-                        ));
-              }
-            }
-          default:
+        print(settings.name);
+        if (isSpotifyLink(settings.name)) {
+          if (settings.arguments != null) {
+            final args = settings.arguments as ShowDataArgument;
             return MaterialPageRoute(
-              builder: (context) => const SplashScreen(),
-            );
+                builder: (_) => ShareDataScreen(
+                      sharedText: args.sharedText,
+                    ));
+          } else {
+            return MaterialPageRoute(
+                builder: (_) => ShareDataScreen(
+                      sharedText: widget.initData.sharedText,
+                    ));
+          }
+        } else if (isInviteLink(settings.name)) {
+          log("EW");
+          if (settings.arguments != null) {
+            return MaterialPageRoute(
+                builder: (_) => InvitePage(
+                      sharedText: settings.name!,
+                    ));
+          } else {
+            return MaterialPageRoute(
+                builder: (_) => InvitePage(
+                      sharedText: settings.name!,
+                    ));
+          }
+        } else {
+          return MaterialPageRoute(
+            builder: (context) => const SplashScreen(),
+          );
         }
       },
-      initialRoute: widget.initData.routeName,
+      // initialRoute: widget.initData.routeName,
     );
   }
 }

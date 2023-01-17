@@ -12,8 +12,11 @@ import 'package:soul_date/models/models.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class MatchDetail extends StatelessWidget {
-  const MatchDetail({Key? key, required this.match}) : super(key: key);
-  final Match match;
+  const MatchDetail({Key? key, this.matchDetails, required this.profile})
+      : super(key: key);
+  final List<Details>? matchDetails;
+  final Profile profile;
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -27,9 +30,9 @@ class MatchDetail extends StatelessWidget {
                 SizedBox(
                   height: size.height * 0.6,
                   child: ScrollImage(
-                    heroTag: match.matched.id.toString(),
+                    heroTag: profile.id.toString(),
                     size: size.height * 0.6,
-                    images: match.matched.images.reversed.toList(),
+                    images: profile.images.reversed.toList(),
                   ),
                 ),
                 Padding(
@@ -51,7 +54,9 @@ class MatchDetail extends StatelessWidget {
                                       Icons.close,
                                       color: Colors.white,
                                     ))),
-                            _MatchDetails(match: match),
+                            _MatchDetails(
+                              profile: profile,
+                            ),
                           ],
                         ),
                       )),
@@ -61,9 +66,54 @@ class MatchDetail extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: _MatchProfile(
-              size: size,
-              match: match,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                  vertical: defaultMargin * 2, horizontal: defaultMargin),
+              height: size.height * 0.5,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  matchDetails != null
+                      ? Align(
+                          alignment: Alignment.bottomCenter,
+                          child: _MatchProfile(
+                            details: matchDetails!,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: defaultMargin * 2),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "About Me",
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Text(
+                                profile.bio,
+                                style: Theme.of(context).textTheme.bodyText2,
+                                overflow: TextOverflow.fade,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SoulSliderCheck(
+                    profile: profile,
+                  ),
+                ],
+              ),
             ),
           )
         ],
@@ -75,23 +125,18 @@ class MatchDetail extends StatelessWidget {
 class _MatchProfile extends StatelessWidget {
   _MatchProfile({
     Key? key,
-    required this.size,
-    required this.match,
+    required this.details,
   }) : super(key: key);
 
-  final Size size;
-  final Match match;
+  final List<Details> details;
   final SoulController controller = Get.find<SoulController>();
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Container(
-      padding: const EdgeInsets.symmetric(
-          vertical: defaultMargin * 2, horizontal: defaultMargin),
-      height: size.height * 0.5,
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(20)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             "Matching by: ",
@@ -103,34 +148,15 @@ class _MatchProfile extends StatelessWidget {
               height: 50,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: match.details.length,
+                itemCount: details.length,
                 itemBuilder: (context, index) => Padding(
                   padding: const EdgeInsets.only(right: defaultMargin),
                   child: SpotifyCard(
-                    details: match.details[index],
+                    details: details[index],
                   ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "About Me",
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-                Text(
-                  match.matched.bio,
-                  style: Theme.of(context).textTheme.bodyText2,
-                )
-              ],
-            ),
-          ),
-          SoulSliderCheck(
-            profile: match.matched,
           ),
         ],
       ),
@@ -228,8 +254,8 @@ class _ScrollImageState extends State<ScrollImage> {
 }
 
 class _MatchDetails extends StatelessWidget {
-  const _MatchDetails({Key? key, required this.match}) : super(key: key);
-  final Match match;
+  const _MatchDetails({Key? key, required this.profile}) : super(key: key);
+  final Profile profile;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -249,7 +275,7 @@ class _MatchDetails extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(vertical: defaultMargin / 2),
                 child: Text(
-                  "${match.matched.name}, ${match.matched.age}",
+                  "${profile.name}, ${profile.age}",
                   style: Theme.of(context)
                       .textTheme
                       .headline5!
@@ -261,7 +287,7 @@ class _MatchDetails extends StatelessWidget {
           IconButton(
               onPressed: () async {
                 launchUrlString(
-                    "https://open.spotify.com/user/${match.matched.user.spotifyId}");
+                    "https://open.spotify.com/user/${profile.user.spotifyId}");
               },
               icon: const Icon(
                 FontAwesomeIcons.spotify,

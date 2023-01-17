@@ -8,11 +8,15 @@ class ChatTextField extends StatelessWidget {
     this.autoFocus = false,
     this.textColor,
     this.focusedBorder,
+    this.fillColor,
+    this.filled = false,
   }) : super(key: key);
 
   final InputBorder? border;
   final bool autoFocus;
   final Color? textColor;
+  final Color? fillColor;
+  final bool filled;
   final InputBorder? focusedBorder;
   final TextEditingController captionText;
 
@@ -34,8 +38,8 @@ class ChatTextField extends StatelessWidget {
             Theme.of(context).textTheme.bodyText2!.copyWith(color: textColor),
         decoration: InputDecoration(
             isDense: true,
-            filled: border != null ? false : true,
-            fillColor: Colors.grey.withOpacity(0.4),
+            filled: filled,
+            fillColor: fillColor ?? Colors.grey.withOpacity(0.4),
             hintText: "Type Message",
             focusedBorder: focusedBorder ??
                 OutlineInputBorder(

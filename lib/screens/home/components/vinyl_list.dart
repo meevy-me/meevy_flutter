@@ -16,11 +16,18 @@ class VinylList extends StatefulWidget {
 }
 
 class _VinylListState extends State<VinylList>
-    with SingleTickerProviderStateMixin {
+    with
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<VinylList> {
   late TabController _tabController;
+
+  int currentIndex = 0;
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -53,7 +60,7 @@ class _VinylListState extends State<VinylList>
           child: TabBarView(
             controller: _tabController,
             children: [
-              buildSentList(
+              VinylSentList(
                 stream: FirebaseFirestore.instance
                     .collection('sentTracks')
                     .where("audience", arrayContains: [
@@ -62,7 +69,7 @@ class _VinylListState extends State<VinylList>
                     .orderBy('date_sent', descending: true)
                     .snapshots(),
               ),
-              buildSentList(
+              VinylSentList(
                   mine: true,
                   stream: FirebaseFirestore.instance
                       .collection('sentTracks')
@@ -75,6 +82,9 @@ class _VinylListState extends State<VinylList>
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class _TabLabel extends StatelessWidget {
@@ -97,34 +107,51 @@ class _TabLabel extends StatelessWidget {
   }
 }
 
-StreamBuilder<QuerySnapshot<Object?>> buildSentList(
-    {required Stream<QuerySnapshot> stream, bool mine = false}) {
-  return StreamBuilder<QuerySnapshot>(
-      stream: stream,
-      builder: (context, snapshot) {
-        final userSnapshot = snapshot.data?.docs;
-        return userSnapshot != null && userSnapshot.isNotEmpty
-            ? ListView.separated(
-                padding: scaffoldPadding,
-                itemCount: userSnapshot != null ? userSnapshot.length : 0,
-                shrinkWrap: true,
-                separatorBuilder: (context, index) {
-                  return Divider(
-                    color: Colors.grey.withOpacity(0.2),
-                  );
-                },
-                itemBuilder: (context, index) {
-                  var doc = userSnapshot[index];
-                  Map<String, dynamic> data =
-                      doc.data() as Map<String, dynamic>;
-                  return VinylSentCard(
-                      mine: mine, vinyl: VinylModel.fromJson(data, doc.id));
-                },
-              )
-            : Center(
-                child: Text(
-                "Its Lonely in here",
-                style: Theme.of(context).textTheme.caption,
-              ));
-      });
+class VinylSentList extends StatefulWidget {
+  const VinylSentList({Key? key, required this.stream, this.mine = false})
+      : super(key: key);
+  final Stream<QuerySnapshot> stream;
+  final bool mine;
+
+  @override
+  State<VinylSentList> createState() => _VinylSentListState();
+}
+
+class _VinylSentListState extends State<VinylSentList>
+    with AutomaticKeepAliveClientMixin<VinylSentList> {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: widget.stream,
+        builder: (context, snapshot) {
+          final userSnapshot = snapshot.data?.docs;
+          return userSnapshot != null && userSnapshot.isNotEmpty
+              ? ListView.separated(
+                  padding: scaffoldPadding,
+                  itemCount: userSnapshot != null ? userSnapshot.length : 0,
+                  shrinkWrap: true,
+                  separatorBuilder: (context, index) {
+                    return Divider(
+                      color: Colors.grey.withOpacity(0.2),
+                    );
+                  },
+                  itemBuilder: (context, index) {
+                    var doc = userSnapshot[index];
+                    Map<String, dynamic> data =
+                        doc.data() as Map<String, dynamic>;
+                    return VinylSentCard(
+                        mine: widget.mine,
+                        vinyl: VinylModel.fromJson(data, doc.id));
+                  },
+                )
+              : Center(
+                  child: Text(
+                  "Its Lonely in here",
+                  style: Theme.of(context).textTheme.caption,
+                ));
+        });
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

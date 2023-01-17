@@ -12,6 +12,8 @@ Future<Profile?> searchProfile(String id) async {
 
   if (res.statusCode <= 210) {
     return Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)));
+  } else if (res.statusCode == 400) {
+    throw "Profile Not Found";
   }
   return null;
 }

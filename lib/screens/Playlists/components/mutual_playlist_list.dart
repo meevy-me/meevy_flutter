@@ -24,24 +24,32 @@ class MutualPlaylistList extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.data != null) {
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: snapshot.data!.size,
-                  itemBuilder: (context, index) {
-                    var doc = snapshot.data!.docs[index];
-                    MeevyPlaylist meevyPlaylist =
-                        MeevyPlaylist.fromSnapshot(doc);
-                    return Padding(
-                      padding: const EdgeInsets.only(right: defaultMargin),
-                      child: MeevyPlaylistCard(meevyPlaylist: meevyPlaylist),
-                    );
-                  },
-                );
+                return snapshot.data!.size != 0
+                    ? ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: snapshot.data!.size,
+                        itemBuilder: (context, index) {
+                          var doc = snapshot.data!.docs[index];
+                          MeevyPlaylist meevyPlaylist =
+                              MeevyPlaylist.fromSnapshot(doc);
+                          return Padding(
+                            padding:
+                                const EdgeInsets.only(right: defaultMargin),
+                            child:
+                                MeevyPlaylistCard(meevyPlaylist: meevyPlaylist),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Text(
+                        "Its Empty:(. Create Mutual playlist by adding a song sent to you by a friend",
+                        style: Theme.of(context).textTheme.caption,
+                      ));
               }
               return SpinKitPulse(
                 color: Theme.of(context).primaryColor,
               );
             })
-        : LoadingPulse();
+        : const LoadingPulse();
   }
 }

@@ -30,7 +30,8 @@ class MessagesPage extends StatefulWidget {
   State<MessagesPage> createState() => _MessagesPageState();
 }
 
-class _MessagesPageState extends State<MessagesPage> {
+class _MessagesPageState extends State<MessagesPage>
+    with AutomaticKeepAliveClientMixin<MessagesPage> {
   final SoulController controller = Get.find<SoulController>();
   final SpotController spotController = Get.find<SpotController>();
   final MessageController messageController = Get.find<MessageController>();
@@ -164,6 +165,9 @@ class _MessagesPageState extends State<MessagesPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class _SpotSection extends StatefulWidget {

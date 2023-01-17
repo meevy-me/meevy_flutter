@@ -8,11 +8,8 @@ import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/screens/Chat/messages.dart';
 import 'package:soul_date/screens/discover.dart';
 import 'package:soul_date/screens/home/vinyls.dart';
-import 'package:soul_date/screens/match.dart';
 import 'package:soul_date/screens/Playlists/playlists.dart';
 import 'package:soul_date/screens/profile_home.dart';
-
-import 'settings_home.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -28,7 +25,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   SoulController controller = Get.find<SoulController>();
   final SpotController spotController = Get.put(SpotController());
-  final FirebaseController firebaseController = Get.put(FirebaseController());
   final MessageController msgController = Get.put(MessageController());
   final PageController _pageController = PageController();
   int selectedIndex = 0;
@@ -61,9 +57,16 @@ class _HomePageState extends State<HomePage> {
           onTap: (index) {
             setState(() {
               selectedIndex = index;
+              _pageController.animateToPage(selectedIndex,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.fastOutSlowIn);
             });
           },
         ),
-        body: pages[selectedIndex]);
+        body: PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          children: pages,
+          controller: _pageController,
+        ));
   }
 }

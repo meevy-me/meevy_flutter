@@ -78,43 +78,47 @@ class SoulSliderCheck extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-        future: controller.isFriendRequested(profile),
-        builder: (context, snapshot) {
-          return snapshot.connectionState == ConnectionState.done
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-                  child: Center(
-                    child: snapshot.data != null &&
-                            snapshot.hasData &&
-                            snapshot.data!
-                        ? Text(
-                            ":( You already sent a request",
-                            style: Theme.of(context).textTheme.bodyText1,
-                          )
-                        : SoulSlider(
-                            completedWidget:
-                                const Text("You have sent a request"),
-                            defaultText: "Slide to match with ${profile.name}",
-                            onComplete: () {
-                              controller.sendRequest(
-                                  {'profile2': profile.id.toString()},
-                                  context: context);
-                            },
-                          ),
-                    // child: SlideToLike(
-                    //     match: match.matched,
-                    //     onLiked: (value) {
-                    //       controller.sendRequest({'matchID': match.id.toString()},
-                    //           context: context);
-                    //     })
-                  ),
-                )
-              : SpinKitRing(
-                  color: Theme.of(context).primaryColor,
-                  lineWidth: 2,
-                  size: 20,
-                );
-        });
+    return profile.id != controller.profile!.id
+        ? FutureBuilder<bool>(
+            future: controller.isFriendRequested(profile),
+            builder: (context, snapshot) {
+              return snapshot.connectionState == ConnectionState.done
+                  ? Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: defaultMargin),
+                      child: Center(
+                        child: snapshot.data != null &&
+                                snapshot.hasData &&
+                                snapshot.data!
+                            ? Text(
+                                ":( You already sent a request",
+                                style: Theme.of(context).textTheme.bodyText1,
+                              )
+                            : SoulSlider(
+                                completedWidget:
+                                    const Text("You have sent a request"),
+                                defaultText:
+                                    "Slide to match with ${profile.name}",
+                                onComplete: () {
+                                  controller.sendRequest(
+                                      {'profile2': profile.id.toString()},
+                                      context: context);
+                                },
+                              ),
+                        // child: SlideToLike(
+                        //     match: match.matched,
+                        //     onLiked: (value) {
+                        //       controller.sendRequest({'matchID': match.id.toString()},
+                        //           context: context);
+                        //     })
+                      ),
+                    )
+                  : SpinKitRing(
+                      color: Theme.of(context).primaryColor,
+                      lineWidth: 2,
+                      size: 20,
+                    );
+            })
+        : const SizedBox.shrink();
   }
 }

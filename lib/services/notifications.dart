@@ -26,6 +26,46 @@ class NotificationApi {
             requestBadgePermission: true,
             requestSoundPermission: true,
           ));
+
+  static void groupNotifications() async {
+    var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    AndroidNotificationChannelGroup channelGroup =
+        AndroidNotificationChannelGroup('com.meevy.alert1', 'mychannel1');
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannelGroup(channelGroup);
+    List<ActiveNotification>? activeNotifications =
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.getActiveNotifications();
+
+    if (activeNotifications != null && activeNotifications.isNotEmpty) {
+      List<String> lines =
+          activeNotifications.map((e) => e.title.toString()).toList();
+      InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
+        lines,
+        contentTitle: "${activeNotifications.length - 1} Updates",
+        summaryText: "${activeNotifications.length - 1} Updates",
+      );
+      AndroidNotificationDetails groupNotificationDetails =
+          AndroidNotificationDetails(
+        'com.meevy.alert1',
+        'soul name',
+        // channelDescription: channel.description,
+        styleInformation: inboxStyleInformation,
+        setAsGroupSummary: true,
+        groupKey: channelGroup.id,
+        // onlyAlertOnce: true,
+      );
+      NotificationDetails groupNotificationDetailsPlatformSpefics =
+          NotificationDetails(android: groupNotificationDetails);
+      await flutterLocalNotificationsPlugin.show(
+          0, '', '', groupNotificationDetailsPlatformSpefics);
+    }
+  }
+
   static Future showNotification({
     int id = 0,
     String? title,
@@ -37,5 +77,7 @@ class NotificationApi {
     );
     _notifications.show(id, title, body, await _notificationDetails(),
         payload: payload);
+
+    groupNotifications();
   }
 }

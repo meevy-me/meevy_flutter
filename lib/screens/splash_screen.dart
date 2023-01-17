@@ -26,13 +26,13 @@ class _SplashScreenState extends State<SplashScreen> {
     // final service = FlutterBackgroundService();
     if (preferences.getString("spotify_accesstoken") == null) {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => SpotifyLogin()),
+          MaterialPageRoute(builder: (context) => const SpotifyLogin()),
           (route) => false);
     } else {
       Get.put(SoulController(), permanent: true);
 
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
           (route) => false);
     }
   }

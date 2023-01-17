@@ -417,6 +417,8 @@ class SoulController extends GetxController {
     http.Response response = await client.post(notifyUrl,
         body: {'receiver': profile.id.toString(), 'message': message});
 
+    print(response.statusCode);
+
     if (response.statusCode <= 210) {
       return true;
     }

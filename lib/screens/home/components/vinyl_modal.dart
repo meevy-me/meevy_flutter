@@ -92,7 +92,8 @@ class _VinylModalState extends State<VinylModal> {
                         text: snapshot.data! ? "Remove from liked" : "Like",
                         onPress: () {
                           if (!snapshot.data!) {
-                            trackLike(context, widget.spotifyData);
+                            trackLike(context, widget.spotifyData,
+                                sender: widget.sender);
                           } else {
                             trackLikeRemove(context, widget.spotifyData);
                           }

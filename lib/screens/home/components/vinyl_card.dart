@@ -79,13 +79,19 @@ class _VinylSentCardState extends State<VinylSentCard> {
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             color: Colors.white, fontWeight: FontWeight.w600),
                       ),
-                      RowSuper(innerDistance: -10, children: [
-                        for (Profile profile in widget.vinyl.audience.take(4))
-                          ProfileAvatar(
-                            profileID: profile.id,
-                            radius: 9,
-                          )
-                      ])
+                      SizedBox(
+                        width: 25,
+                        child: FittedBox(
+                          child: RowSuper(innerDistance: -10, children: [
+                            for (Profile profile
+                                in widget.vinyl.audience.take(4))
+                              ProfileAvatar(
+                                profileID: profile.id,
+                                radius: 9,
+                              )
+                          ]),
+                        ),
+                      )
                     ],
                   ),
                   Padding(
