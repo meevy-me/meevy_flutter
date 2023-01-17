@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/spots.dart';
-import 'package:soul_date/screens/spot_screen.dart';
+import 'package:soul_date/screens/Spots/spot_screen.dart';
 import 'package:soul_date/services/transitions.dart';
 
 class SpotWidget extends StatelessWidget {

@@ -3,18 +3,25 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:share_extend/share_extend.dart';
+import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/models/spots.dart';
+import 'package:soul_date/screens/Spots/share_item.dart';
+import 'package:soul_date/services/navigation.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
+
+import 'components/spot_background.dart';
+import 'components/spot_song_image.dart';
 
 class SpotScreen extends StatefulWidget {
   const SpotScreen({Key? key, required this.spots}) : super(key: key);
@@ -31,27 +38,35 @@ class _SpotScreenState extends State<SpotScreen> {
 
   //Implement Dispose
 
-  Uint8List? bytes;
-  void exportSpot(BuildContext context, Spot spot) async {
-    bytes = await imageController.capture();
-    try {
-      if (bytes != null) {
-        var tempDir = await getApplicationDocumentsDirectory();
-        String filePath = '${tempDir.path}/spot.png';
+  // Uint8List? bytes;
+  // void exportSpot(BuildContext context, Spot spot) async {
+  //   bytes = await imageController.capture();
+  //   try {
+  //     if (bytes != null) {
+  //       var tempDir = await getApplicationDocumentsDirectory();
+  //       String filePath = '${tempDir.path}/spot.png';
 
-        File file = File(filePath);
-        if (!file.existsSync()) {
-          file.create(recursive: true);
-        }
-        File image = await file.writeAsBytes(bytes!.toList());
-        final box = context.findRenderObject() as RenderBox?;
-        ShareExtend.share(image.path, "image",
-            subject: spot.details.item.name,
-            sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
-      }
-    } catch (e) {
-      log(e.toString());
-    }
+  //       File file = File(filePath);
+  //       if (!file.existsSync()) {
+  //         file.create(recursive: true);
+  //       }
+  //       File image = await file.writeAsBytes(bytes!.toList());
+  //       final box = context.findRenderObject() as RenderBox?;
+  //       ShareExtend.share(image.path, "image",
+  //           subject: spot.details.item.name,
+  //           sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+  //     }
+  //   } catch (e) {
+  //     log(e.toString());
+  //   }
+  // }
+
+  @override
+  void initState() {
+    setState(() {
+      widget.spots.spots = widget.spots.spots.reversed.toList();
+    });
+    super.initState();
   }
 
   int currentIndex = 0;
@@ -89,7 +104,9 @@ class _SpotScreenState extends State<SpotScreen> {
                 }
               },
               child: Stack(children: [
-                SpotScreenBackground(size: size, spot: spot),
+                SpotScreenBackground(
+                  item: spot.details.item,
+                ),
                 SafeArea(
                   child: SizedBox(
                     height: size.height * 0.9,
@@ -182,6 +199,32 @@ class _SpotScreenState extends State<SpotScreen> {
                                     //       Icons.share,
                                     //       color: Colors.white,
                                     //     )),
+
+                                    widget.spots.profile.id ==
+                                            controller.profile!.id
+                                        ? IconButton(
+                                            onPressed: () {
+                                              Navigation.push(context,
+                                                  customPageTransition:
+                                                      PageTransition(
+                                                          child: ShareScreen(
+                                                            profile: widget
+                                                                .spots.profile,
+                                                            item: widget
+                                                                .spots
+                                                                .spots[
+                                                                    currentIndex]
+                                                                .details
+                                                                .item,
+                                                          ),
+                                                          type:
+                                                              PageTransitionType
+                                                                  .fromBottom));
+                                            },
+                                            icon: const Icon(
+                                                CupertinoIcons.share_solid,
+                                                color: Colors.white))
+                                        : const SizedBox.shrink(),
                                     widget.spots.profile.id ==
                                             controller.profile!.id
                                         ? IconButton(
@@ -190,10 +233,10 @@ class _SpotScreenState extends State<SpotScreen> {
                                                   .deleteSpot(spot.id);
                                             },
                                             icon: const Icon(
-                                              Icons.delete,
+                                              CupertinoIcons.delete_solid,
                                               color: Colors.white,
                                             ))
-                                        : const SizedBox.shrink()
+                                        : const SizedBox.shrink(),
                                   ],
                                 )
                               ],
@@ -205,8 +248,9 @@ class _SpotScreenState extends State<SpotScreen> {
                   ),
                 ),
                 Center(
-                  child: _SongWithImage(
-                    spot: spot,
+                  child: SongWithImage(
+                    item: spot.details.item,
+                    caption: spot.caption,
                   ),
                 )
               ]),
@@ -245,179 +289,6 @@ class _SpotScreenState extends State<SpotScreen> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _SongWithImage extends StatelessWidget {
-  const _SongWithImage({
-    Key? key,
-    required this.spot,
-  }) : super(key: key);
-
-  final Spot spot;
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Hero(
-              tag: spot.details.item.album.images[0].url +
-                  spot.profile.id.toString(),
-              child: CachedNetworkImage(
-                imageUrl: spot.details.item.album.images[0].url,
-                height: size.height * 0.4,
-                width: size.height * 0.4,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
-          child: _SongDetails(spot: spot),
-        ),
-        Center(
-          child: Column(
-            children: [
-              Container(
-                height: 5,
-                margin: const EdgeInsets.only(bottom: defaultPadding),
-                width: 30,
-                decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(20)),
-              ),
-              Text(
-                spot.caption,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(color: Colors.white, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-}
-
-class _SongDetails extends StatelessWidget {
-  const _SongDetails({
-    Key? key,
-    required this.spot,
-  }) : super(key: key);
-
-  final Spot spot;
-
-  @override
-  Widget build(BuildContext context) {
-    return GetBuilder<SoulController>(builder: (controller) {
-      return InkWell(
-        onDoubleTap: () => controller.spotify
-            .openSpotify(spot.details.item.uri, spot.details.item.href),
-        child: Row(
-          children: [
-            const Icon(
-              FontAwesomeIcons.spotify,
-              color: spotifyGreen,
-            ),
-            const SizedBox(
-              width: defaultMargin,
-            ),
-            Container(
-              width: 5,
-              height: 100,
-              decoration: BoxDecoration(
-                  color: spotifyGreen, borderRadius: BorderRadius.circular(20)),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      spot.details.item.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6!
-                          .copyWith(color: Colors.white),
-                    ),
-                    const SizedBox(
-                      height: defaultMargin / 2,
-                    ),
-                    Text(
-                      spot.details.item.artists.join(", "),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(color: Colors.white),
-                    ),
-                    const SizedBox(
-                      height: defaultMargin,
-                    ),
-                    Text(
-                      spot.details.item.album.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(color: Colors.white),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-}
-
-class SpotScreenBackground extends StatelessWidget {
-  const SpotScreenBackground({
-    Key? key,
-    required this.size,
-    required this.spot,
-  }) : super(key: key);
-
-  final Size size;
-  final Spot spot;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius:
-              const BorderRadius.vertical(bottom: Radius.circular(20)),
-          child: SizedBox(
-            height: size.height,
-            width: size.width,
-            child: Container(
-              color: Colors.black.withOpacity(0),
-              child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl: spot.details.item.album.images[0].url),
-            ),
-          ),
-        ),
-        Positioned.fill(
-            child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            color: Colors.black.withOpacity(0.3),
-          ),
-        ))
-      ],
     );
   }
 }

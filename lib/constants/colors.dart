@@ -14,3 +14,8 @@ const BoxShadow defaultBoxShadow = BoxShadow(
     blurRadius: 4,
     spreadRadius: 2,
     offset: Offset(2, 2));
+
+const Color twitterColor = Color(0xFF1DA1F2);
+const Color facebookColor = Color(0xFF4267B2);
+const Color whatsappColor = Color(0xFF25D366);
+const Color instagramColor = Color(0xFFC13584);

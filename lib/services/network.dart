@@ -83,8 +83,8 @@ class HttpClient {
     } else {
       var request = http.MultipartRequest("PUT", Uri.parse(endpoint));
       request.files.add(await http.MultipartFile.fromPath('image', file.path));
-      body = body as Map<String, String>;
-      request.fields.addAll(body);
+      var body_pass = body!.cast<String, String>();
+      request.fields.addAll(body_pass  );
       request.headers.addAll(_headers);
       var streamedResponse = await request.send();
       return http.Response.fromStream(streamedResponse);

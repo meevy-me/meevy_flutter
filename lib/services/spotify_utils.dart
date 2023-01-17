@@ -8,13 +8,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
-import 'package:soul_date/models/Spotify/playlist_model.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:soul_date/screens/home/models/chat_model.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/spotify.dart';
-import '../../../models/spotify_spot_details.dart' as Spot;
 
 void trackPlay(BuildContext context, SpotifyData item,
     {List<SpotifyData>? items, VinylModel? vinyl}) async {
