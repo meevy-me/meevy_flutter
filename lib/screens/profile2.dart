@@ -6,11 +6,14 @@ import 'package:intl/intl.dart';
 import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/components/radio_container.dart';
 import 'package:soul_date/components/secondary_input.dart';
 import 'package:soul_date/components/soul_spotify_border.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/models.dart';
+import 'package:soul_date/services/spotify.dart';
 
 import '../models/profile_model.dart';
 
@@ -27,7 +30,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
   TextEditingController name = TextEditingController();
   TextEditingController bio = TextEditingController();
   String target = 'A';
-
+  late Future<SpotifyUser?> _future;
   @override
   void initState() {
     Profile _profile = soulController.profile!;
@@ -35,6 +38,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
     bio.text = _profile.bio;
     target = _profile.looking_for;
     selectedDate = _profile.dateOfBirth;
+    _future = Spotify().getCurrentUser();
     super.initState();
   }
 
@@ -154,13 +158,25 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    SpotifyBorder(
-                      padding: const EdgeInsets.all(defaultPadding / 2.5),
-                      child: SoulCircleAvatar(
-                        imageUrl: soulController.spotify.currentUser!.image,
-                        radius: 50,
-                      ),
-                    ),
+                    FutureBuilder<SpotifyUser?>(
+                        future: _future,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                                  ConnectionState.done &&
+                              snapshot.data != null) {
+                            return SpotifyBorder(
+                              padding:
+                                  const EdgeInsets.all(defaultPadding / 2.5),
+                              child: SoulCircleAvatar(
+                                imageUrl: snapshot.data!.image,
+                                radius: 50,
+                              ),
+                            );
+                          }
+                          return const LoadingPulse(
+                            color: spotifyGreen,
+                          );
+                        }),
                     const Positioned(
                       bottom: -15,
                       right: 0,

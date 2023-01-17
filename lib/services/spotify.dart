@@ -161,11 +161,6 @@ class Spotify {
   }
 
   Future<SpotifyUser?> getCurrentUser({String? accessToken}) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    late String? spotToken;
-
-    spotToken = accessToken ?? preferences.getString("spotify_accesstoken");
-
     http.Response res = await client.get(
       spotifyMeEndpoint,
     );
@@ -175,7 +170,7 @@ class Spotify {
       currentUser = currentSpot;
       return currentSpot;
     } else {
-      log(res.body, name: "SPOTIFY ERROR");
+      log(res.body, name: "SPOTIFY CURRENT USER ERROR");
     }
     return null;
   }

@@ -221,8 +221,7 @@ class _SpotScreenState extends State<SpotScreen> {
                                                               PageTransitionType
                                                                   .fromBottom));
                                             },
-                                            icon: const Icon(
-                                                CupertinoIcons.share_solid,
+                                            icon: const Icon(Icons.share,
                                                 color: Colors.white))
                                         : const SizedBox.shrink(),
                                     widget.spots.profile.id ==

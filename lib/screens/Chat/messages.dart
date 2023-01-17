@@ -5,6 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soul_date/components/Modals/invite_modal.dart';
 import 'package:soul_date/components/chat_item.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/pulse.dart';
@@ -63,20 +64,24 @@ class _MessagesPageState extends State<MessagesPage> {
             style: Theme.of(context).textTheme.headline5),
         // centerTitle: true,
         actions: [
-          IconContainer(
-            onPress: () {
-              showModal(context, Scaffold());
-            },
-            size: 40,
-            icon: const Center(
-              child: Icon(
-                FeatherIcons.upload,
-                color: Colors.black,
-                size: 20,
-              ),
-            ),
-            color: Colors.grey.withOpacity(0.2),
-          ),
+          GetBuilder<SoulController>(builder: (controller) {
+            return controller.profile != null
+                ? IconContainer(
+                    onPress: () {
+                      showModal(context, const InviteModal());
+                    },
+                    size: 40,
+                    icon: const Center(
+                      child: Icon(
+                        FeatherIcons.upload,
+                        color: Colors.black,
+                        size: 20,
+                      ),
+                    ),
+                    color: Colors.grey.withOpacity(0.2),
+                  )
+                : const LoadingPulse();
+          }),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
             child: IconContainer(

@@ -56,23 +56,6 @@ class _VinylsPageState extends State<VinylsPage> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Padding(
-                padding: scaffoldPadding,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GetBuilder<SoulController>(builder: (controller) {
-                      return Text(
-                        "Hello, ${controller.profile?.name}",
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline5!
-                            .copyWith(fontWeight: FontWeight.w600),
-                      );
-                    }),
-                  ],
-                ),
-              ),
               const SizedBox(
                 height: defaultMargin,
               ),
@@ -83,7 +66,7 @@ class _VinylsPageState extends State<VinylsPage> {
                 ),
               ),
               SizedBox(
-                height: defaultMargin * 2,
+                height: defaultMargin,
               ),
               Expanded(
                 child: Column(

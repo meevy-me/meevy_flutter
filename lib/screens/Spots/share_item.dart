@@ -76,31 +76,13 @@ class _ShareScreenState extends State<ShareScreen> {
 
     ShareExtend.share(path, "image",
         subject: widget.item.name,
-        extraText: widget.item.externalUrls.spotify,
+        extraText:
+            "I'm listening to ${widget.item.name} by ${widget.item.artists.join(', ')} \n ${widget.item.externalUrls.spotify}",
         sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
   }
   //Implement Dispose
 
   // Uint8List? bytes;
-  // void exportSpot(BuildContext context, Spot spot) async {
-  //   bytes = await imageController.capture();
-  //   try {
-  //     if (bytes != null) {
-  //       var tempDir = await getApplicationDocumentsDirectory();
-  //       String filePath = '${tempDir.path}/spot.png';
-
-  //       File file = File(filePath);
-  //       if (!file.existsSync()) {
-  //         file.create(recursive: true);
-  //       }
-  //       File image = await file.writeAsBytes(bytes!.toList());
-  //       final box = context.findRenderObject() as RenderBox?;
-
-  //     }
-  //   } catch (e) {
-  //     log(e.toString());
-  //   }
-  // }
 
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

@@ -84,7 +84,7 @@ class HttpClient {
       var request = http.MultipartRequest("PUT", Uri.parse(endpoint));
       request.files.add(await http.MultipartFile.fromPath('image', file.path));
       var body_pass = body!.cast<String, String>();
-      request.fields.addAll(body_pass  );
+      request.fields.addAll(body_pass);
       request.headers.addAll(_headers);
       var streamedResponse = await request.send();
       return http.Response.fromStream(streamedResponse);
@@ -208,7 +208,7 @@ class SpotifyClient {
         json.decode(res.body)['error']['message'] ==
             "The access token expired") {
       await refreshAccessToken();
-      get(endpoint);
+      get(endpoint, parameters: parameters);
     }
     return res;
   }
