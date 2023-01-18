@@ -63,11 +63,13 @@ class SoulController extends GetxController {
     Timer.periodic(const Duration(minutes: 1), (timer) async {
       if (profile != null) {
         SpotifyDetails? data = await spotify.currentlyPlaying();
-        FirebaseDatabase.instance
-            .ref()
-            .child('currentlyPlaying')
-            .child(profile!.user.id.toString())
-            .set(data?.item.toJson());
+        if (data != null) {
+          FirebaseDatabase.instance
+              .ref()
+              .child('currentlyPlaying')
+              .child(profile!.user.id.toString())
+              .set(data.item.toJson());
+        }
       }
     });
   }
@@ -155,10 +157,7 @@ class SoulController extends GetxController {
     if (preferences.getString("spotify_accesstoken") == null) {
       // logout();
       // Get.to(()  => const LoginScreen());
-    } else {
-      spotify.accessToken = preferences.getString("spotify_accesstoken")!;
-      spotify.accessToken = preferences.getString("spotify_refreshtoken")!;
-    }
+    } else {}
   }
 
   void fetchMatches() async {

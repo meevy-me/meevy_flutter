@@ -48,117 +48,124 @@ class _VinylSentCardState extends State<VinylSentCard> {
                   child: VinylDetail(vinyl: widget.vinyl),
                   type: PageTransitionType.fadeIn));
         },
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Hero(
-                tag: widget.vinyl,
-                child: CachedNetworkImage(
-                  imageUrl: widget.vinyl.item.album.images.last.url,
-                  height: 65,
-                  width: 60,
-                  fit: BoxFit.cover,
+        child: SizedBox(
+          height: 85,
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Hero(
+                  tag: widget.vinyl,
+                  child: CachedNetworkImage(
+                    imageUrl: widget.vinyl.item.album.images.last.url,
+                    height: 65,
+                    width: 60,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              width: defaultMargin,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextScroll(
-                        widget.mine
-                            ? joinList(widget.vinyl.audience, count: 1)
-                            : widget.vinyl.sender.name,
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            color: Colors.white, fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        width: 25,
-                        child: FittedBox(
-                          child: RowSuper(innerDistance: -10, children: [
-                            for (Profile profile
-                                in widget.vinyl.audience.take(4))
-                              ProfileAvatar(
-                                profileID: profile.id,
-                                radius: 9,
-                              )
-                          ]),
-                        ),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: defaultPadding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(
+                width: defaultMargin,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TextScroll(
-                          "${widget.vinyl.item.name}  -  ${widget.vinyl.item.artists.first.name}",
+                          widget.mine
+                              ? joinList(widget.vinyl.audience, count: 1)
+                              : widget.vinyl.sender.name,
                           style: Theme.of(context)
                               .textTheme
                               .bodyText1!
                               .copyWith(
-                                  color:
-                                      Theme.of(context).colorScheme.tertiary),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600),
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.only(top: defaultPadding),
-                        //   child: TextScroll(
-                        //     widget.vinyl.item.artists.first.name,
-                        //     style: Theme.of(context)
-                        //         .textTheme
-                        //         .bodyText1!
-                        //         .copyWith(
-                        //             color:
-                        //                 Theme.of(context).colorScheme.tertiary),
-                        //   ),
-                        // ),
+                        SizedBox(
+                          width: 25,
+                          child: FittedBox(
+                            child: RowSuper(innerDistance: -10, children: [
+                              for (Profile profile
+                                  in widget.vinyl.audience.take(4))
+                                ProfileAvatar(
+                                  profileID: profile.id,
+                                  radius: 9,
+                                )
+                            ]),
+                          ),
+                        )
                       ],
                     ),
-                  ),
-                  Row(
-                    children: [
-                      ProfileAvatar(
-                          profileID: widget.vinyl.sender.id, radius: 11),
-                      const SizedBox(
-                        width: defaultMargin,
+                    Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: defaultPadding),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextScroll(
+                            "${widget.vinyl.item.name}  -  ${widget.vinyl.item.artists.first.name}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.tertiary),
+                          ),
+                          // Padding(
+                          //   padding: const EdgeInsets.only(top: defaultPadding),
+                          //   child: TextScroll(
+                          //     widget.vinyl.item.artists.first.name,
+                          //     style: Theme.of(context)
+                          //         .textTheme
+                          //         .bodyText1!
+                          //         .copyWith(
+                          //             color:
+                          //                 Theme.of(context).colorScheme.tertiary),
+                          //   ),
+                          // ),
+                        ],
                       ),
-                      Text(
-                        widget.vinyl.caption ?? "",
-                        style: Theme.of(context)
-                            .textTheme
-                            .caption!
-                            .copyWith(color: Colors.white),
-                      ),
-                    ],
-                  )
-                ],
+                    ),
+                    Row(
+                      children: [
+                        ProfileAvatar(
+                            profileID: widget.vinyl.sender.id, radius: 11),
+                        const SizedBox(
+                          width: defaultMargin,
+                        ),
+                        Text(
+                          widget.vinyl.caption ?? "",
+                          style: Theme.of(context)
+                              .textTheme
+                              .caption!
+                              .copyWith(color: Colors.white),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-            InkWell(
-              onTap: () {
-                showModal(
-                    context,
-                    VinylModal(
-                      spotifyData: widget.vinyl.item,
-                      sender: widget.vinyl.sender,
-                      vinylModel: widget.vinyl,
-                    ));
-              },
-              child: const Icon(
-                FeatherIcons.moreHorizontal,
-                color: Colors.white,
-              ),
-            )
-          ],
+              InkWell(
+                onTap: () {
+                  showModal(
+                      context,
+                      VinylModal(
+                        spotifyData: widget.vinyl.item,
+                        sender: widget.vinyl.sender,
+                        vinylModel: widget.vinyl,
+                      ));
+                },
+                child: const Icon(
+                  FeatherIcons.moreHorizontal,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

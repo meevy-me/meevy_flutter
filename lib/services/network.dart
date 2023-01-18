@@ -192,16 +192,17 @@ class SpotifyClient {
   }
 
   Future<http.Response> get(String endpoint,
-      {Map<String, String>? parameters}) async {
+      {Map<String, String>? parameters, Map<String, String>? headers}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var accessToken = preferences.getString("spotify_accesstoken")!;
     var refreshToken = preferences.getString("spotify_refreshtoken")!;
     http.Response res = await client.get(endpoint,
         parameters: parameters,
-        headers: {
-          'Authorization': "Bearer $accessToken",
-          "Content-Type": "application/json"
-        },
+        headers: headers ??
+            {
+              'Authorization': "Bearer $accessToken",
+              "Content-Type": "application/json"
+            },
         useToken: false);
 
     if (res.statusCode == 401 &&

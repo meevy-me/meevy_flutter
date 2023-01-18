@@ -25,8 +25,8 @@ import 'package:soul_date/services/notifications.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class Spotify {
-  late String accessToken;
-  late String refreshToken;
+  // late String accessToken;
+  // late String refreshToken;
   SpotifyUser? currentUser;
   Spotify() {
     getCurrentUser();
@@ -44,7 +44,7 @@ class Spotify {
       'code': code,
       'clientId': clientId,
       'grant_type': 'authorization_code',
-      'redirect_uri': 'souldate:/'
+      'redirect_uri': 'meevy:/'
     }, headers: {
       'Content-type': 'application/x-www-form-urlencoded',
       'Authorization': client.basicAuth(clientId, _clientSecret)
@@ -58,25 +58,26 @@ class Spotify {
     return null;
   }
 
-  void setTokens(String accessToken, String refreshToken) async {
-    this.accessToken = accessToken;
-    this.refreshToken = refreshToken;
-  }
+  // void setTokens(String accessToken, String refreshToken) async {
+  //   this.accessToken = accessToken;
+  //   this.refreshToken = refreshToken;
+  // }
 
   Future<Spot.SpotifyDetails?> currentlyPlaying() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    accessToken = preferences.getString("spotify_accesstoken")!;
-    refreshToken = preferences.getString("spotify_refreshtoken")!;
-    http.Response res = await client.get(
-      playerUrl,
-    );
+    try {
+      http.Response res = await client.get(
+        playerUrl,
+      );
 
-    if (res.statusCode <= 210 && res.body.isNotEmpty) {
-      return Spot.SpotifyDetails.fromJson(json.decode(res.body));
-    } else {
-      log(res.body, name: "CURRENTLY PLAYING");
+      if (res.statusCode <= 210 && res.body.isNotEmpty) {
+        return Spot.SpotifyDetails.fromJson(json.decode(res.body));
+      } else {
+        log(res.body, name: "CURRENTLY PLAYING");
+      }
+      return null;
+    } catch (e) {
+      return null;
     }
-    return null;
   }
 
   Future<Spot.SpotifyDetails?> fetchCurrentPlaying(
@@ -103,10 +104,10 @@ class Spotify {
   }
 
   playTrack(String uri, {required BuildContext context}) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
 
-    accessToken = preferences.getString("spotify_accesstoken")!;
-    refreshToken = preferences.getString("spotify_refreshtoken")!;
+    // accessToken = preferences.getString("spotify_accesstoken")!;
+    // refreshToken = preferences.getString("spotify_refreshtoken")!;
     http.Response res = await client.post(
       queueUrl,
       body: {},
@@ -160,7 +161,7 @@ class Spotify {
     return null;
   }
 
-  Future<SpotifyUser?> getCurrentUser({String? accessToken}) async {
+  Future<SpotifyUser?> getCurrentUser() async {
     http.Response res = await client.get(
       spotifyMeEndpoint,
     );

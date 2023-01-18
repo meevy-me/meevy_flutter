@@ -26,25 +26,28 @@ class SpotifyController extends GetxController {
     final Uri url = Uri.https('accounts.spotify.com', '/authorize', {
       'response_type': 'code',
       'client_id': clientId,
-      'redirect_uri': 'souldate:/',
+      'redirect_uri': 'meevy:/',
       'show_dialog': 'true',
       'scope':
           'user-read-private user-read-recently-played playlist-read-private user-library-read user-top-read user-modify-playback-state user-read-currently-playing'
     });
     try {
       final result = await FlutterWebAuth.authenticate(
-          url: url.toString(), callbackUrlScheme: 'souldate');
+          url: url.toString(), callbackUrlScheme: 'meevy');
 
       final code = Uri.parse(result).queryParameters['code'];
       Map? spotifyTokens = await spotify.getTokens(code!);
       if (spotifyTokens != null) {
-        spotify.accessToken = spotifyTokens['access_token'];
-        spotify.refreshToken = spotifyTokens['refresh_token'];
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        preferences.setString(
+            "spotify_accesstoken", spotifyTokens['access_token']);
+        preferences.setString(
+            "spotify_refreshtoken", spotifyTokens['refresh_token']);
 
-        spotify.currentUser =
-            await spotify.getCurrentUser(accessToken: spotify.accessToken);
+        spotify.currentUser = await spotify.getCurrentUser();
       }
     } catch (e) {
+      log(e.toString());
       Analytics.log_error('Web Auth Error', {'error': e.toString()});
     }
 
@@ -95,8 +98,8 @@ class SpotifyController extends GetxController {
       String firebaseToken = json['firebase_token'];
       preferences.setString('token', json['token']);
       preferences.setString('firebase_token', firebaseToken);
-      preferences.setString('spotify_accesstoken', spotify.accessToken);
-      preferences.setString('spotify_refreshtoken', spotify.refreshToken);
+      // preferences.setString('spotify_accesstoken', spotify.accessToken);
+      // preferences.setString('spotify_refreshtoken', spotify.refreshToken);
       await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
 
       if (body.containsKey('email')) {
@@ -107,8 +110,8 @@ class SpotifyController extends GetxController {
           if (context != null) _showSnackBar("Success. Welcome back", context);
 
           Get.to(() => DataFetchPage(
-              accessToken: spotify.accessToken,
-              refreshToken: spotify.refreshToken));
+              accessToken: preferences.getString('spotify_accesstoken')!,
+              refreshToken: preferences.getString('spotify_refreshtoken')!));
         } else {
           if (context != null) {
             _showSnackBar("Success. Create Profile", context);
@@ -126,6 +129,7 @@ class SpotifyController extends GetxController {
 
   void createProfile(Map<String, String> body,
       {bool update = false, BuildContext? context}) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     http.Response res = await client.post(profileUrl, body: body);
     if (res.statusCode <= 210) {
       if (context != null) {
@@ -135,20 +139,20 @@ class SpotifyController extends GetxController {
                 : "Profile created successfully")));
       }
       Get.to(() => DataFetchPage(
-          accessToken: spotify.accessToken,
-          refreshToken: spotify.refreshToken));
+          accessToken: preferences.getString('spotify_accesstoken')!,
+          refreshToken: preferences.getString('spotify_refreshtoken')!));
     } else {
       log(res.body, name: "API ERROR");
     }
   }
 
   void fetchData() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
     http.Response response = await client.post(fetchDataUrl, body: {
-      'access_token': spotify.accessToken,
-      'refresh_token': spotify.refreshToken
+      'access_token': preferences.getString('spotify_accesstoken')!,
+      'refresh_token': preferences.getString('spotify_refreshtoken')!
     });
-    log(spotify.accessToken);
-    log(spotify.refreshToken);
+
     if (response.statusCode <= 210) {
       Get.to(() => const SplashScreen());
     } else if (response.statusCode <= 500) {
