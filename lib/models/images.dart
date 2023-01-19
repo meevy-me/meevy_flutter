@@ -1,6 +1,13 @@
+import 'package:hive/hive.dart';
+part 'images.g.dart';
+
+@HiveType(typeId: 2)
 class ProfileImages {
+  @HiveField(0)
   int id;
+  @HiveField(1)
   bool isDefault;
+  @HiveField(2)
   final String image;
   ProfileImages(
       {required this.image, required this.id, required this.isDefault});

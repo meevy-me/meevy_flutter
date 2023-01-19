@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:soul_date/components/loading.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/AuthController.dart';
 
@@ -30,11 +31,13 @@ class _DataFetchPageState extends State<DataFetchPage> {
       child: Scaffold(
           body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Loading(),
+          LoadingPulse(
+            color: Theme.of(context).primaryColor,
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultMargin),
             child: Text(
-              "Please wait as we gather your data ",
+              "Please wait as we make your matches ",
               style: Theme.of(context)
                   .textTheme
                   .bodyText1!

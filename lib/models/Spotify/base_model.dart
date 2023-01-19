@@ -1,4 +1,4 @@
-enum SpotifyDataType { album, playlist, track }
+enum SpotifyDataType { album, playlist, track, user }
 
 abstract class SpotifyData {
   String get itemName;

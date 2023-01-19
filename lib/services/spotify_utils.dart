@@ -14,6 +14,8 @@ import 'package:soul_date/screens/home/models/vinyl_model.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/spotify.dart';
 
+import 'notifications.dart';
+
 void trackPlay(BuildContext context, SpotifyData item,
     {List<SpotifyData>? items, VinylModel? vinyl}) async {
   final SoulController controller = Get.find<SoulController>();
@@ -95,12 +97,12 @@ void trackLike(BuildContext context, SpotifyData item, {Profile? sender}) {
 }
 
 void vinylLike(BuildContext context, VinylModel vinyl) {
-  final SoulController controller = Get.find<SoulController>();
+  // final SoulController controller = Get.find<SoulController>();
 
   // DateTime now = DateTime.now();
 
   trackLike(context, vinyl.item);
-  controller.sendNotification(vinyl.sender, "Liked a song you sent them");
+  sendNotification(vinyl.sender, "Liked a song you sent them");
 }
 
 void trackLikeRemove(BuildContext context, SpotifyData item) {
@@ -140,7 +142,7 @@ void trackAddToPlaylist(
     {required Profile sender,
     required Profile receiver,
     required SpotifyData item}) {
-  final SoulController controller = Get.find<SoulController>();
+  // final SoulController controller = Get.find<SoulController>();
 
   String playlistID = getPlaylistID(sender, receiver);
   FirebaseFirestore.instance
@@ -153,7 +155,7 @@ void trackAddToPlaylist(
     "date_added": DateTime.now().toIso8601String()
   });
 
-  controller.sendNotification(sender, "Liked a song you sent them.");
+  sendNotification(sender, "Liked a song you sent them.");
 }
 
 void _addToPlaylist(String playlistID, VinylModel vinyl) {

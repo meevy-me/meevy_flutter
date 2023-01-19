@@ -20,10 +20,12 @@ class SoulCircleAvatar extends StatelessWidget {
 }
 
 class ProfileAvatar extends StatelessWidget {
-  const ProfileAvatar({Key? key, required this.profileID, this.radius = 20})
+  const ProfileAvatar(
+      {Key? key, required this.profileID, this.radius = 20, this.placeholder})
       : super(key: key);
   final int profileID;
   final double radius;
+  final Widget? placeholder;
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ProfileImages>(
@@ -36,10 +38,9 @@ class ProfileAvatar extends StatelessWidget {
             radius: radius,
           );
         } else if (snapshot.hasError) {
-          print(snapshot.error);
           return const SizedBox.shrink();
         } else {
-          return const LoadingPulse();
+          return placeholder ?? const LoadingPulse();
         }
       },
     );

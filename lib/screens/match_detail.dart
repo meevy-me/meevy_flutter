@@ -4,11 +4,16 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/custom_slider.dart';
+import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/components/spotify_card.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
+import 'package:soul_date/models/Spotify/base_model.dart';
+import 'package:soul_date/models/Spotify/user_model.dart';
 import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/models.dart';
+import 'package:soul_date/services/spotify.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class MatchDetail extends StatelessWidget {
@@ -253,9 +258,22 @@ class _ScrollImageState extends State<ScrollImage> {
   }
 }
 
-class _MatchDetails extends StatelessWidget {
+class _MatchDetails extends StatefulWidget {
   const _MatchDetails({Key? key, required this.profile}) : super(key: key);
   final Profile profile;
+
+  @override
+  State<_MatchDetails> createState() => _MatchDetailsState();
+}
+
+class _MatchDetailsState extends State<_MatchDetails> {
+  late Future<SpotifyData?> _future;
+  @override
+  void initState() {
+    _future = Spotify().getItem('user', widget.profile.user.spotifyId);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -275,7 +293,7 @@ class _MatchDetails extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(vertical: defaultMargin / 2),
                 child: Text(
-                  "${profile.name}, ${profile.age}",
+                  "${widget.profile.name}, ${widget.profile.age}",
                   style: Theme.of(context)
                       .textTheme
                       .headline5!
@@ -284,16 +302,41 @@ class _MatchDetails extends StatelessWidget {
               ),
             ],
           ),
-          IconButton(
-              onPressed: () async {
-                launchUrlString(
-                    "https://open.spotify.com/user/${profile.user.spotifyId}");
-              },
-              icon: const Icon(
-                FontAwesomeIcons.spotify,
-                color: Colors.white,
-                size: 35,
-              ))
+          FutureBuilder<SpotifyData?>(
+              future: _future,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return LoadingPulse(
+                    color: spotifyGreen,
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.data != null) {
+                  return GestureDetector(
+                    onTap: () {
+                      Spotify()
+                          .openSpotify(snapshot.data!.uri, snapshot.data!.url);
+                    },
+                    child: Container(
+                        padding: scaffoldPadding / 3,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: spotifyGreen)),
+                        child:
+                            SoulCircleAvatar(imageUrl: snapshot.data!.image)),
+                  );
+                }
+                return IconButton(
+                    onPressed: () async {
+                      launchUrlString(
+                          "https://open.spotify.com/user/${widget.profile.user.spotifyId}");
+                    },
+                    icon: const Icon(
+                      FontAwesomeIcons.spotify,
+                      color: Colors.white,
+                      size: 35,
+                    ));
+              })
         ],
       ),
     );

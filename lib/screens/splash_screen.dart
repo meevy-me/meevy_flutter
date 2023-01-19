@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void checkLogin() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     // final service = FlutterBackgroundService();
-    if (preferences.getString("spotify_accesstoken") == null) {
+    if (preferences.getString("token") == null) {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => const SpotifyLogin()),
           (route) => false);

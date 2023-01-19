@@ -7,7 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:soul_date/models/models.dart';
 import 'package:soul_date/screens/invite_page.dart';
 import 'package:soul_date/screens/send_spot_screen.dart';
 import 'package:soul_date/screens/splash_screen.dart';
@@ -51,6 +53,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   InitData initData = await init();
   await Firebase.initializeApp();
+  await Hive.initFlutter();
+  Hive.registerAdapter(ProfileAdapter());
+  Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(ProfileImagesAdapter());
+  Hive.openBox<Profile>('profile');
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     NotificationApi.showNotification(

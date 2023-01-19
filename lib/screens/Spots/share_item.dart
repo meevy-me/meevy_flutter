@@ -38,7 +38,7 @@ class _ShareScreenState extends State<ShareScreen> {
   Future<Uint8List> captureWidget() async {
     final RenderRepaintBoundary boundary =
         spotKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    final ui.Image image = await boundary.toImage();
+    final ui.Image image = await boundary.toImage(pixelRatio: 5);
     final ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
 

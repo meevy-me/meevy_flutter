@@ -133,7 +133,9 @@ class _VinylSentCardState extends State<VinylSentCard> {
                     Row(
                       children: [
                         ProfileAvatar(
-                            profileID: widget.vinyl.sender.id, radius: 11),
+                            placeholder: const SizedBox.shrink(),
+                            profileID: widget.vinyl.sender.id,
+                            radius: 11),
                         const SizedBox(
                           width: defaultMargin,
                         ),

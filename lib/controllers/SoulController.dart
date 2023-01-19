@@ -9,6 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -42,13 +43,13 @@ class SoulController extends GetxController {
   @override
   void onInit() async {
     WidgetsFlutterBinding.ensureInitialized();
-    setSpotifyToken();
+    await getProfile();
     registerDevice();
-    fetchMatches();
-    //TODO:: CAll this on relevant pages
-    getProfile();
-    currentlyPlaying();
     getFriends();
+    setSpotifyToken();
+    //TODO:: CAll this on relevant pages
+    currentlyPlaying();
+    fetchMatches();
     super.onInit();
   }
 
@@ -92,17 +93,25 @@ class SoulController extends GetxController {
     }
   }
 
-  getProfile() async {
-    var res = await client.get(profileMeUrl);
+  getProfile({bool reset = false}) async {
+    var profileBox = await Hive.openBox<Profile>('profile');
 
-    if (res.statusCode <= 210) {
-      profile = Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)));
-
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      preferences.setInt("profileID", profile!.id);
-      update(['profile']);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    int? profileID = preferences.getInt('profileID');
+    if (!reset && profileID != null && profileBox.containsKey(profileID)) {
+      profile = profileBox.get(profileID)!;
     } else {
-      log(res.body, name: "PROFILE FETCH ERROR");
+      var res = await client.get(profileMeUrl);
+
+      if (res.statusCode <= 210) {
+        profile = Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)));
+
+        preferences.setInt("profileID", profile!.id);
+        profileBox.put(profile!.id, profile!);
+        update(['profile']);
+      } else {
+        log(res.body, name: "PROFILE FETCH ERROR");
+      }
     }
   }
 
@@ -246,7 +255,7 @@ class SoulController extends GetxController {
   void updateProfile(Map body, {required BuildContext context}) async {
     http.Response res = await client.patch('${profileUrl}1/', body);
     if (res.statusCode <= 210) {
-      getProfile();
+      getProfile(reset: true);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Profile Updated. Matches will update tomorrow")));
     } else {
@@ -270,7 +279,7 @@ class SoulController extends GetxController {
     http.Response res = await client.post(uploadImageUrl,
         body: {'profile': profile!.id.toString()}, file: file);
     if (res.statusCode <= 210) {
-      getProfile();
+      getProfile(reset: true);
       Get.back();
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Image uploaded")));
@@ -415,8 +424,6 @@ class SoulController extends GetxController {
   Future<bool> sendNotification(Profile profile, String message) async {
     http.Response response = await client.post(notifyUrl,
         body: {'receiver': profile.id.toString(), 'message': message});
-
-    print(response.statusCode);
 
     if (response.statusCode <= 210) {
       return true;

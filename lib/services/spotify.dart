@@ -29,7 +29,7 @@ class Spotify {
   // late String refreshToken;
   SpotifyUser? currentUser;
   Spotify() {
-    getCurrentUser();
+    // getCurrentUser();
   }
 
   SpotifyClient client = SpotifyClient();

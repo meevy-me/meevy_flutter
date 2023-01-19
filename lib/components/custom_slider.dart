@@ -67,20 +67,33 @@ class _SoulSliderState extends State<SoulSlider>
   }
 }
 
-class SoulSliderCheck extends StatelessWidget {
+class SoulSliderCheck extends StatefulWidget {
   SoulSliderCheck({
     Key? key,
     required this.profile,
   }) : super(key: key);
 
   final Profile profile;
+
+  @override
+  State<SoulSliderCheck> createState() => _SoulSliderCheckState();
+}
+
+class _SoulSliderCheckState extends State<SoulSliderCheck> {
   final SoulController controller = Get.find<SoulController>();
+  late Future<bool> _future;
+
+  @override
+  void initState() {
+    _future = controller.isFriendRequested(widget.profile);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return profile.id != controller.profile!.id
+    return widget.profile.id != controller.profile!.id
         ? FutureBuilder<bool>(
-            future: controller.isFriendRequested(profile),
+            future: _future,
             builder: (context, snapshot) {
               return snapshot.connectionState == ConnectionState.done
                   ? Padding(
@@ -98,11 +111,11 @@ class SoulSliderCheck extends StatelessWidget {
                                 completedWidget:
                                     const Text("You have sent a request"),
                                 defaultText:
-                                    "Slide to match with ${profile.name}",
+                                    "Slide to match with ${widget.profile.name}",
                                 onComplete: () {
-                                  controller.sendRequest(
-                                      {'profile2': profile.id.toString()},
-                                      context: context);
+                                  controller.sendRequest({
+                                    'profile2': widget.profile.id.toString()
+                                  }, context: context);
                                 },
                               ),
                         // child: SlideToLike(

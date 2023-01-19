@@ -1,20 +1,29 @@
 import 'dart:convert';
 
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:soul_date/models/images.dart';
 import 'package:soul_date/models/user_model.dart';
+part 'profile_model.g.dart';
 
 List<Profile> profileFromJson(String str) =>
     List<Profile>.from(json.decode(str).map((x) => Profile.fromJson(x)));
 
-class Profile {
+@HiveType(typeId: 0)
+class Profile extends HiveObject {
+  @HiveField(0)
   final int id;
+  @HiveField(1)
   final User user;
+  @HiveField(2)
   List<ProfileImages> images = [];
-
+  @HiveField(3)
   final String name;
+  @HiveField(4)
   final String looking_for;
+  @HiveField(5)
   final DateTime dateOfBirth;
+  @HiveField(6)
   final String bio;
 
   factory Profile.fromJson(Map<String, dynamic> json) {

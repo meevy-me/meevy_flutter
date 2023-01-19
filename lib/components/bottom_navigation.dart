@@ -93,7 +93,7 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
               });
             },
             child: GetBuilder<SoulController>(
-                // stream: null,
+                // tag: 'profile',
                 builder: (controller) {
               return _BottomNavigationItem(
                 active: selectedIndex == 4 ? true : false,
