@@ -1,4 +1,4 @@
-const String baseUrl = 'https://meevy.herokuapp.com/api/v1/';
+const String baseUrl = 'https://meevy.me/api/v1/';
 const String callbackUrl = baseUrl + 'users/callback/';
 const String spotifyMeEndpoint = "https://api.spotify.com/v1/me";
 const String spotifyTokenEndpoint = "https://accounts.spotify.com/api/token";
