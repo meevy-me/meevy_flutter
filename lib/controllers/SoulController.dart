@@ -46,10 +46,8 @@ class SoulController extends GetxController {
     await getProfile();
     registerDevice();
     getFriends();
-    setSpotifyToken();
-    //TODO:: CAll this on relevant pages
-    currentlyPlaying();
     fetchMatches();
+    currentlyPlaying();
     super.onInit();
   }
 
@@ -88,7 +86,7 @@ class SoulController extends GetxController {
       http.Response response = await client
           .post(registerDeviceUrl, body: {'firebase_token': fireToken!});
       if (response.statusCode <= 210) {
-        preferences.setBool('firebaseRegistered', true);
+        preferences.setString('firebase_token', fireToken);
       }
     }
   }
@@ -161,15 +159,15 @@ class SoulController extends GetxController {
     return Friends.fromJson(json.decode(response.body));
   }
 
-  setSpotifyToken() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    if (preferences.getString("spotify_accesstoken") == null) {
-      // logout();
-      // Get.to(()  => const LoginScreen());
-    } else {}
-  }
+  // setSpotifyToken() async {
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   if (preferences.getString("spotify_accesstoken") == null) {
+  //     // logout();
+  //     // Get.to(()  => const LoginScreen());
+  //   } else {}
+  // }
 
-  void fetchMatches() async {
+  Future<void> fetchMatches() async {
     await client.get(fetchMakeMatchesUrl);
 
     http.Response res = await client.get(fetchMatchesUrl);
@@ -180,7 +178,7 @@ class SoulController extends GetxController {
     }
   }
 
-  void fetchSpots() async {
+  Future<void> fetchSpots() async {
     http.Response res = await client.get(fetchSpotsUrl);
     if (res.statusCode <= 210) {
       spots.value = spotsViewFromJson(utf8.decode(res.bodyBytes));
@@ -218,15 +216,16 @@ class SoulController extends GetxController {
     }
   }
 
-  void sendRequest(Map<String, String> body,
+  Future<void> sendRequest(Map<String, String> body,
       {required BuildContext context}) async {
     http.Response res = await client.post(requestUrl, body: body);
+    // print(res.body);
     if (res.statusCode <= 210) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Request has been sent")));
 
-      Get.back();
-      fetchMatches();
+      // Get.back();
+      // fetchMatches();
     }
   }
 

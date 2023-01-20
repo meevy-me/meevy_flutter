@@ -45,10 +45,10 @@ class _SoulSliderState extends State<SoulSlider>
         ? widget.completedWidget
         : ConfirmationSlider(
             onConfirmation: () {
+              widget.onComplete();
               setState(() {
                 slideComplete = true;
               });
-              widget.onComplete();
             },
             iconColor: Theme.of(context).primaryColor,
             foregroundColor: Theme.of(context).primaryColor,
@@ -68,7 +68,7 @@ class _SoulSliderState extends State<SoulSlider>
 }
 
 class SoulSliderCheck extends StatefulWidget {
-  SoulSliderCheck({
+  const SoulSliderCheck({
     Key? key,
     required this.profile,
   }) : super(key: key);
@@ -112,8 +112,8 @@ class _SoulSliderCheckState extends State<SoulSliderCheck> {
                                     const Text("You have sent a request"),
                                 defaultText:
                                     "Slide to match with ${widget.profile.name}",
-                                onComplete: () {
-                                  controller.sendRequest({
+                                onComplete: () async {
+                                  await controller.sendRequest({
                                     'profile2': widget.profile.id.toString()
                                   }, context: context);
                                 },

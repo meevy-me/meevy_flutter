@@ -23,7 +23,7 @@ class _InvitePageState extends State<InvitePage> {
   }
 
   Future<Profile?> getProfile() async {
-    final pattern = RegExp(r'\/app\/invite\/([a-zA-Z0-9]+)');
+    final pattern = RegExp(r'/app/invite/([a-zA-Z0-9_]+)');
     final match = pattern.firstMatch(widget.sharedText);
     if (match != null) {
       final id = match.group(1);
@@ -47,11 +47,15 @@ class _InvitePageState extends State<InvitePage> {
               return MatchDetail(profile: snapshot.data!);
             } else if (snapshot.hasError) {
               return Text(snapshot.error.toString());
-            } else {
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
               return LoadingPulse(
                 color: Theme.of(context).primaryColor,
               );
+            } else if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.data == null) {
+              return Center(child: Text("Profile Not found"));
             }
+            return const SizedBox();
           }),
     );
   }

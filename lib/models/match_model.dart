@@ -35,7 +35,7 @@ class Match {
         matched: Profile.fromJson(json["user"]),
         method: json['method'],
         details: List<Details>.from(json['match'].map((x) {
-          return Details.fromJson(x);
+          return Details.fromJson(jsonDecode(x));
         }))
         // dateAdded: DateTime.parse(json["date_added"]),
         // friends: json["isFriend"],

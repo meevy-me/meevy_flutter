@@ -111,89 +111,120 @@ class _ChatScreenState extends State<ChatScreen> {
                     })),
             Positioned(
               bottom: 0,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: defaultMargin, vertical: defaultMargin),
+              child: SizedBox(
+                width: size.width,
+                height: size.height * 0.2,
                 child: Padding(
-                  padding: const EdgeInsets.only(right: defaultMargin),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (replyTo != null)
-                        ReplyChatBox(
-                          message: replyTo!,
-                          profile: profile,
-                          width: size.width * 0.8,
-                          height: 100,
-                          onClose: () {
-                            setState(() {
-                              replyTo = null;
-                            });
-                          },
-                        ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ConstrainedBox(
-                            constraints: BoxConstraints(
-                                minWidth: size.width * 0.8,
-                                maxWidth: size.width * 0.8,
-                                minHeight: 50),
-                            child: TextFormField(
-                              focusNode: focus,
-                              cursorHeight: 1,
-                              controller: text,
-                              maxLines: null,
-                              textCapitalization: TextCapitalization.sentences,
-                              style: Theme.of(context).textTheme.bodyText2,
-                              decoration: InputDecoration(
-                                  isDense: true,
-                                  filled: true,
-                                  fillColor: Colors.grey.withOpacity(0.4),
-                                  hintText: "Type Message",
-                                  focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                      borderSide: BorderSide.none),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide.none,
-                                      borderRadius: BorderRadius.circular(20)),
-                                  hintStyle:
-                                      Theme.of(context).textTheme.caption),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: defaultMargin, vertical: defaultMargin),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: defaultMargin),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (replyTo != null)
+                          ReplyChatBox(
+                            message: replyTo!,
+                            profile: profile,
+                            width: size.width * 0.8,
+                            height: 100,
+                            onClose: () {
+                              setState(() {
+                                replyTo = null;
+                              });
+                            },
+                          ),
+                        Expanded(
+                          child: AnimatedSize(
+                            duration: const Duration(seconds: 2),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Expanded(
+                                  // constraints: BoxConstraints(
+                                  //     minWidth: size.width * 0.8,
+                                  //     maxWidth: size.width * 0.8,
+                                  //     minHeight: 50),
+                                  child: AnimatedSize(
+                                    duration: const Duration(seconds: 2),
+                                    child: TextFormField(
+                                      focusNode: focus,
+                                      cursorHeight: 1,
+                                      controller: text,
+                                      onChanged: (value) {
+                                        if (value.isEmpty ||
+                                            value.length == 1) {
+                                          setState(() {});
+                                        }
+                                      },
+                                      maxLines: null,
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText2,
+                                      decoration: InputDecoration(
+                                          isDense: true,
+                                          filled: true,
+                                          fillColor:
+                                              Colors.grey.withOpacity(0.4),
+                                          hintText: "Type Message",
+                                          focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              borderSide: BorderSide.none),
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide.none,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .caption),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: defaultMargin,
+                                ),
+                                text.text.isNotEmpty
+                                    ? ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            fixedSize: const Size(40, 40),
+                                            backgroundColor:
+                                                Theme.of(context).primaryColor,
+                                            shape: const CircleBorder()),
+                                        onPressed: () {
+                                          if (text.text.trim().isNotEmpty) {
+                                            // messageController.addMessageSocket(text.text,
+                                            //     reply:
+                                            //         replyTo != null ? replyTo!.id : null,
+                                            //     chat: widget.chat,
+                                            //     scrollController: scrollController);
+                                            messageController.sendMessage(
+                                                chatID: widget.friend.id,
+                                                msg: text.text,
+                                                receiver: profile,
+                                                replyTo: replyTo);
+
+                                            text.clear();
+                                            setState(() {
+                                              replyTo = null;
+                                            });
+                                          }
+                                        },
+                                        child: const Center(
+                                            child: Icon(
+                                          Icons.send,
+                                          size: 15,
+                                        )))
+                                    : const SizedBox.shrink()
+                              ],
                             ),
                           ),
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  elevation: 0,
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
-                                  shape: const CircleBorder()),
-                              onPressed: () {
-                                if (text.text.trim().isNotEmpty) {
-                                  // messageController.addMessageSocket(text.text,
-                                  //     reply:
-                                  //         replyTo != null ? replyTo!.id : null,
-                                  //     chat: widget.chat,
-                                  //     scrollController: scrollController);
-                                  messageController.sendMessage(
-                                      chatID: widget.friend.id,
-                                      msg: text.text,
-                                      receiver: profile,
-                                      replyTo: replyTo);
-
-                                  text.clear();
-                                  setState(() {
-                                    replyTo = null;
-                                  });
-                                }
-                              },
-                              child: const Center(
-                                  child: Icon(
-                                Icons.send,
-                                size: 15,
-                              )))
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
