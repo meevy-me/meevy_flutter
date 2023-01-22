@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:soul_date/constants/constants.dart';
 part 'images.g.dart';
 
 @HiveType(typeId: 2)
@@ -26,3 +27,6 @@ class ProfileImages {
     return image;
   }
 }
+
+ProfileImages defaultProfileImage =
+    ProfileImages(image: secondaryAvatarUrl, id: 0, isDefault: true);

@@ -208,6 +208,11 @@ class _SpotScreenState extends State<SpotScreen> {
                                                   customPageTransition:
                                                       PageTransition(
                                                           child: ShareScreen(
+                                                            caption: widget
+                                                                .spots
+                                                                .spots[
+                                                                    currentIndex]
+                                                                .caption,
                                                             profile: widget
                                                                 .spots.profile,
                                                             item: widget

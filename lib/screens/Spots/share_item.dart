@@ -21,10 +21,12 @@ import 'components/spot_background.dart';
 import 'components/spot_song_image.dart';
 
 class ShareScreen extends StatefulWidget {
-  const ShareScreen({Key? key, required this.item, required this.profile})
+  const ShareScreen(
+      {Key? key, required this.item, required this.profile, this.caption})
       : super(key: key);
   final Spot.Item item;
   final Profile profile;
+  final String? caption;
 
   @override
   State<ShareScreen> createState() => _ShareScreenState();
@@ -97,6 +99,7 @@ class _ShareScreenState extends State<ShareScreen> {
               key: spotKey,
               child: SpotWidget(
                 item: widget.item,
+                caption: widget.caption,
                 profile: widget.profile,
               ),
             ),
@@ -183,10 +186,12 @@ class SpotWidget extends StatelessWidget {
     Key? key,
     required this.item,
     required this.profile,
+    this.caption,
   }) : super(key: key);
 
   final Spot.Item item;
   final Profile profile;
+  final String? caption;
 
   @override
   Widget build(BuildContext context) {
@@ -250,6 +255,7 @@ class SpotWidget extends StatelessWidget {
       ),
       Center(
         child: SongWithImage(
+          caption: caption,
           item: item,
         ),
       )

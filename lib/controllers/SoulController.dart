@@ -290,10 +290,7 @@ class SoulController extends GetxController {
   deleteImage(int id, {required BuildContext context}) async {
     var res = await client.delete(picturesUrl + '$id/');
     if (res.statusCode <= 210) {
-      var index = profile!.images.indexWhere((element) => element.id == id);
-      profile!.images.removeAt(index);
-      Get.back();
-      update();
+      getProfile(reset: true);
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Image has been deleted")));
     } else {

@@ -82,29 +82,34 @@ class _DiscoverPageState extends State<DiscoverPage> {
               controller: scrollController,
               slivers: [
                 _buildSliverAppbar(context),
-                Obx(() => controller.matches.isNotEmpty
-                    ? SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                        Match match = controller.matches[index];
-                        return InkWell(
-                          onTap: () => Navigation.push(context,
-                              customPageTransition: PageTransition(
-                                  child: MatchDetail(
-                                      matchDetails: match.details,
-                                      profile: match.matched),
-                                  type: PageTransitionType.fromTop)),
-                          child: MatchCard(
-                              match: match,
-                              onLiked: (match) {
-                                // controller.matches.remove(match);
-                              }),
-                        );
-                      }, childCount: controller.matches.length))
-                    : SliverToBoxAdapter(
-                        child: EmptyWidget(
-                          text: "You have no matches",
+                Obx(
+                  () => controller.matches.isNotEmpty
+                      ? SliverList(
+                          delegate:
+                              SliverChildBuilderDelegate((context, index) {
+                          Match match = controller.matches[index];
+                          return InkWell(
+                            onTap: () => Navigation.push(context,
+                                customPageTransition: PageTransition(
+                                    child: MatchDetail(
+                                        matchDetails: match.details,
+                                        profile: match.matched),
+                                    type: PageTransitionType.fromTop)),
+                            child: MatchCard(
+                                match: match,
+                                onLiked: (match) {
+                                  // controller.matches.remove(match);
+                                }),
+                          );
+                        }, childCount: controller.matches.length))
+                      : SliverList(
+                          delegate: SliverChildListDelegate([
+                            const EmptyWidget(
+                              text: "Oops, you have no matches. Don't worry",
+                            )
+                          ]),
                         ),
-                      ))
+                )
                 // Obx(() => controller.matches.isNotEmpty
                 //     ? SliverList(
                 //         delegate: SliverChildBuilderDelegate((context, index) {

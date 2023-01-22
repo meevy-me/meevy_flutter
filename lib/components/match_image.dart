@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/loading.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/models/match_model.dart';
 
 import '../constants/constants.dart';
@@ -38,7 +39,11 @@ class MatchImage extends StatelessWidget {
                 imageUrl: match.matched.profilePicture.image,
                 fit: BoxFit.cover,
                 progressIndicatorBuilder: (context, text, percentage) {
-                  return const SizedBox(width: 20, child: Loading());
+                  return SizedBox(
+                      width: 20,
+                      child: LoadingPulse(
+                        color: Theme.of(context).primaryColor,
+                      ));
                 },
               ),
             ),

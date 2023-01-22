@@ -35,10 +35,13 @@ class Profile extends HiveObject {
       bio: json["bio"],
       looking_for: json['looking_for'],
     );
-
-    profile.images.addAll(List<ProfileImages>.from(json["images"].map((x) {
-      return ProfileImages.fromJson(x);
-    })));
+    try {
+      profile.images.addAll(List<ProfileImages>.from(json["images"].map((x) {
+        return ProfileImages.fromJson(x);
+      })));
+    } catch (e) {
+      profile.images.add(defaultProfileImage);
+    }
     return profile;
   }
   Map<String, dynamic> toJson() => {
