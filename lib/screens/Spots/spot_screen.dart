@@ -1,22 +1,22 @@
-import 'dart:developer';
-import 'dart:io';
-import 'dart:ui';
-
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-import 'package:share_extend/share_extend.dart';
 import 'package:soul_date/animations/animations.dart';
+import 'package:soul_date/components/Modals/spot_buddy_modal.dart';
 import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
+import 'package:soul_date/models/models.dart';
+import 'package:soul_date/models/spot_buddy_model.dart';
 import 'package:soul_date/models/spots.dart';
 import 'package:soul_date/screens/Spots/share_item.dart';
+import 'package:soul_date/services/modal.dart';
 import 'package:soul_date/services/navigation.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 
@@ -35,37 +35,14 @@ class _SpotScreenState extends State<SpotScreen> {
   final SoulController controller = Get.find<SoulController>();
   final SpotController spotController = Get.find<SpotController>();
   final WidgetsToImageController imageController = WidgetsToImageController();
-
-  //Implement Dispose
-
-  // Uint8List? bytes;
-  // void exportSpot(BuildContext context, Spot spot) async {
-  //   bytes = await imageController.capture();
-  //   try {
-  //     if (bytes != null) {
-  //       var tempDir = await getApplicationDocumentsDirectory();
-  //       String filePath = '${tempDir.path}/spot.png';
-
-  //       File file = File(filePath);
-  //       if (!file.existsSync()) {
-  //         file.create(recursive: true);
-  //       }
-  //       File image = await file.writeAsBytes(bytes!.toList());
-  //       final box = context.findRenderObject() as RenderBox?;
-  //       ShareExtend.share(image.path, "image",
-  //           subject: spot.details.item.name,
-  //           sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
-  //     }
-  //   } catch (e) {
-  //     log(e.toString());
-  //   }
-  // }
+  // late Future<List<SpotBuddy>> _future;
 
   @override
   void initState() {
-    setState(() {
-      widget.spots.spots = widget.spots.spots.reversed.toList();
-    });
+    // setState(() {
+    //   widget.spots.spots = widget.spots.spots.reversed.toList();
+    //   // _future = controller.getSpotBuddies(widget.spots.spots[currentIndex].id);
+    // });
     super.initState();
   }
 
@@ -168,7 +145,7 @@ class _SpotScreenState extends State<SpotScreen> {
                                               .copyWith(color: Colors.white),
                                         ),
                                         Text(
-                                          "${DateTime.now().difference(spot.dateAdded).inHours} Hrs ago.",
+                                          spot.datePosted,
                                           style: Theme.of(context)
                                               .textTheme
                                               .caption!
@@ -260,33 +237,44 @@ class _SpotScreenState extends State<SpotScreen> {
               ]),
             ),
             Container(
+              // height: size.height * 0.1,
               color: Colors.black,
               padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "Sync To Spot",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(color: Colors.white),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      widget.spots.profile.id == controller.profile!.id
+                          ? _SpotBuddy(
+                              spot: spot,
+                              // future: controller.getSpotBuddies(spot.id),
+                            )
+                          : Text(
+                              "Sync To Spot",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(color: Colors.white),
+                            ),
+                      ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20))),
+                          onPressed: () {
+                            controller.spotify.playTrack(spot.details.item.uri,
+                                context: context);
+                          },
+                          icon: const Icon(
+                            FontAwesomeIcons.spotify,
+                            color: Colors.white,
+                          ),
+                          label: const Text("Sync"))
+                    ],
                   ),
-                  ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20))),
-                      onPressed: () {
-                        controller.spotify
-                            .playTrack(spot.details.item.uri, context: context);
-                      },
-                      icon: const Icon(
-                        FontAwesomeIcons.spotify,
-                        color: Colors.white,
-                      ),
-                      label: const Text("Sync"))
                 ],
               ),
             )
@@ -294,5 +282,72 @@ class _SpotScreenState extends State<SpotScreen> {
         ),
       ),
     );
+  }
+}
+
+class _SpotBuddy extends StatefulWidget {
+  const _SpotBuddy({
+    Key? key,
+    required this.spot,
+  }) : super(key: key);
+  final Spot spot;
+
+  @override
+  State<_SpotBuddy> createState() => _SpotBuddyState();
+}
+
+class _SpotBuddyState extends State<_SpotBuddy> {
+  final SoulController soulController = Get.find<SoulController>();
+  // late Future<List<SpotBuddy>> _future;
+
+  @override
+  void initState() {
+    // _future = ;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<SpotBuddy>>(
+        future: soulController.getSpotBuddies(widget.spot.id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data != null) {
+            return snapshot.data!.isNotEmpty
+                ? GestureDetector(
+                    onTap: () => showModal(
+                        context,
+                        SpotBuddyModal(
+                          buddies: snapshot.data!,
+                          spot: widget.spot,
+                        )),
+                    child: Row(
+                      children: [
+                        RowSuper(
+                          innerDistance: -10,
+                          children: snapshot.data!
+                              .map((e) => SoulCircleAvatar(
+                                    imageUrl: e.profile.profilePicture.image,
+                                    radius: 15,
+                                  ))
+                              .toList(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: defaultPadding),
+                          child: Text(
+                              "${snapshot.data!.length} Spot ${snapshot.data!.length == 1 ? 'Buddy' : 'Buddies'}",
+                              style: Theme.of(context).textTheme.caption),
+                        )
+                      ],
+                    ),
+                  )
+                : Text(
+                    "0 Spot Buddies :(",
+                    style: Theme.of(context).textTheme.caption,
+                  );
+          }
+          return const LoadingPulse();
+        });
   }
 }

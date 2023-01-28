@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/pulse.dart';
@@ -210,6 +209,6 @@ class _MeevyFavouriteCardState extends State<MeevyFavouriteCard> {
                 ),
               );
             })
-        : LoadingPulse();
+        : const LoadingPulse();
   }
 }

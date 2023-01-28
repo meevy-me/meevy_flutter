@@ -1,13 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/screens/Playlists/components/shared_playlist_card.dart';
 
-import '../../../components/cached_image_error.dart';
-import '../../../components/icon_container.dart';
-import '../../../components/image_circle.dart';
 import '../../../constants/constants.dart';
 
 class SharedPlaylistList extends StatelessWidget {
@@ -70,6 +66,6 @@ class SharedPlaylistList extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
               );
             })
-        : LoadingPulse();
+        : const LoadingPulse();
   }
 }

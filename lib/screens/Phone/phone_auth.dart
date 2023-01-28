@@ -17,7 +17,6 @@ class PhoneAuthentication extends StatefulWidget {
 }
 
 class _PhoneAuthenticationState extends State<PhoneAuthentication> {
-  //TODO: Change later to get find
   final SoulController soulController = Get.find<SoulController>();
   PhoneNumber initialNumber = PhoneNumber();
   PhoneNumber usersPhoneNumber = PhoneNumber();

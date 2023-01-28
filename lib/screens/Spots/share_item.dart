@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_extend/share_extend.dart';
@@ -14,8 +13,6 @@ import 'package:soul_date/constants/constants.dart';
 
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/models/spotify_spot_details.dart' as Spot;
-
-import 'package:widgets_to_image/widgets_to_image.dart';
 
 import 'components/spot_background.dart';
 import 'components/spot_song_image.dart';
@@ -86,8 +83,8 @@ class _ShareScreenState extends State<ShareScreen> {
 
   // Uint8List? bytes;
 
+  @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(

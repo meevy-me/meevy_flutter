@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:jiffy/jiffy.dart';
 import 'package:soul_date/models/spotify_spot_details.dart';
-
 import 'profile_model.dart';
 
 List<Spot> spotFromJson(String str) =>
@@ -33,6 +33,11 @@ class Spot {
         "date_posted": dateAdded.toIso8601String(),
         "caption": caption,
       };
+
+  String get datePosted {
+    // var diff = DateTime.now().subtract(dateAdded.);
+    return Jiffy(dateAdded).fromNow();
+  }
 }
 
 List<SpotsView> spotsViewFromJson(String str) =>

@@ -1,20 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/custom_slider.dart';
-import 'package:soul_date/components/image_circle.dart';
-import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/components/spotify_card.dart';
+import 'package:soul_date/components/spotify_profile_avatar.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/models/Spotify/base_model.dart';
-import 'package:soul_date/models/Spotify/user_model.dart';
-import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/models.dart';
-import 'package:soul_date/services/spotify.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class MatchDetail extends StatelessWidget {
   const MatchDetail({Key? key, this.matchDetails, required this.profile})
@@ -137,34 +129,31 @@ class _MatchProfile extends StatelessWidget {
   final SoulController controller = Get.find<SoulController>();
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "Matching by: ",
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-            child: SizedBox(
-              height: 50,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: details.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(right: defaultMargin),
-                  child: SpotifyCard(
-                    details: details[index],
-                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          "Matching by: ",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+          child: SizedBox(
+            height: 50,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: details.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.only(right: defaultMargin),
+                child: SpotifyCard(
+                  details: details[index],
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -267,10 +256,8 @@ class _MatchDetails extends StatefulWidget {
 }
 
 class _MatchDetailsState extends State<_MatchDetails> {
-  late Future<SpotifyData?> _future;
   @override
   void initState() {
-    _future = Spotify().getItem('user', widget.profile.user.spotifyId);
     super.initState();
   }
 
@@ -302,41 +289,9 @@ class _MatchDetailsState extends State<_MatchDetails> {
               ),
             ],
           ),
-          FutureBuilder<SpotifyData?>(
-              future: _future,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return LoadingPulse(
-                    color: spotifyGreen,
-                  );
-                }
-                if (snapshot.connectionState == ConnectionState.done &&
-                    snapshot.data != null) {
-                  return GestureDetector(
-                    onTap: () {
-                      Spotify()
-                          .openSpotify(snapshot.data!.uri, snapshot.data!.url);
-                    },
-                    child: Container(
-                        padding: scaffoldPadding / 3,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: spotifyGreen)),
-                        child:
-                            SoulCircleAvatar(imageUrl: snapshot.data!.image)),
-                  );
-                }
-                return IconButton(
-                    onPressed: () async {
-                      launchUrlString(
-                          "https://open.spotify.com/user/${widget.profile.user.spotifyId}");
-                    },
-                    icon: const Icon(
-                      FontAwesomeIcons.spotify,
-                      color: Colors.white,
-                      size: 35,
-                    ));
-              })
+          SpotifyProfileAvatar(
+            profile: widget.profile,
+          )
         ],
       ),
     );

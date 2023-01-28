@@ -3,10 +3,8 @@ import 'dart:developer';
 
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/Spotify/album_model.dart';
 import 'package:soul_date/models/Spotify/artist_model.dart';
@@ -18,7 +16,6 @@ import 'package:soul_date/models/SpotifySearch/my_spotify_playlists.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_search.dart';
 import 'package:soul_date/models/spotify_spot_details.dart' as Spot;
 import 'package:soul_date/models/spotifyuser.dart';
-import 'package:soul_date/screens/my_spot_screen.dart';
 import 'package:soul_date/services/analytics.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/notifications.dart';
@@ -80,7 +77,7 @@ class Spotify {
     }
   }
 
-  Future<Spot.SpotifyDetails?> fetchCurrentPlaying(
+  Future<Spot.Item?> fetchCurrentPlaying(
       {BuildContext? context, navigate = true}) async {
     http.Response res = await client.get(
       playerUrl,
@@ -88,10 +85,8 @@ class Spotify {
 
     if (res.statusCode <= 210 && res.body.isNotEmpty) {
       var detail = Spot.SpotifyDetails.fromJson(json.decode(res.body));
-      if (navigate) {
-        Get.to(() => MySpotScreen(details: detail.item));
-      }
-      return detail;
+
+      return detail.item;
     } else if (res.statusCode <= 210 && res.body.isEmpty) {
       if (context != null) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -177,9 +172,6 @@ class Spotify {
   }
 
   Future<http.Response> _searchItem(String query, {String? type}) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var spotToken = preferences.getString("spotify_accesstoken");
-
     http.Response res = await client.get(spotifySearchEndpoint,
         parameters: {'q': query, 'type': type ?? 'track', 'limit': '5'});
 
@@ -187,9 +179,6 @@ class Spotify {
   }
 
   Future<http.Response> _getPlaylists({String? nextEndpoint}) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    var spotToken = preferences.getString("spotify_accesstoken");
-
     http.Response res = await client.get(nextEndpoint ?? favouritePlaylistsUrl);
     if (res.statusCode <= 210) {
       return res;
@@ -248,8 +237,6 @@ class Spotify {
   }
 
   Future<bool> startTrack(Map<String, dynamic> body) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
     http.Response res =
         await client.put(spotifyPlayUrl, bodyRaw: jsonEncode(body));
 
@@ -262,8 +249,7 @@ class Spotify {
   }
 
   Future<List<SpotifyData>> playlistTracks(String playlistID) async {
-    String endpoint =
-        "https://api.spotify.com/v1/playlists/${playlistID}/tracks";
+    String endpoint = "https://api.spotify.com/v1/playlists/$playlistID/tracks";
 
     http.Response res = await client.get(endpoint);
     if (res.statusCode <= 210) {
@@ -271,9 +257,7 @@ class Spotify {
       return List<SpotifyData>.from(jsonData.map((e) {
         try {
           return Spot.Item.fromJson(e['track']);
-        } catch (error, stack) {
-          print(stack);
-        }
+        } catch (error) {}
       }));
     }
     return [];

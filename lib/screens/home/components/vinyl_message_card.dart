@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:soul_date/screens/home/models/chat_model.dart';
-import 'package:soul_date/services/color_utils.dart';
-import 'package:soul_date/services/date_format.dart';
 
 import '../../../components/image_circle.dart';
 import '../../../constants/constants.dart';
-import '../models/vinyl_model.dart';
 
 class VinylMessageCard extends StatelessWidget {
   const VinylMessageCard({

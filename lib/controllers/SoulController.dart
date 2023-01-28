@@ -19,6 +19,7 @@ import 'package:soul_date/models/SpotifySearch/spotify_search.dart'
     as spotifySearch;
 import 'package:soul_date/models/favourite_model.dart';
 import 'package:soul_date/models/models.dart';
+import 'package:soul_date/models/spot_buddy_model.dart';
 import 'package:soul_date/screens/Login/login.dart';
 
 import 'package:soul_date/services/network.dart';
@@ -268,9 +269,7 @@ class SoulController extends GetxController {
     String endpoint = baseUrl + 'users/search/user/';
     var res = await client.get(endpoint + "$id/");
 
-    if (res.statusCode <= 210) {
-      return Profile.fromJson(json.decode(utf8.decode(res.bodyBytes)));
-    }
+    if (res.statusCode <= 210) {}
     return null;
   }
 
@@ -283,6 +282,8 @@ class SoulController extends GetxController {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Image uploaded")));
     } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("An error has occcured")));
       log(res.body);
     }
   }
@@ -302,10 +303,13 @@ class SoulController extends GetxController {
 
   void logout() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    var profileBox = await Hive.openBox<Profile>('profile');
 
+    profileBox.delete(profile!.id);
     if (await preferences.clear()) {
       Get.offAll(() => const SpotifyLogin());
-      Get.delete<SoulController>();
+
+      Get.delete<SoulController>(force: true);
       // Get.delete<SpotController>();
       // Get.delete<MessageController>();
     }
@@ -340,10 +344,15 @@ class SoulController extends GetxController {
     } else {
       http.Response res = await client.get(myFavouriteUrl);
       if (res.statusCode <= 210) {
-        Map<String, dynamic> data = json.decode(res.body)[0];
-        favouriteTrack = FavouriteTrack(
-            data['id'], spotifySearch.SongItem.fromJson(data['details']));
-        return favouriteTrack;
+        var data = json.decode(res.body) as List;
+
+        if (data.isNotEmpty) {
+          var details = data[0];
+
+          favouriteTrack = FavouriteTrack(details['id'],
+              spotifySearch.SongItem.fromJson(details['details']));
+          return favouriteTrack;
+        }
       }
       return null;
     }
@@ -425,6 +434,18 @@ class SoulController extends GetxController {
       return true;
     }
     return false;
+  }
+
+  Future<List<SpotBuddy>> getSpotBuddies(int spotID) async {
+    var response = await client.get(fetchSpotsUrl + "$spotID/buddy/");
+
+    if (response.statusCode <= 210) {
+      var json = jsonDecode(response.body);
+      var data = json['results'];
+      return List.from(data.map((e) => SpotBuddy.fromJson(e)));
+    }
+
+    return [];
   }
 
   Future<bool> linkPhoneNumber() async {

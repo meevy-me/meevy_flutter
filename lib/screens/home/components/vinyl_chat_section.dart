@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/screens/home/components/vinyl_message_card.dart';
 import 'package:soul_date/screens/home/models/chat_model.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
@@ -31,30 +31,32 @@ class VinylChatSection extends StatelessWidget {
           return event.docs.map((e) => VinylChat.fromJson(e.data())).toList();
         }),
         builder: (context, snapshot) {
-          return snapshot.data != null
-              ? ListView.builder(
-                  reverse: true,
-                  itemCount: snapshot.data!.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: defaultMargin, horizontal: defaultMargin),
-                      child: GetBuilder<SoulController>(builder: (controller) {
-                        return VinylMessageCard(
-                          textColor:
-                              luminance > 0.5 ? Colors.black : Colors.white,
-                          color: backgroundColor,
-                          vinyl: snapshot.data![index],
-                          mine: controller.profile!.id == vinyl.sender.id,
-                        );
-                      }),
+          if (snapshot.data != null) {
+            return ListView.builder(
+              reverse: true,
+              itemCount: snapshot.data!.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: defaultMargin, horizontal: defaultMargin),
+                  child: GetBuilder<SoulController>(builder: (controller) {
+                    return VinylMessageCard(
+                      textColor: luminance > 0.5 ? Colors.black : Colors.white,
+                      color: backgroundColor,
+                      vinyl: snapshot.data![index],
+                      mine: controller.profile!.id == vinyl.sender.id,
                     );
-                  },
-                )
-              :
-              //TODO: Add no messages widget
-              SizedBox.shrink();
+                  }),
+                );
+              },
+            );
+          } else {
+            return const EmptyWidget(
+              text: "Nothing here",
+              height: 100,
+            );
+          }
         });
   }
 }

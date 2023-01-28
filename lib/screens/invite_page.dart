@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:soul_date/screens/match_detail.dart';
@@ -53,7 +50,7 @@ class _InvitePageState extends State<InvitePage> {
               );
             } else if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.data == null) {
-              return Center(child: Text("Profile Not found"));
+              return const Center(child: Text("Profile Not found"));
             }
             return const SizedBox();
           }),

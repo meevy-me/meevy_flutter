@@ -34,7 +34,7 @@ class NotificationApi {
   static void groupNotifications() async {
     var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     AndroidNotificationChannelGroup channelGroup =
-        AndroidNotificationChannelGroup('com.meevy.alert1', 'mychannel1');
+        const AndroidNotificationChannelGroup('com.meevy.alert1', 'mychannel1');
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()

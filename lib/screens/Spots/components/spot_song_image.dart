@@ -41,22 +41,25 @@ class SongWithImage extends StatelessWidget {
         ),
         caption != null
             ? Center(
-                child: Column(
-                  children: [
-                    Container(
-                      height: 5,
-                      margin: const EdgeInsets.only(bottom: defaultPadding),
-                      width: 30,
-                      decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.circular(20)),
-                    ),
-                    Text(
-                      caption!,
-                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                          color: Colors.white, fontWeight: FontWeight.w500),
-                    ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 5,
+                        margin: const EdgeInsets.only(bottom: defaultPadding),
+                        width: 30,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(20)),
+                      ),
+                      Text(
+                        caption!,
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            color: Colors.white, fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
                 ),
               )
             : const SizedBox.shrink()

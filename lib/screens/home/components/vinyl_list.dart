@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/screens/home/components/vinyl_card.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
 
@@ -63,9 +62,7 @@ class _VinylListState extends State<VinylList>
               VinylSentList(
                 stream: FirebaseFirestore.instance
                     .collection('sentTracks')
-                    .where("audience", arrayContains: [
-                      {"id": widget.profileID}
-                    ])
+                    .where("members", arrayContains: widget.profileID)
                     .orderBy('date_sent', descending: true)
                     .snapshots(),
               ),

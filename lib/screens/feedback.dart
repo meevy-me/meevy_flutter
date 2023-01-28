@@ -102,7 +102,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             child: IconContainer(
                                 onPress: () {
                                   controller.feedbackPush(answers);
-                                  Get.offAll(() => HomePage());
+                                  Get.offAll(() => const HomePage());
                                 },
                                 size: 50,
                                 icon: const Icon(
@@ -252,7 +252,6 @@ class _FeedbackQuestion2State extends State<FeedbackQuestion2>
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 230, 230, 230),
       body: Padding(
@@ -322,7 +321,6 @@ class _FeedbackQuestion3State extends State<FeedbackQuestion3>
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 230, 230, 230),
       body: Padding(

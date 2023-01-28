@@ -9,16 +9,18 @@ class SoulBottomNavigationBar extends StatefulWidget {
   const SoulBottomNavigationBar({
     Key? key,
     required this.onTap,
+    required this.activeIndex,
   }) : super(key: key);
 
   final Function(int index) onTap;
+  final int activeIndex;
+
   @override
   State<SoulBottomNavigationBar> createState() =>
       _SoulBottomNavigationBarState();
 }
 
 class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
-  int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -36,12 +38,12 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
           InkWell(
             onTap: () {
               setState(() {
-                selectedIndex = 0;
+                // selectedIndex = 0;
                 widget.onTap(0);
               });
             },
             child: _BottomNavigationItem(
-              active: selectedIndex == 0 ? true : false,
+              active: widget.activeIndex == 0 ? true : false,
               assetUrl: 'assets/images/home.svg',
               title: "Home",
             ),
@@ -49,12 +51,11 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
           InkWell(
             onTap: () {
               setState(() {
-                selectedIndex = 1;
                 widget.onTap(1);
               });
             },
             child: _BottomNavigationItem(
-              active: selectedIndex == 1 ? true : false,
+              active: widget.activeIndex == 1 ? true : false,
               assetUrl: 'assets/images/headset.svg',
               title: "Activity",
             ),
@@ -62,12 +63,12 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
           InkWell(
             onTap: () {
               setState(() {
-                selectedIndex = 2;
+                // selectedIndex = 2;
                 widget.onTap(2);
               });
             },
             child: _BottomNavigationItem(
-              active: selectedIndex == 2 ? true : false,
+              active: widget.activeIndex == 2 ? true : false,
               assetUrl: 'assets/images/album.svg',
               title: "Playlists",
             ),
@@ -75,12 +76,11 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
           InkWell(
             onTap: () {
               setState(() {
-                selectedIndex = 3;
                 widget.onTap(3);
               });
             },
             child: _BottomNavigationItem(
-              active: selectedIndex == 3 ? true : false,
+              active: widget.activeIndex == 3 ? true : false,
               assetUrl: 'assets/images/users-alt.svg',
               title: "Friends",
             ),
@@ -88,7 +88,6 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
           InkWell(
             onTap: () {
               setState(() {
-                selectedIndex = 4;
                 widget.onTap(4);
               });
             },
@@ -96,7 +95,7 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
                 // tag: 'profile',
                 builder: (controller) {
               return _BottomNavigationItem(
-                active: selectedIndex == 4 ? true : false,
+                active: widget.activeIndex == 4 ? true : false,
                 child: controller.profile != null
                     ? SoulCircleAvatar(
                         imageUrl: controller.profile!.profilePicture.image,

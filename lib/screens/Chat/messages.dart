@@ -1,25 +1,23 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/Modals/invite_modal.dart';
-import 'package:soul_date/components/chat_item.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/pulse.dart';
-import 'package:soul_date/components/reorderable_firebase_list.dart';
 import 'package:soul_date/components/spot.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:collection/collection.dart';
-import 'package:soul_date/models/friend_model.dart';
-import 'package:soul_date/screens/Chat/chat.dart';
+import 'package:soul_date/models/spotify_spot_details.dart';
 import 'package:soul_date/screens/friends/friends.dart';
+import 'package:soul_date/screens/my_spot_screen.dart';
 import 'package:soul_date/services/modal.dart';
+import 'package:soul_date/services/navigation.dart';
 
 import 'components/message_list.dart';
 
@@ -139,9 +137,20 @@ class _MessagesPageState extends State<MessagesPage>
                   ),
                 ),
               ),
-              onTap: () =>
-                  controller.spotify.fetchCurrentPlaying(context: context),
-            )
+              onTap: () async {
+                SpotifyDetails? item =
+                    await controller.spotify.currentlyPlaying();
+                if (item != null) {
+                  Navigation.push(context,
+                      customPageTransition: PageTransition(
+                          child: MySpotScreen(details: item.item),
+                          type: PageTransitionType.fromBottom));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text(
+                          "There is an issue, you can try playing a song")));
+                }
+              })
           : null,
       body: SafeArea(
         child: Column(
@@ -227,7 +236,7 @@ class _SpotSectionState extends State<_SpotSection> {
                                     Obx(() => spotController.mySpots.isNotEmpty
                                         ? SpotWidget(
                                             mine: true,
-                                            spots: spotController.mySpots.first,
+                                            spots: spotController.mySpots.last,
                                           )
                                         : const SizedBox.shrink())),
                             ...spotController.spots

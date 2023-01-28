@@ -115,7 +115,7 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
           "Favourite Playlists",
           style: Theme.of(context).textTheme.headline6,
         ),
-        actions: [],
+        actions: const [],
       ),
       body: ListView(
         padding: scrollPadding,
@@ -194,7 +194,7 @@ class _FavouritePlaylistScreenState extends State<FavouritePlaylistScreen> {
                             );
                           },
                         )
-                      : SizedBox.shrink()
+                      : const SizedBox.shrink()
                 ],
               ),
             )

@@ -195,7 +195,6 @@ class SpotifyClient {
       {Map<String, String>? parameters, Map<String, String>? headers}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var accessToken = preferences.getString("spotify_accesstoken")!;
-    var refreshToken = preferences.getString("spotify_refreshtoken")!;
     http.Response res = await client.get(endpoint,
         parameters: parameters,
         headers: headers ??
@@ -222,7 +221,6 @@ class SpotifyClient {
   }) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var accessToken = preferences.getString("spotify_accesstoken")!;
-    var refreshToken = preferences.getString("spotify_refreshtoken")!;
 
     headers ??= {'Authorization': "Bearer $accessToken"};
 

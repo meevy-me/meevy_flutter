@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:soul_date/components/buttons.dart';
-import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/Phone/phone_auth.dart';
 import 'package:soul_date/services/contacts.dart';
@@ -98,7 +97,7 @@ class _ContactsRequestContainerState extends State<ContactsRequestContainer> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                PhoneAuthentication(),
+                                                const PhoneAuthentication(),
                                           ));
                                     },
                                     text: "Verify Phone Number"),

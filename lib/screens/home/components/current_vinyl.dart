@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/pulse.dart';
@@ -14,8 +13,6 @@ import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/services/spotify_utils.dart';
 import 'package:text_scroll/text_scroll.dart';
 
-import '../../../components/icon_container.dart';
-import '../../../components/image_circle.dart';
 import '../../../constants/constants.dart';
 import '../../../models/spotify_spot_details.dart' as Spotify;
 import 'current_vinyl_actions.dart';
@@ -86,7 +83,7 @@ class _CurrentlySelectedState extends State<_CurrentlySelected> {
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: defaultMargin,
               ),
               Expanded(
@@ -192,7 +189,7 @@ class _CurrentlySelectedState extends State<_CurrentlySelected> {
                                                 },
                                               );
                                             }
-                                            return LoadingPulse();
+                                            return const LoadingPulse();
                                           }),
                                       // MusicActions(
                                       //   icon: SvgPicture.asset(
@@ -250,6 +247,6 @@ class _CurrentlySelectedState extends State<_CurrentlySelected> {
               )
             ]),
           )
-        : SizedBox.shrink();
+        : const SizedBox.shrink();
   }
 }

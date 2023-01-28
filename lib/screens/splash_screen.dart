@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/Login/login.dart';
 import 'package:soul_date/screens/home.dart';
-import 'package:soul_date/screens/login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

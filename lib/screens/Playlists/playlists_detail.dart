@@ -1,9 +1,6 @@
 import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:soul_date/components/cached_image_error.dart';
 import 'package:soul_date/components/image_circle.dart';
@@ -33,7 +30,7 @@ class PlaylistDetailPage extends StatelessWidget {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: Icon(
+          child: const Icon(
             Icons.chevron_left,
             size: 30,
             color: Colors.white,
@@ -115,7 +112,7 @@ class PlaylistDetailPage extends StatelessWidget {
                                         onPress: onSpotify,
                                       ),
                                     )
-                                  : SizedBox.shrink(),
+                                  : const SizedBox.shrink(),
                             ],
                           ),
                         )
@@ -165,7 +162,7 @@ class PlaylistDetailPage extends StatelessWidget {
                         } else if (snapshot.hasError) {
                           Text(snapshot.error.toString());
                         }
-                        return LoadingPulse();
+                        return const LoadingPulse();
                       }))
             ],
           ),

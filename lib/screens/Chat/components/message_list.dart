@@ -20,60 +20,61 @@ class MessagesSection extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     const Radius radius = Radius.circular(30);
-    return Container(
-        padding: const EdgeInsets.fromLTRB(
-            defaultMargin, defaultMargin, defaultMargin, 0),
-        decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.vertical(top: radius)),
-        child: RefreshIndicator(
-            onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
-                  onRefresh();
-                }),
-            child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('chats')
-                    .where("members", arrayContains: profileID)
-                    .orderBy('timestamp', descending: true)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  return snapshot.data != null
-                      ? ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return const Divider();
-                          },
-                          shrinkWrap: true,
-                          itemCount: snapshot.data!.size,
-                          itemBuilder: ((context, index) {
-                            var doc = snapshot.data!.docs[index];
-                            Map<String, dynamic> data =
-                                doc.data() as Map<String, dynamic>;
-                            return FutureBuilder<Friends>(
-                                future: messageController
-                                    .getFriend(int.parse(doc.id)),
-                                builder: (context, friendSnapshot) {
-                                  if (friendSnapshot.connectionState ==
-                                          ConnectionState.done &&
-                                      friendSnapshot.data != null) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: defaultPadding),
-                                      child: ChatItem(
-                                          friend: friendSnapshot.data!,
-                                          lastMessage:
-                                              data.containsKey('last_message')
-                                                  ? Message.fromJson(
-                                                      data['last_message'])
-                                                  : null,
-                                          size: size),
-                                    );
-                                  }
-                                  return LoadingPulse(
-                                    color: Theme.of(context).primaryColor,
+    return RefreshIndicator(
+      onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
+        onRefresh();
+      }),
+      child: Container(
+          padding: const EdgeInsets.fromLTRB(
+              defaultMargin, defaultMargin, defaultMargin, 0),
+          decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.vertical(top: radius)),
+          child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('chats')
+                  .where("members", arrayContains: profileID)
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                return snapshot.data != null
+                    ? ListView.separated(
+                        separatorBuilder: (context, index) {
+                          return const Divider();
+                        },
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.size,
+                        itemBuilder: ((context, index) {
+                          var doc = snapshot.data!.docs[index];
+                          Map<String, dynamic> data =
+                              doc.data() as Map<String, dynamic>;
+                          return FutureBuilder<Friends>(
+                              future: messageController
+                                  .getFriend(int.parse(doc.id)),
+                              builder: (context, friendSnapshot) {
+                                if (friendSnapshot.connectionState ==
+                                        ConnectionState.done &&
+                                    friendSnapshot.data != null) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: defaultPadding),
+                                    child: ChatItem(
+                                        friend: friendSnapshot.data!,
+                                        lastMessage:
+                                            data.containsKey('last_message')
+                                                ? Message.fromJson(
+                                                    data['last_message'])
+                                                : null,
+                                        size: size),
                                   );
-                                });
-                          }))
-                      : LoadingPulse();
-                })));
+                                }
+                                return LoadingPulse(
+                                  color: Theme.of(context).primaryColor,
+                                );
+                              });
+                        }))
+                    : const LoadingPulse();
+              })),
+    );
   }
 }

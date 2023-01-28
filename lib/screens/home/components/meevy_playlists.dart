@@ -20,7 +20,7 @@ class MeevyPlaylistList extends StatelessWidget {
             "My Meevy Playlists",
             style: Theme.of(context).textTheme.headline5,
           ),
-          SizedBox(
+          const SizedBox(
             height: defaultMargin,
           ),
           SizedBox(
@@ -43,7 +43,7 @@ class MeevyPlaylistList extends StatelessWidget {
                         Positioned(
                           right: defaultMargin + defaultPadding,
                           top: defaultPadding,
-                          child: RowSuper(innerDistance: -10, children: [
+                          child: RowSuper(innerDistance: -10, children: const [
                             SoulCircleAvatar(
                               imageUrl: defaultArtistUrl,
                               radius: 15,

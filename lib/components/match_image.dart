@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:soul_date/components/loading.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/models/match_model.dart';
 

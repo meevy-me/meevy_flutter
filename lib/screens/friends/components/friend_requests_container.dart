@@ -93,7 +93,7 @@ class _FriendRequestsContainerState extends State<FriendRequestsContainer> {
                           )),
                         );
                 }
-                return LoadingPulse();
+                return const LoadingPulse();
               })
         ],
       ),

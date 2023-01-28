@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +23,11 @@ void trackPlay(BuildContext context, SpotifyData item,
   });
 
   if (!res) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Ooops:) An error has occured")));
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Ooops:) An error has occured")));
   } else {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Great:) That was a success")));
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Great:) That was a success")));
     if (vinyl != null) {
       if (!vinyl.opened) {
         FirebaseFirestore.instance
@@ -45,11 +44,11 @@ void trackPlay(BuildContext context, SpotifyData item,
 
 void _statusCheck(BuildContext context, bool status) {
   if (!status) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Ooops:) An error has occured")));
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Ooops:) An error has occured")));
   } else {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text("Great:) That was a success")));
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Great:) That was a success")));
   }
 }
 
@@ -131,20 +130,36 @@ String getPlaylistID(Profile sender, Profile receiver) {
   }
 }
 
-String _getPlaylistID(VinylModel vinylModel) {
-  final SoulController controller = Get.find<SoulController>();
-
-  String userID = controller.profile!.user.id.toString();
-  return getPlaylistID(vinylModel.sender, controller.profile!);
-}
-
 void trackAddToPlaylist(
     {required Profile sender,
     required Profile receiver,
-    required SpotifyData item}) {
+    required SpotifyData item}) async {
   // final SoulController controller = Get.find<SoulController>();
 
   String playlistID = getPlaylistID(sender, receiver);
+
+  Map<String, dynamic> playlistMetadata = {
+    "creator": receiver.toJson(),
+    "imageUrl": "",
+    "name": "${sender.name} & ${receiver.name}",
+    "created_at": DateTime.now().toIso8601String(),
+    "members": [sender.user.id, receiver.user.id],
+  };
+
+  var doc_ref = await FirebaseFirestore.instance
+      .collection('meevyPlaylists')
+      .doc(playlistID)
+      .get();
+  if (!doc_ref.exists) {
+    FirebaseFirestore.instance
+        .collection('meevyPlaylists')
+        .doc(playlistID)
+        .set(playlistMetadata);
+  }
+  FirebaseFirestore.instance
+      .collection('meevyPlaylists')
+      .doc(playlistID)
+      .update({"timestamp": FieldValue.serverTimestamp()});
   FirebaseFirestore.instance
       .collection('meevyPlaylists')
       .doc(playlistID)
@@ -161,7 +176,6 @@ void trackAddToPlaylist(
 void _addToPlaylist(String playlistID, VinylModel vinyl) {
   final SoulController controller = Get.find<SoulController>();
 
-  String userID = controller.profile!.user.id.toString();
   trackAddToPlaylist(
       sender: vinyl.sender, receiver: controller.profile!, item: vinyl.item);
 }
@@ -169,7 +183,6 @@ void _addToPlaylist(String playlistID, VinylModel vinyl) {
 void vinylPlaylist(BuildContext context, VinylModel vinyl) async {
   final SoulController controller = Get.find<SoulController>();
 
-  String userID = controller.profile!.user.id.toString();
   String playlistID = getPlaylistID(vinyl.sender, controller.profile!);
 
   var doc = await FirebaseFirestore.instance
@@ -193,7 +206,7 @@ void vinylPlaylist(BuildContext context, VinylModel vinyl) async {
         .set(playlistMetadata);
     _addToPlaylist(playlistID, vinyl);
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Yayy:) Track added to your playlist")));
+        const SnackBar(content: Text("Yayy:) Track added to your playlist")));
   }
 }
 
@@ -220,7 +233,6 @@ void trackPlaylistRemoveID(String id, SpotifyData data) {}
 void vinylPlaylistRemove(BuildContext context, VinylModel vinyl) {
   final SoulController controller = Get.find<SoulController>();
 
-  String userID = controller.profile!.user.id.toString();
   trackPlaylistRemove(
       sender: vinyl.sender, receiver: controller.profile!, item: vinyl.item);
 }
@@ -228,7 +240,6 @@ void vinylPlaylistRemove(BuildContext context, VinylModel vinyl) {
 Future<bool> isVinylLiked(VinylModel vinyl) async {
   final SoulController controller = Get.find<SoulController>();
 
-  String userID = controller.profile!.user.id.toString();
   var ref = FirebaseFirestore.instance
       .collection('likedPlaylist')
       .doc(controller.profile!.user.id.toString())
@@ -242,7 +253,6 @@ Future<bool> isVinylLiked(VinylModel vinyl) async {
 Future<bool> isTrackLiked(SpotifyData item) async {
   final SoulController controller = Get.find<SoulController>();
 
-  String userID = controller.profile!.user.id.toString();
   var ref = FirebaseFirestore.instance
       .collection('likedPlaylist')
       .doc(controller.profile!.user.id.toString())
@@ -304,10 +314,15 @@ void sendSpotifyItem(
 
       Map<String, dynamic> sendToProfile = {
         "track": item.toJson(),
-        "audience": friends.map((e) => e.friendsProfile.toJson()).toList(),
+        "audience": friends
+            .map((e) => e.friendsProfileSafe(profileID).toJson())
+            .toList(),
         "date_sent": DateTime.now().toString(),
         "opened": false,
         "sender": me.toJson(),
+        'members': friends
+            .map((e) => e.friendsProfileSafe(profileID).user.id)
+            .toList(),
         "caption": caption
       };
 
@@ -331,9 +346,8 @@ void sendSpotifyItem(
           });
         }
       } else if (item.spotifyDataType == SpotifyDataType.playlist) {
-        var docRef = await FirebaseFirestore.instance
-            .collection('sentPlaylists')
-            .doc(item.id);
+        var docRef =
+            FirebaseFirestore.instance.collection('sentPlaylists').doc(item.id);
 
         docRef.set(sendToProfile);
 

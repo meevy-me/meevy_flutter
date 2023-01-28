@@ -1,22 +1,14 @@
 import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/Chat/chat_field.dart';
-import 'package:soul_date/components/authfield.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/models.dart';
-import 'package:soul_date/screens/home/models/chat_model.dart';
 import 'package:soul_date/services/spotify_utils.dart';
 import 'package:text_scroll/text_scroll.dart';
 
@@ -143,7 +135,7 @@ class _FriendsModalState extends State<FriendsModal> {
                           width: 80,
                           height: 80,
                         )),
-                    SizedBox(
+                    const SizedBox(
                       width: defaultMargin,
                     ),
                     Expanded(
@@ -194,7 +186,7 @@ class _FriendsModalState extends State<FriendsModal> {
                             ChatTextField(captionText: captionText),
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                    fixedSize: Size(50, 50),
+                                    fixedSize: const Size(50, 50),
                                     elevation: 0,
                                     backgroundColor:
                                         Theme.of(context).primaryColor,

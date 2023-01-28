@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:soul_date/components/loading.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/AuthController.dart';

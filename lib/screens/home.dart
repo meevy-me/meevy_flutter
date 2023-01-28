@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/bottom_navigation.dart';
-import 'package:soul_date/controllers/FirebaseController.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
@@ -54,6 +53,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: SoulBottomNavigationBar(
+          activeIndex: selectedIndex,
           onTap: (index) {
             setState(() {
               selectedIndex = index;
@@ -64,9 +64,14 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         body: PageView(
-          physics: const NeverScrollableScrollPhysics(),
+          // physics: const NeverScrollableScrollPhysics(),
           children: pages,
           controller: _pageController,
+          onPageChanged: (value) {
+            setState(() {
+              selectedIndex = value;
+            });
+          },
         ));
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -53,6 +52,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   InitData initData = await init();
   await Firebase.initializeApp();
+  // FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   await Hive.initFlutter();
   Hive.registerAdapter(ProfileAdapter());
   Hive.registerAdapter(UserAdapter());
@@ -93,7 +93,6 @@ void main() async {
 }
 
 bool isInviteLink(String? inviteLink) {
-  final pattern = RegExp(r'^meevy\.me\/app\/invite\/([A-Za-z0-9-_]+)$');
   if (inviteLink == null) {
     return false;
   }
@@ -148,8 +147,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.primary(),
       onGenerateRoute: (RouteSettings settings) {
-        print(settings.name);
-        if (isSpotifyLink(settings.name)) {
+        if (settings.name == shareData) {
           if (settings.arguments != null) {
             final args = settings.arguments as ShowDataArgument;
             return MaterialPageRoute(
@@ -163,7 +161,6 @@ class _MyAppState extends State<MyApp> {
                     ));
           }
         } else if (isInviteLink(settings.name)) {
-          log("EW");
           if (settings.arguments != null) {
             return MaterialPageRoute(
                 builder: (_) => InvitePage(

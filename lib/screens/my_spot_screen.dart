@@ -69,7 +69,7 @@ class _MySpotScreenState extends State<MySpotScreen> {
                                               Theme.of(context).primaryColor)),
                                   child: SoulCircleAvatar(
                                     imageUrl: soulController
-                                        .profile!.validImages.last.image,
+                                        .profile!.profilePicture.image,
                                     radius: 18,
                                   ),
                                 ),

@@ -19,30 +19,48 @@ class SoulCircleAvatar extends StatelessWidget {
   }
 }
 
-class ProfileAvatar extends StatelessWidget {
+class ProfileAvatar extends StatefulWidget {
   const ProfileAvatar(
       {Key? key, required this.profileID, this.radius = 20, this.placeholder})
       : super(key: key);
   final int profileID;
   final double radius;
   final Widget? placeholder;
+
+  @override
+  State<ProfileAvatar> createState() => _ProfileAvatarState();
+}
+
+class _ProfileAvatarState extends State<ProfileAvatar>
+    with AutomaticKeepAliveClientMixin<ProfileAvatar> {
+  late Future<ProfileImages> _future;
+
+  @override
+  void initState() {
+    _future = getProfileImages(widget.profileID);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ProfileImages>(
-      future: getProfileImages(profileID),
+      future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.data != null) {
           return SoulCircleAvatar(
             imageUrl: snapshot.data!.image,
-            radius: radius,
+            radius: widget.radius,
           );
         } else if (snapshot.hasError) {
           return const SizedBox.shrink();
         } else {
-          return placeholder ?? const LoadingPulse();
+          return widget.placeholder ?? const LoadingPulse();
         }
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

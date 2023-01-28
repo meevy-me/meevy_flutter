@@ -52,7 +52,7 @@ class _VinylsPageState extends State<VinylsPage>
                   profileID: profileID,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: defaultMargin,
               ),
               Expanded(

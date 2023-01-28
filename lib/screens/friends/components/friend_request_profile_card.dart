@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:soul_date/models/friend_model.dart';
 
 import '../../../components/image_circle.dart';
 import '../../../constants/constants.dart';

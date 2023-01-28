@@ -1,11 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -25,10 +20,12 @@ class VinylModal extends StatefulWidget {
     required this.spotifyData,
     required this.sender,
     this.vinylModel,
+    this.addToPlaylist,
   }) : super(key: key);
   final SpotifyData spotifyData;
   final Profile sender;
   final VinylModel? vinylModel;
+  final void Function()? addToPlaylist;
 
   @override
   State<VinylModal> createState() => _VinylModalState();

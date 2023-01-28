@@ -84,6 +84,6 @@ class Profile extends HiveObject {
   }
 
   ProfileImages get profilePicture {
-    return images.first;
+    return images.last;
   }
 }

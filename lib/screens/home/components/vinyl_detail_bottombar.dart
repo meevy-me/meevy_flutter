@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
@@ -26,7 +25,6 @@ class _VinylBottomBarState extends State<VinylBottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return FutureBuilder<PaletteGenerator>(
         future: getImageColors(widget.vinylModel.item.album.images.first.url),
         builder: (context, snapshot) {
@@ -75,7 +73,7 @@ class _VinylBottomBarState extends State<VinylBottomBar> {
                             title: "Like",
                           );
                         }
-                        return SpinKitPulse(
+                        return const SpinKitPulse(
                           color: Colors.grey,
                         );
                       }),
@@ -129,7 +127,6 @@ class _VinylBottomBarState extends State<VinylBottomBar> {
             ),
           );
         });
-    ;
   }
 }
 

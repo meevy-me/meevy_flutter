@@ -140,10 +140,7 @@ class _PhoneCodeScreenState extends State<PhoneCodeScreen> {
                             PhoneAuthProvider.credential(
                                 verificationId: verificationId!,
                                 smsCode: pinInput.text);
-                        try {
-                          var user = FirebaseAuth.instance.currentUser!
-                              .linkWithCredential(credential);
-                        } catch (e) {
+                        try {} catch (e) {
                         } finally {
                           bool res = await soulController.linkPhoneNumber();
                           if (res) {

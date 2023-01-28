@@ -61,7 +61,7 @@ class _VinylDetailState extends State<VinylDetail> {
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 1250),
                     // height: size.height * 0.45,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         // color: snapshot.connectionState ==
                         //             ConnectionState.done &&
                         //         snapshot.data != null
@@ -279,8 +279,8 @@ class _VinylDetailState extends State<VinylDetail> {
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       focusedBorder: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.white),
+                                          borderSide: const BorderSide(
+                                              color: Colors.white),
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       key: inputKey,

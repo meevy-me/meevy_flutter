@@ -15,8 +15,6 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:soul_date/services/spotify.dart';
 
-import '../models/profile_model.dart';
-
 class ProfileUpdate extends StatefulWidget {
   const ProfileUpdate({Key? key}) : super(key: key);
 
@@ -328,7 +326,7 @@ class _TargetPickState extends State<_TargetPick> {
                 });
               },
               active: activeTarget == 'A',
-              child: Icon(
+              child: const Icon(
                 FontAwesomeIcons.peopleGroup,
                 color: Colors.white,
               ),

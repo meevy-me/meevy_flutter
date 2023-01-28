@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soul_date/components/home_appbar_action.dart';
 import 'package:soul_date/constants/constants.dart';
 
 import '../../components/meevy_favourite_card.dart';
@@ -45,7 +43,7 @@ class _PlaylistsPageState extends State<PlaylistsPage>
           "Your Playlists",
           style: Theme.of(context).textTheme.headline5,
         ),
-        actions: [
+        actions: const [
           // Padding(
           //   padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
           //   child: AppbarIconContainer(
@@ -103,5 +101,5 @@ class _PlaylistsPageState extends State<PlaylistsPage>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }

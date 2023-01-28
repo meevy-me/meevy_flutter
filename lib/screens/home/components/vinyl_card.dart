@@ -1,13 +1,10 @@
 import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/models/images.dart';
 import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/screens/home/components/vinyl_modal.dart';
 import 'package:soul_date/screens/home/models/vinyl_model.dart';
@@ -15,8 +12,6 @@ import 'package:soul_date/screens/home/vinyl_detail.dart';
 import 'package:soul_date/services/formatting.dart';
 import 'package:soul_date/services/modal.dart';
 import 'package:soul_date/services/navigation.dart';
-import 'package:soul_date/services/network_utils.dart';
-import 'package:soul_date/services/spotify.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 import '../../../components/image_circle.dart';

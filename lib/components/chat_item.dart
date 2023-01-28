@@ -1,22 +1,16 @@
-import 'dart:convert';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
-import 'package:soul_date/models/spotify_spot_details.dart' as Spotify;
 import 'package:soul_date/screens/Chat/chat.dart';
 import 'package:soul_date/services/formatting.dart';
 import 'package:soul_date/services/navigation.dart';
-import 'package:text_scroll/text_scroll.dart';
 import '../constants/constants.dart';
 import '../models/friend_model.dart';
+import 'Chat/listening_activity.dart';
 import 'image_circle.dart';
 
 class ChatItem extends StatefulWidget {
@@ -61,8 +55,9 @@ class _ChatItemState extends State<ChatItem> {
                       type: PageTransitionType.fadeIn)),
               child: Row(
                 children: [
-                  SoulCircleAvatar(
-                    imageUrl: profile.images.last.image,
+                  ProfileAvatar(
+                    profileID: profile.id,
+                    // imageUrl: profile.images.last.image,
                     radius: 25,
                   ),
                   Expanded(
@@ -104,7 +99,7 @@ class _ChatItemState extends State<ChatItem> {
                           timeFormat(widget.lastMessage!.datePosted!.toDate()),
                           style: Theme.of(context).textTheme.caption,
                         )
-                      : SizedBox.shrink()
+                      : const SizedBox.shrink()
                 ],
               ),
             );
@@ -117,100 +112,6 @@ class _ChatItemState extends State<ChatItem> {
           }
         });
   }
-}
-
-class ListeningActivity extends StatefulWidget {
-  const ListeningActivity({
-    Key? key,
-    required this.profile,
-    required this.friends,
-  }) : super(key: key);
-
-  final Profile profile;
-  final Friends friends;
-
-  @override
-  State<ListeningActivity> createState() => _ListeningActivityState();
-}
-
-class _ListeningActivityState extends State<ListeningActivity>
-    with AutomaticKeepAliveClientMixin<ListeningActivity> {
-  Spotify.Item? item;
-  @override
-  void initState() {
-    FirebaseDatabase.instance
-        .ref()
-        .child('currentlyPlaying')
-        .child(widget.profile.user.id.toString())
-        .onValue
-        .listen((event) {
-      final data =
-          jsonDecode(jsonEncode(event.snapshot.value)) as Map<String, dynamic>?;
-      if (data != null) {
-        if (mounted) {
-          setState(() {
-            item = Spotify.Item.fromJson(data);
-          });
-        }
-      }
-    });
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return item != null
-        ? Padding(
-            padding: const EdgeInsets.only(top: defaultMargin / 2),
-            child: Row(
-              children: [
-                const Icon(
-                  FontAwesomeIcons.spotify,
-                  color: spotifyGreen,
-                  size: 15,
-                ),
-                const SizedBox(
-                  width: defaultPadding,
-                ),
-                SoulCircleAvatar(
-                  imageUrl: item!.album.images.first.url,
-                  radius: 10,
-                ),
-                const SizedBox(
-                  width: defaultPadding,
-                ),
-                TextScroll(
-                  "${item!.name} - ${item!.artists.join(", ")}",
-                  style: Theme.of(context).textTheme.caption!.copyWith(
-                      fontSize: 12,
-                      color: spotifyGreen,
-                      fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          )
-        : const SizedBox.shrink();
-    // : Row(
-    //     children: [
-    //       const Icon(
-    //         FontAwesomeIcons.spotify,
-    //         color: Colors.grey,
-    //         size: 15,
-    //       ),
-    //       const SizedBox(
-    //         width: defaultPadding,
-    //       ),
-    //       Text(
-    //         "No current listening activity",
-    //         style: Theme.of(context).textTheme.caption,
-    //       )
-    //     ],
-    //   );
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class _ChatMessage extends StatefulWidget {

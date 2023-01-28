@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/Chat/profile_status.dart';
 import 'package:soul_date/components/chatbox.dart';
@@ -66,7 +65,7 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: ProfileStatus(profile: profile),
-        actions: [],
+        actions: const [],
         centerTitle: true,
       ),
       body: SafeArea(

@@ -1,6 +1,4 @@
 import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/screens/home/vinyls.dart';
@@ -70,7 +68,6 @@ class _ReceivedSongCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     Radius radius = const Radius.circular(20);
-    Radius zeroRadius = const Radius.circular(0);
     return InkWell(
       onTap: () {
         Navigator.push(context,
@@ -89,11 +86,11 @@ class _ReceivedSongCard extends StatelessWidget {
               color: Colors.black, borderRadius: BorderRadius.all(radius)),
           child: Row(
             children: [
-              SoulCircleAvatar(
+              const SoulCircleAvatar(
                 imageUrl: defaultGirlUrl,
                 radius: 22,
               ),
-              SizedBox(
+              const SizedBox(
                 width: defaultMargin,
               ),
               Expanded(
@@ -105,7 +102,7 @@ class _ReceivedSongCard extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: defaultMargin),
-                        child: RowSuper(children: [
+                        child: RowSuper(children: const [
                           SoulCircleAvatar(
                             imageUrl: secondaryAvatarUrl,
                             radius: 12,
@@ -125,7 +122,7 @@ class _ReceivedSongCard extends StatelessWidget {
                           vertical: defaultMargin / 2),
                       child: Row(
                         children: [
-                          SoulCircleAvatar(
+                          const SoulCircleAvatar(
                             imageUrl: defaultArtistUrl,
                             radius: 12,
                           ),

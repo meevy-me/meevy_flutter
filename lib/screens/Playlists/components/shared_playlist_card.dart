@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
@@ -16,7 +13,6 @@ import 'package:soul_date/screens/Playlists/playlists_detail.dart';
 import 'package:soul_date/services/formatting.dart';
 import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/services/network_utils.dart';
-import 'package:soul_date/services/spotify.dart';
 import 'package:soul_date/services/spotify_utils.dart';
 
 import '../../../components/cached_image_error.dart';
@@ -122,7 +118,7 @@ class _SharedPlaylistCardState extends State<SharedPlaylistCard> {
                                         radius: 10,
                                       );
                                     }
-                                    return SpinKitPulse(
+                                    return const SpinKitPulse(
                                       color: Colors.grey,
                                     );
                                   }),
@@ -155,7 +151,7 @@ class _SharedPlaylistCardState extends State<SharedPlaylistCard> {
               ),
             );
           }
-          return SpinKitPulse(
+          return const SpinKitPulse(
             color: Colors.grey,
           );
         });

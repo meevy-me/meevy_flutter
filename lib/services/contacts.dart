@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';

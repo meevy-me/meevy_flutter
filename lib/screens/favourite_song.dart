@@ -75,7 +75,7 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
           "Favourite Song",
           style: Theme.of(context).textTheme.headline6,
         ),
-        actions: [],
+        actions: const [],
       ),
       body: Container(
         height: size.height * 0.8,

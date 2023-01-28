@@ -108,7 +108,7 @@ class _ShareDataScreenState extends State<ShareDataScreen> {
         ),
         leading: InkWell(
           onTap: () => Navigator.pop(context),
-          child: Icon(
+          child: const Icon(
             CupertinoIcons.clear,
             color: Colors.black,
           ),
@@ -167,7 +167,7 @@ class _ShareDataScreenState extends State<ShareDataScreen> {
                   color: Theme.of(context).primaryColor,
                 );
               }
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             }),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: defaultMargin),
@@ -296,7 +296,7 @@ class _ShareDataScreenState extends State<ShareDataScreen> {
                           Navigator.pop(context);
                         }
                       },
-                      child: Icon(CupertinoIcons.paperplane_fill))
+                      child: const Icon(CupertinoIcons.paperplane_fill))
                 ],
               ),
             )

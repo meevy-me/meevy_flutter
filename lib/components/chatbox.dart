@@ -148,7 +148,7 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
                             .format(widget.message.datePosted!.toDate()),
                         style: Theme.of(context).textTheme.caption,
                       )
-                    : LoadingPulse(),
+                    : const LoadingPulse(),
               )
           ],
         ),
