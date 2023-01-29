@@ -168,10 +168,16 @@ class SoulController extends GetxController {
   //   } else {}
   // }
 
-  Future<void> fetchMatches() async {
+  Future<void> fetchMatches({RxBool? loading}) async {
+    if (loading != null) {
+      loading.value = true;
+    }
     await client.get(fetchMakeMatchesUrl);
 
     http.Response res = await client.get(fetchMatchesUrl);
+    if (loading != null) {
+      loading.value = false;
+    }
     if (res.statusCode <= 210) {
       matches.value = matchFromJson(utf8.decode(res.bodyBytes));
     } else {

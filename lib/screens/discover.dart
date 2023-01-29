@@ -12,6 +12,7 @@ import 'package:soul_date/models/profile_model.dart';
 import 'package:soul_date/services/navigation.dart';
 
 import '../components/inputfield.dart';
+import '../components/pulse.dart';
 import '../components/search_profile_dialog.dart';
 import 'match_detail.dart';
 
@@ -54,6 +55,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   final TextEditingController searchField = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
+  RxBool loading = false.obs;
   @override
   void dispose() {
     scrollController.dispose();
@@ -70,7 +72,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
           child: RefreshIndicator(
             onRefresh: () {
               return Future.delayed(const Duration(seconds: 1), () {
-                controller.fetchMatches();
+                controller.fetchMatches(loading: loading);
               });
             },
             color: Theme.of(context).primaryColor,
@@ -79,32 +81,49 @@ class _DiscoverPageState extends State<DiscoverPage> {
               slivers: [
                 _buildSliverAppbar(context),
                 Obx(
-                  () => controller.matches.isNotEmpty
-                      ? SliverList(
-                          delegate:
-                              SliverChildBuilderDelegate((context, index) {
-                          Match match = controller.matches[index];
-                          return InkWell(
-                            onTap: () => Navigation.push(context,
-                                customPageTransition: PageTransition(
-                                    child: MatchDetail(
-                                        matchDetails: match.details,
-                                        profile: match.matched),
-                                    type: PageTransitionType.fromTop)),
-                            child: MatchCard(
-                                match: match,
-                                onLiked: (match) {
-                                  // controller.matches.remove(match);
-                                }),
-                          );
-                        }, childCount: controller.matches.length))
-                      : SliverList(
-                          delegate: SliverChildListDelegate([
-                            const EmptyWidget(
-                              text: "Oops, you have no matches. Don't worry",
-                            )
-                          ]),
-                        ),
+                  () => loading.value
+                      ? SliverToBoxAdapter(
+                          child: LoadingPulse(
+                              color: Theme.of(context).primaryColor),
+                        )
+                      : controller.matches.isNotEmpty
+                          ? SliverList(
+                              delegate:
+                                  SliverChildBuilderDelegate((context, index) {
+                              Match match = controller.matches[index];
+                              return InkWell(
+                                onTap: () => Navigation.push(context,
+                                    customPageTransition: PageTransition(
+                                        child: MatchDetail(
+                                            matchDetails: match.details,
+                                            profile: match.matched),
+                                        type: PageTransitionType.fromTop)),
+                                child: MatchCard(
+                                    match: match,
+                                    onLiked: (match) {
+                                      // controller.matches.remove(match);
+                                    }),
+                              );
+                            }, childCount: controller.matches.length))
+                          : SliverList(
+                              delegate: SliverChildListDelegate([
+                                EmptyWidget(
+                                  text:
+                                      "Oops, you have no matches. Don't worry",
+                                  child: ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
+                                          elevation: 0),
+                                      onPressed: () {
+                                        controller.fetchMatches(
+                                            loading: loading);
+                                      },
+                                      icon: Icon(Icons.refresh),
+                                      label: Text("Refresh")),
+                                )
+                              ]),
+                            ),
                 )
                 // Obx(() => controller.matches.isNotEmpty
                 //     ? SliverList(

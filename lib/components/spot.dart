@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/spots.dart';
 import 'package:soul_date/screens/Spots/spot_screen.dart';
+import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/services/transitions.dart';
 
 class SpotWidget extends StatelessWidget {
@@ -18,13 +20,17 @@ class SpotWidget extends StatelessWidget {
   final Function? onTap;
   @override
   Widget build(BuildContext context) {
-    Spot spot = spots!.spots.last;
+    Spot spot = spots!.spots.first;
     return Column(
       children: [
         InkWell(
           onTap: () {
-            Navigator.push(
-                context, scaledTransition(SpotScreen(spots: spots!)));
+            Navigation.push(context,
+                customPageTransition: PageTransition(
+                    child: SpotScreen(spots: spots!),
+                    type: PageTransitionType.scaleUpWithFadeIn));
+            // Navigator.push(
+            //     context, scaledTransition(SpotScreen(spots: spots!)));
           },
           child: Stack(
             alignment: Alignment.bottomRight,

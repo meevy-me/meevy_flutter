@@ -4,12 +4,18 @@ import 'package:lottie/lottie.dart';
 
 class EmptyWidget extends StatelessWidget {
   const EmptyWidget(
-      {Key? key, this.text, this.height, this.width, this.assetString})
+      {Key? key,
+      this.text,
+      this.height,
+      this.width,
+      this.assetString,
+      this.child})
       : super(key: key);
   final String? text;
   final double? height;
   final double? width;
   final String? assetString;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +28,8 @@ class EmptyWidget extends StatelessWidget {
           Text(
             text!,
             style: Theme.of(context).textTheme.caption,
-          )
+          ),
+        child != null ? child! : const SizedBox.shrink()
       ],
     );
   }

@@ -236,7 +236,7 @@ class _SpotSectionState extends State<_SpotSection> {
                                     Obx(() => spotController.mySpots.isNotEmpty
                                         ? SpotWidget(
                                             mine: true,
-                                            spots: spotController.mySpots.last,
+                                            spots: spotController.mySpots.first,
                                           )
                                         : const SizedBox.shrink())),
                             ...spotController.spots
