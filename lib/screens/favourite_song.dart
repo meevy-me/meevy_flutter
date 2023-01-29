@@ -128,23 +128,30 @@ class _FavouriteSongScreenState extends State<FavouriteSongScreen> {
                 },
               ),
             ),
-            if (results != null)
-              ...results!.tracks.items.map((e) {
-                return SlideAnimation(
-                  child: SpotifyTrackResult(
-                    key: ValueKey(e.id),
-                    selected: selected != null ? e.id == selected!.id : false,
-                    // disabled: selected.first != null,
+            results != null
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: results!.tracks.items.length,
+                    itemBuilder: (context, index) {
+                      var e = results!.tracks.items[index];
+                      return SlideAnimation(
+                        child: SpotifyTrackResult(
+                          key: ValueKey(e.id),
+                          selected:
+                              selected != null ? e.id == selected!.id : false,
+                          // disabled: selected.first != null,
 
-                    onClick: (item) {
-                      setState(() {
-                        selected = item;
-                      });
+                          onClick: (item) {
+                            setState(() {
+                              selected = item;
+                            });
+                          },
+                          result: e,
+                        ),
+                      );
                     },
-                    result: e,
-                  ),
-                );
-              })
+                  )
+                : const SizedBox(),
           ],
         ),
       ),

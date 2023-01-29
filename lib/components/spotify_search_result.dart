@@ -65,7 +65,7 @@ class _SpotifyTrackResultState extends State<SpotifyTrackResult>
                       padding: const EdgeInsets.symmetric(
                           vertical: defaultMargin / 2),
                       child: Text(
-                        widget.result.caption,
+                        widget.result.subTitle,
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             fontSize: 14,
                             color: widget.selected
