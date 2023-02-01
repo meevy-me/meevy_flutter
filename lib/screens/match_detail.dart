@@ -1,18 +1,38 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:soul_date/components/Modals/profile_favourite_modal.dart';
 import 'package:soul_date/components/custom_slider.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/components/spotify_card.dart';
 import 'package:soul_date/components/spotify_profile_avatar.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/models.dart';
+import 'package:soul_date/services/cache.dart';
+import 'package:soul_date/services/modal.dart';
 
-class MatchDetail extends StatelessWidget {
-  const MatchDetail({Key? key, this.matchDetails, required this.profile})
+class MatchDetail extends StatefulWidget {
+  const MatchDetail(
+      {Key? key, this.matchDetails, required this.profile, this.images})
       : super(key: key);
   final List<Details>? matchDetails;
   final Profile profile;
+  final List<ProfileImages>? images;
+
+  @override
+  State<MatchDetail> createState() => _MatchDetailState();
+}
+
+class _MatchDetailState extends State<MatchDetail> {
+  late Future<List<ProfileImages>> _future;
+
+  @override
+  void initState() {
+    _future = getImages(widget.profile.id);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +46,28 @@ class MatchDetail extends StatelessWidget {
               children: [
                 SizedBox(
                   height: size.height * 0.6,
-                  child: ScrollImage(
-                    heroTag: profile.id.toString(),
-                    size: size.height * 0.6,
-                    images: profile.images.reversed.toList(),
-                  ),
+                  child: widget.images == null
+                      ? FutureBuilder<List<ProfileImages>>(
+                          future: _future,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.done &&
+                                snapshot.data != null &&
+                                snapshot.data!.isNotEmpty) {
+                              return ScrollImage(
+                                heroTag: widget.profile.id.toString(),
+                                size: size.height * 0.6,
+                                images: snapshot.data!,
+                              );
+                            }
+                            return LoadingPulse(
+                              color: Theme.of(context).primaryColor,
+                            );
+                          })
+                      : ScrollImage(
+                          heroTag: widget.profile.id.toString(),
+                          size: size.height * 0.6,
+                          images: widget.images!),
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: size.height * 0.1),
@@ -43,16 +80,33 @@ class MatchDetail extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             SafeArea(
-                                child: IconButton(
+                                child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                IconButton(
                                     onPressed: () {
                                       Get.back();
                                     },
                                     icon: const Icon(
                                       Icons.close,
                                       color: Colors.white,
-                                    ))),
+                                    )),
+                                IconButton(
+                                    onPressed: () {
+                                      showModal(
+                                          context,
+                                          ProfileFavouritesModal(
+                                            profile: widget.profile,
+                                          ));
+                                    },
+                                    icon: const Icon(
+                                      CupertinoIcons.sparkles,
+                                      color: Colors.white,
+                                    ))
+                              ],
+                            )),
                             _MatchDetails(
-                              profile: profile,
+                              profile: widget.profile,
                             ),
                           ],
                         ),
@@ -74,11 +128,11 @@ class MatchDetail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  matchDetails != null
+                  widget.matchDetails != null
                       ? Align(
                           alignment: Alignment.bottomCenter,
                           child: _MatchProfile(
-                            details: matchDetails!,
+                            details: widget.matchDetails!,
                           ),
                         )
                       : const SizedBox.shrink(),
@@ -96,7 +150,7 @@ class MatchDetail extends StatelessWidget {
                           Expanded(
                             child: SingleChildScrollView(
                               child: Text(
-                                profile.bio,
+                                widget.profile.bio,
                                 style: Theme.of(context).textTheme.bodyText2,
                                 overflow: TextOverflow.fade,
                               ),
@@ -107,7 +161,7 @@ class MatchDetail extends StatelessWidget {
                     ),
                   ),
                   SoulSliderCheck(
-                    profile: profile,
+                    profile: widget.profile,
                   ),
                 ],
               ),
@@ -166,7 +220,7 @@ class ScrollImage extends StatefulWidget {
     required this.heroTag,
   }) : super(key: key);
 
-  final List images;
+  final List<ProfileImages> images;
   final double size;
   final String heroTag;
 

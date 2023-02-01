@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soul_date/services/cache.dart';
 
 import '../constants/constants.dart';
 
@@ -26,25 +27,33 @@ class HttpClient {
   Future<http.Response> get(String endpoint,
       {Map<String, String>? parameters,
       Map<String, String>? headers,
+      bool cache = false,
       bool useToken = true}) async {
     String? token = await getToken();
 
-    late Map<String, String> _headers;
+    final _headers = headers ?? {};
 
-    if (headers != null) {
-      _headers = headers;
-    } else {
-      _headers = {};
-    }
     if (useToken && token != null) {
       _headers['Authorization'] = "Token $token";
     }
 
+    var endpointUrl = _formatEndpoint(endpoint, parameters);
+    if (cache) {
+      var cachedResponse =
+          await DataCache().getJson(_formatEndpoint(endpoint, parameters));
+      if (cachedResponse != null) {
+        return http.Response(cachedResponse, 200);
+      }
+    }
     http.Response res = await http.get(
         Uri.parse(
-          _formatEndpoint(endpoint, parameters),
+          endpointUrl,
         ),
         headers: _headers);
+
+    if (cache) {
+      DataCache().setJson(endpointUrl, res.body);
+    }
 
     return res;
   }
@@ -192,7 +201,9 @@ class SpotifyClient {
   }
 
   Future<http.Response> get(String endpoint,
-      {Map<String, String>? parameters, Map<String, String>? headers}) async {
+      {Map<String, String>? parameters,
+      Map<String, String>? headers,
+      bool cache = true}) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     var accessToken = preferences.getString("spotify_accesstoken")!;
     http.Response res = await client.get(endpoint,

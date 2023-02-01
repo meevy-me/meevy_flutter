@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/pulse.dart';
+import 'package:soul_date/models/images.dart';
 import 'package:soul_date/models/match_model.dart';
+import 'package:soul_date/services/cache.dart';
 
 import '../constants/constants.dart';
 import 'cached_image_error.dart';
 
-class MatchImage extends StatelessWidget {
+class MatchImage extends StatefulWidget {
   const MatchImage({
     required this.match,
     Key? key,
   }) : super(key: key);
 
   final Match match;
+
+  @override
+  State<MatchImage> createState() => _MatchImageState();
+}
+
+class _MatchImageState extends State<MatchImage> {
+  late Future<List<ProfileImages>> _future;
+  @override
+  void initState() {
+    _future = getImages(widget.match.matched.id);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,21 +48,34 @@ class MatchImage extends StatelessWidget {
                       Colors.transparent
                     ]).createShader(bounds);
               },
-              child: SoulCachedNetworkImage(
-                imageUrl: match.matched.profilePicture.image,
-                fit: BoxFit.cover,
-                progressIndicatorBuilder: (context, text, percentage) {
-                  return SizedBox(
-                      width: 20,
-                      child: LoadingPulse(
-                        color: Theme.of(context).primaryColor,
-                      ));
-                },
-              ),
+              child: FutureBuilder<List<ProfileImages>>(
+                  future: _future,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.data != null &&
+                        snapshot.data!.isNotEmpty) {
+                      return SoulCachedNetworkImage(
+                        imageUrl: snapshot.data!.first.image,
+                        fit: BoxFit.cover,
+                        progressIndicatorBuilder: (context, text, percentage) {
+                          return SizedBox(
+                              width: 20,
+                              child: LoadingPulse(
+                                color: Theme.of(context).primaryColor,
+                              ));
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    }
+                    return LoadingPulse(
+                      color: Theme.of(context).primaryColor,
+                    );
+                  }),
             ),
           ),
         ),
-        if (match.matchMethod != null)
+        if (widget.match.matchMethod != null)
           Positioned(
             top: defaultMargin,
             left: defaultMargin,
@@ -72,7 +99,7 @@ class MatchImage extends StatelessWidget {
                     width: defaultPadding,
                   ),
                   Text(
-                    match.matchMethod!,
+                    widget.match.matchMethod!,
                     style: Theme.of(context)
                         .textTheme
                         .caption!
@@ -100,7 +127,7 @@ class MatchImage extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(vertical: defaultMargin / 2),
                     child: Text(
-                      "${match.matched.name}, ${match.matched.age}",
+                      "${widget.match.matched.name}, ${widget.match.matched.age}",
                       style: Theme.of(context)
                           .textTheme
                           .headline5!

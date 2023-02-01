@@ -26,6 +26,8 @@ import 'package:soul_date/services/network.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/services/spotify.dart';
 
+import '../models/SpotifySearch/spotify_search.dart';
+
 class SoulController extends GetxController {
   HttpClient client = HttpClient();
   RxList<Match> matches = <Match>[].obs;
@@ -461,5 +463,22 @@ class SoulController extends GetxController {
     } else {
       return false;
     }
+  }
+
+  Future<List<SpotifyFavouriteItem>> getProfileFavourite(int profileID,
+      {String type = 'track'}) async {
+    var res = await client.get(userProfileUrl + '$profileID/favourite/',
+        parameters: {'type': type}, cache: true);
+    if (res.statusCode <= 210) {
+      var favourites = jsonDecode(utf8.decode(res.bodyBytes));
+      if (type == 'playlist') {
+        return List<PlaylistItem>.from(
+            favourites.map((e) => PlaylistItem.fromJson(e['details'])));
+      } else {
+        return List<SongItem>.from(
+            favourites.map((e) => SongItem.fromJson(e['details'])));
+      }
+    }
+    return [];
   }
 }

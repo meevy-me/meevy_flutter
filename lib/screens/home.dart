@@ -1,4 +1,9 @@
+import 'dart:async';
+
+import 'package:clipboard_listener/clipboard_listener.dart';
+import 'package:clipboard_monitor/clipboard_monitor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/bottom_navigation.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
@@ -9,6 +14,7 @@ import 'package:soul_date/screens/discover.dart';
 import 'package:soul_date/screens/home/vinyls.dart';
 import 'package:soul_date/screens/Playlists/playlists.dart';
 import 'package:soul_date/screens/profile_home.dart';
+import 'package:soul_date/screens/send_spot_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -28,6 +34,9 @@ class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
   int selectedIndex = 0;
 
+  bool _showModal = false;
+  String link = '';
+
   List<Widget> pages = const [
     DiscoverPage(),
     VinylsPage(),
@@ -37,10 +46,35 @@ class _HomePageState extends State<HomePage> {
   ];
   @override
   void initState() {
+    Timer.periodic(const Duration(seconds: 2), (timer) {
+      _getClipboardData();
+    });
     setState(() {
       selectedIndex = widget.initialIndex;
     });
     super.initState();
+  }
+
+  void _getClipboardData() {
+    Clipboard.getData('text/plain').then((data) {
+      if (data != null && data.text != null) {
+        RegExp regExp = RegExp(
+            r'https:\/\/open\.spotify\.com\/(track|playlist)\/[a-zA-Z0-9]*(\?si=|\?si|)');
+        if (regExp.hasMatch(data.text!)) {
+          // open modal
+          if (link != data.text!) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ShareDataScreen(
+                sharedText: data.text,
+              ),
+            ));
+            link = data.text!;
+          }
+
+          setState(() {});
+        }
+      }
+    });
   }
 
   @override

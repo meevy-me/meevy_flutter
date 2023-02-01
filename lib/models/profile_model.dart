@@ -27,18 +27,26 @@ class Profile extends HiveObject {
   final String bio;
 
   factory Profile.fromJson(Map<String, dynamic> json) {
+    late String bioTemp;
+    try {
+      bioTemp = utf8.decode(json['bio'].codeUnits);
+    } catch (e) {
+      bioTemp = json['bio'];
+    }
     var profile = Profile(
       id: json["id"],
       user: User.fromJson(json["user"]),
       name: json["name"],
       dateOfBirth: DateTime.parse(json["date_of_birth"]),
-      bio: json["bio"],
+      bio: bioTemp,
       looking_for: json['looking_for'],
     );
     try {
-      profile.images.addAll(List<ProfileImages>.from(json["images"].map((x) {
-        return ProfileImages.fromJson(x);
-      })));
+      if (json.containsKey('images')) {
+        profile.images.addAll(List<ProfileImages>.from(json["images"].map((x) {
+          return ProfileImages.fromJson(x);
+        })));
+      }
     } catch (e) {
       profile.images.add(defaultProfileImage);
     }
