@@ -15,7 +15,7 @@ Future<ProfileImages> getProfileImages(int profileId) async {
     var jsonData = jsonDecode(res.body);
     jsonData = jsonData as List;
     if (jsonData.isNotEmpty) {
-      return ProfileImages.fromJson(jsonData.last);
+      return  ProfileImages.fromJson(jsonData.last);
     }
     // print(profile);
   } else {

@@ -14,6 +14,7 @@ import 'package:soul_date/services/navigation.dart';
 import '../components/inputfield.dart';
 import '../components/pulse.dart';
 import '../components/search_profile_dialog.dart';
+import 'home/components/discover_match_card.dart';
 import 'match_detail.dart';
 
 class DiscoverPage extends StatefulWidget {
@@ -23,7 +24,8 @@ class DiscoverPage extends StatefulWidget {
   State<DiscoverPage> createState() => _DiscoverPageState();
 }
 
-class _DiscoverPageState extends State<DiscoverPage> {
+class _DiscoverPageState extends State<DiscoverPage>
+    with AutomaticKeepAliveClientMixin<DiscoverPage> {
   final SoulController controller = Get.find<SoulController>();
   void searchText(BuildContext context, String _text) async {
     String text = _text;
@@ -64,6 +66,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
   }
 
   @override
+  void initState() {
+    controller.fetchMatches(loading: loading);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -90,20 +98,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
                           ? SliverList(
                               delegate:
                                   SliverChildBuilderDelegate((context, index) {
-                              Match match = controller.matches[index];
-                              return InkWell(
-                                onTap: () => Navigation.push(context,
-                                    customPageTransition: PageTransition(
-                                        child: MatchDetail(
-                                            matchDetails: match.details,
-                                            profile: match.matched),
-                                        type: PageTransitionType.fromTop)),
-                                child: MatchCard(
-                                    match: match,
-                                    onLiked: (match) {
-                                      // controller.matches.remove(match);
-                                    }),
-                              );
+                              // var matchesList = controller.matches[index];
+                              return DiscoverMatch(
+                                  match: controller.matches[index]);
+                              // Match match = controller.matches[index];
                             }, childCount: controller.matches.length))
                           : SliverList(
                               delegate: SliverChildListDelegate([
@@ -213,4 +211,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

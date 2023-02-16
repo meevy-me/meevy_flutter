@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/constants/constants.dart';
-import 'package:soul_date/models/match_model.dart';
+import 'package:soul_date/models/models.dart';
 
 import 'match_image.dart';
 import 'spotify_card.dart';
 
 class MatchCard extends StatefulWidget {
-  const MatchCard({Key? key, required this.match, required this.onLiked})
-      : super(key: key);
+  const MatchCard({
+    Key? key,
+    required this.profile,
+    required this.matchElement,
+  }) : super(key: key);
 
-  final Match match;
-  final Function(Match match) onLiked;
+  final Profile profile;
+  final MatchElement matchElement;
+  // final Function(Match match) onLiked;
   @override
   State<MatchCard> createState() => _MatchCardState();
 }
@@ -25,8 +29,7 @@ class _MatchCardState extends State<MatchCard> {
       child: Column(
         children: [
           MatchImage(
-            match: widget.match,
-          ),
+              profile: widget.profile, matchElement: widget.matchElement),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
             child: SlideAnimation(
@@ -34,13 +37,13 @@ class _MatchCardState extends State<MatchCard> {
                 height: 50,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: widget.match.details.length,
+                  itemCount: widget.matchElement.matches.length,
                   itemBuilder: (context, index) => Padding(
                     padding: const EdgeInsets.only(right: defaultMargin),
                     child: SlideAnimation(
                       begin: const Offset(0, 250),
                       child: SpotifyCard(
-                        details: widget.match.details[index],
+                        details: widget.matchElement.matches[index],
                       ),
                     ),
                   ),

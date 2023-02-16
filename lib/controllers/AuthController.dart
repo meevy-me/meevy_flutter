@@ -168,6 +168,8 @@ class SpotifyController extends GetxController {
     body['spotifyID'] = spotify.currentUser!.id;
     http.Response response =
         await client.post(resetPasswordUrl + 'email/', body: body);
+    print(response.body);
+
     if (response.statusCode <= 210) {
       Get.to(() => ResetCodeScreen(
             email: body['email']!,

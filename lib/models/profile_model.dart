@@ -39,7 +39,7 @@ class Profile extends HiveObject {
       name: json["name"],
       dateOfBirth: DateTime.parse(json["date_of_birth"]),
       bio: bioTemp,
-      looking_for: json['looking_for'],
+      looking_for: json.containsKey('looking_for') ? json['looking_for'] : 'A',
     );
     try {
       if (json.containsKey('images')) {

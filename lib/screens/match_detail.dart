@@ -14,10 +14,9 @@ import 'package:soul_date/services/cache.dart';
 import 'package:soul_date/services/modal.dart';
 
 class MatchDetail extends StatefulWidget {
-  const MatchDetail(
-      {Key? key, this.matchDetails, required this.profile, this.images})
+  const MatchDetail({Key? key, this.match, required this.profile, this.images})
       : super(key: key);
-  final List<Details>? matchDetails;
+  final Match? match;
   final Profile profile;
   final List<ProfileImages>? images;
 
@@ -128,11 +127,11 @@ class _MatchDetailState extends State<MatchDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  widget.matchDetails != null
+                  widget.match != null
                       ? Align(
                           alignment: Alignment.bottomCenter,
                           child: _MatchProfile(
-                            details: widget.matchDetails!,
+                            details: widget.match!,
                           ),
                         )
                       : const SizedBox.shrink(),
@@ -173,14 +172,28 @@ class _MatchDetailState extends State<MatchDetail> {
   }
 }
 
-class _MatchProfile extends StatelessWidget {
+class _MatchProfile extends StatefulWidget {
   _MatchProfile({
     Key? key,
     required this.details,
   }) : super(key: key);
 
-  final List<Details> details;
+  final Match details;
+
+  @override
+  State<_MatchProfile> createState() => _MatchProfileState();
+}
+
+class _MatchProfileState extends State<_MatchProfile> {
   final SoulController controller = Get.find<SoulController>();
+  late List<Details> allItems;
+
+  @override
+  void initState() {
+    allItems = widget.details.allItems;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -188,7 +201,7 @@ class _MatchProfile extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          "Matching by: ",
+          "Matching by ${widget.details.matches.join(", ")}",
           style: Theme.of(context).textTheme.bodyText1,
         ),
         Padding(
@@ -197,11 +210,11 @@ class _MatchProfile extends StatelessWidget {
             height: 50,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: details.length,
+              itemCount: allItems.length,
               itemBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.only(right: defaultMargin),
                 child: SpotifyCard(
-                  details: details[index],
+                  details: allItems[index],
                 ),
               ),
             ),

@@ -44,23 +44,25 @@ class _PasswordResetEmailState extends State<PasswordResetEmail> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-            child: Row(
-              children: [
-                Text(
-                  "Hello ${widget.user.displayName}",
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-                const SizedBox(
-                  width: defaultPadding,
-                ),
-                ClipOval(
-                    child: CachedNetworkImage(
-                  imageUrl: widget.user.image,
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.cover,
-                ))
-              ],
+            child: Center(
+              child: Column(
+                children: [
+                  
+                  
+                  ClipOval(
+                      child: CachedNetworkImage(
+                    imageUrl: widget.user.image,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                  )),
+                  const SizedBox(height:defaultPadding),
+                  Text(
+                    "Hello ${widget.user.displayName}",
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
+                ],
+              ),
             ),
           ),
           Text(

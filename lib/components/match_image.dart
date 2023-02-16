@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/pulse.dart';
-import 'package:soul_date/models/images.dart';
+import 'package:soul_date/models/models.dart';
 import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/services/cache.dart';
 
@@ -9,11 +9,14 @@ import 'cached_image_error.dart';
 
 class MatchImage extends StatefulWidget {
   const MatchImage({
-    required this.match,
+    required this.profile,
+    required this.matchElement,
     Key? key,
   }) : super(key: key);
 
-  final Match match;
+  // final Match match;
+  final Profile profile;
+  final MatchElement matchElement;
 
   @override
   State<MatchImage> createState() => _MatchImageState();
@@ -23,7 +26,7 @@ class _MatchImageState extends State<MatchImage> {
   late Future<List<ProfileImages>> _future;
   @override
   void initState() {
-    _future = getImages(widget.match.matched.id);
+    _future = getImages(widget.profile.id);
     super.initState();
   }
 
@@ -75,40 +78,11 @@ class _MatchImageState extends State<MatchImage> {
             ),
           ),
         ),
-        if (widget.match.matchMethod != null)
-          Positioned(
-            top: defaultMargin,
-            left: defaultMargin,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  vertical: defaultPadding, horizontal: defaultMargin),
-              constraints: const BoxConstraints(
-                minHeight: 30,
-              ),
-              decoration: BoxDecoration(
-                  color: Colors.black, borderRadius: BorderRadius.circular(20)),
-              child: Row(
-                children: [
-                  Container(
-                    width: 7,
-                    height: 7,
-                    decoration: const BoxDecoration(
-                        color: spotifyGreen, shape: BoxShape.circle),
-                  ),
-                  const SizedBox(
-                    width: defaultPadding,
-                  ),
-                  Text(
-                    widget.match.matchMethod!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .caption!
-                        .copyWith(color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        Positioned(
+          top: defaultMargin,
+          left: defaultMargin,
+          child: MatchMethodWidget(widget: widget),
+        ),
         Padding(
           padding: const EdgeInsets.all(defaultMargin),
           child: Row(
@@ -127,7 +101,7 @@ class _MatchImageState extends State<MatchImage> {
                     padding:
                         const EdgeInsets.symmetric(vertical: defaultMargin / 2),
                     child: Text(
-                      "${widget.match.matched.name}, ${widget.match.matched.age}",
+                      "${widget.profile.name}, ${widget.profile.age}",
                       style: Theme.of(context)
                           .textTheme
                           .headline5!
@@ -158,6 +132,54 @@ class _MatchImageState extends State<MatchImage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class MatchMethodWidget extends StatefulWidget {
+  const MatchMethodWidget({
+    Key? key,
+    required this.widget,
+  }) : super(key: key);
+
+  final MatchImage widget;
+
+  @override
+  State<MatchMethodWidget> createState() => _MatchMethodWidgetState();
+}
+
+class _MatchMethodWidgetState extends State<MatchMethodWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 950),
+      padding: const EdgeInsets.symmetric(
+          vertical: defaultPadding, horizontal: defaultMargin),
+      constraints: const BoxConstraints(
+        minHeight: 30,
+      ),
+      decoration: BoxDecoration(
+          color: Colors.black, borderRadius: BorderRadius.circular(20)),
+      child: Row(
+        children: [
+          Container(
+            width: 7,
+            height: 7,
+            decoration: const BoxDecoration(
+                color: spotifyGreen, shape: BoxShape.circle),
+          ),
+          const SizedBox(
+            width: defaultPadding,
+          ),
+          Text(
+            widget.widget.matchElement.method,
+            style: Theme.of(context)
+                .textTheme
+                .caption!
+                .copyWith(color: Colors.white),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -31,6 +31,7 @@ import '../models/SpotifySearch/spotify_search.dart';
 class SoulController extends GetxController {
   HttpClient client = HttpClient();
   RxList<Match> matches = <Match>[].obs;
+  // RxList<List<List<Match>> matches = <List<Match>>[].obs;
   RxList<SpotsView> spots = <SpotsView>[].obs;
   RxList<SpotsView> mySpots = <SpotsView>[].obs;
   RxList<Chat> chats = <Chat>[].obs;
@@ -49,7 +50,6 @@ class SoulController extends GetxController {
     await getProfile();
     registerDevice();
     getFriends();
-    fetchMatches();
     currentlyPlaying();
     super.onInit();
   }
@@ -174,14 +174,25 @@ class SoulController extends GetxController {
     if (loading != null) {
       loading.value = true;
     }
-    await client.get(fetchMakeMatchesUrl);
+    // await client.get(fetchMakeMatchesUrl);
 
     http.Response res = await client.get(fetchMatchesUrl);
     if (loading != null) {
       loading.value = false;
     }
     if (res.statusCode <= 210) {
-      matches.value = matchFromJson(utf8.decode(res.bodyBytes));
+      List<Match> _matches = matchFromJson(utf8.decode(res.bodyBytes));
+      _matches.sort(
+        (a, b) {
+          if (a.matches.length == 1 && b.matches.length == 1) {
+            return b.matches.first.matches.length
+                .compareTo(a.matches.first.matches.length);
+          }
+
+          return b.matches.length.compareTo(a.matches.length);
+        },
+      );
+      matches.value = _matches;
     } else {
       log(res.body, name: "MATCHES");
     }

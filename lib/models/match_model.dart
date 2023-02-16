@@ -4,10 +4,8 @@
 
 import 'dart:convert';
 
-import 'package:get/get.dart';
-import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/details_model.dart';
-import 'package:soul_date/models/profile_model.dart';
+import 'package:soul_date/models/models.dart';
 
 List<Match> matchFromJson(String str) =>
     List<Match>.from(json.decode(str).map((x) => Match.fromJson(x)));
@@ -17,51 +15,51 @@ String matchToJson(List<Match> data) =>
 
 class Match {
   Match({
-    required this.matched,
-    required this.method,
-    required this.details,
-    // required this.dateAdded,
-    // required this.friends,
+    required this.profile,
+    required this.matches,
   });
 
-  Profile matched;
-  List<Details> details;
-  String method;
-  // DateTime dateAdded;
-  // String friends;
-  factory Match.fromJson(Map<String, dynamic> json) {
-    json['match'] as List;
-    return Match(
-        matched: Profile.fromJson(json["user"]),
-        method: json['method'],
-        details: List<Details>.from(json['match'].map((x) {
-          return Details.fromJson(jsonDecode(x));
-        }))
-        // dateAdded: DateTime.parse(json["date_added"]),
-        // friends: json["isFriend"],
-        );
-  }
+  Profile profile;
+  List<MatchElement> matches;
+
+  factory Match.fromJson(Map<String, dynamic> json) => Match(
+        profile: Profile.fromJson(json["profile"]),
+        matches: List<MatchElement>.from(
+            json["matches"].map((x) => MatchElement.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-        // "profile": profile.toJson(),
-        // "matched": matched.toJson(),
-        // "method": method,
-        "details": List<dynamic>.from(details.map((x) => x.toJson())),
-        // "date_added": dateAdded.toIso8601String(),
-        "requested": requested,
+        "profile": profile.toJson(),
+        "matches": List<dynamic>.from(matches.map((x) => x.toJson())),
       };
 
-  String? get matchMethod {
-    // if (method == 'T') {
-    return method;
-    // } else if (method == 'F') {
-    //   return 'Favourite song';
-    // }
-    // return "We recommend";
+  List<Details> get allItems {
+    return matches.expand((element) => element.matches).toList();
   }
+}
 
-  Future<bool> get requested async {
-    final SoulController controller = Get.find<SoulController>();
-    return controller.isFriendRequested(matched);
+class MatchElement {
+  MatchElement({
+    required this.matches,
+    required this.method,
+  });
+
+  List<Details> matches;
+  String method;
+
+  factory MatchElement.fromJson(Map<String, dynamic> json) => MatchElement(
+        matches: List<Details>.from(
+            json["matches"].map((x) => Details.fromJson(jsonDecode(x)))),
+        method: json["method"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "matches": List<dynamic>.from(matches.map((x) => x)),
+        "method": method,
+      };
+
+  @override
+  String toString() {
+    return method;
   }
 }
