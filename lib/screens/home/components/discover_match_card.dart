@@ -36,15 +36,13 @@ class _DiscoverMatchState extends State<DiscoverMatch>
 
         SwipeDetector(
           onSwipeRight: (offset) {
-            print(currentIndex);
-            if (currentIndex >= widget.match.matches.length - 1) {
+            if (currentIndex >0) {
               setState(() {
                 currentIndex -= 1;
               });
             }
           },
           onSwipeLeft: (offset) {
-            // print("OLLLL");
             if (currentIndex < widget.match.matches.length - 1) {
               setState(() {
                 currentIndex += 1;
