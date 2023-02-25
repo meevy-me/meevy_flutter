@@ -94,4 +94,13 @@ class Profile extends HiveObject {
   ProfileImages get profilePicture {
     return images.last;
   }
+
+  @override
+  bool operator ==(Object other) {
+    other as Profile;
+    return other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

@@ -10,10 +10,12 @@ import 'package:soul_date/screens/Chat/components/chat_appbar.dart';
 import 'package:soul_date/screens/Chat/components/chat_messages_list.dart';
 import 'package:soul_date/screens/Chat/components/chat_textarea.dart';
 import 'package:soul_date/services/formatting.dart';
+import 'package:soul_date/services/spotify.dart';
 import 'package:soul_date/services/spotify_utils.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 import '../../models/models.dart';
+import 'components/track_summary.dart';
 
 class ChatMessagesPage extends StatefulWidget {
   const ChatMessagesPage({Key? key, required this.friend}) : super(key: key);
@@ -26,6 +28,9 @@ class _ChatMessagesPageState extends State<ChatMessagesPage> {
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   double _bottomHeight = 75;
+
+  SpotifyData? spotifyTrack;
+  Message? replyTo;
 
   late String _playlistID;
 
@@ -40,6 +45,7 @@ class _ChatMessagesPageState extends State<ChatMessagesPage> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     double _keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -65,6 +71,12 @@ class _ChatMessagesPageState extends State<ChatMessagesPage> {
                       TrackSummary(
                           friends: widget.friend, playlistID: _playlistID),
                       ChatMessagesList(
+                          repliedMessage: (message) {
+                            setState(() {
+                              replyTo = message;
+                              _bottomHeight = 100;
+                            });
+                          },
                           friend: widget.friend,
                           height: size.height * 0.9 -
                               80 -
@@ -80,8 +92,33 @@ class _ChatMessagesPageState extends State<ChatMessagesPage> {
                 height: _bottomHeight,
                 padding: scaffoldPadding,
                 child: ChatInput(
-                    textEditingController: textEditingController,
-                    friend: widget.friend),
+                  replyTo: replyTo,
+                  spotifyData: spotifyTrack,
+                  onTrackDismiss: () {
+                    setState(() {
+                      spotifyTrack = null;
+                      _bottomHeight = 75;
+                    });
+                  },
+                  onReplyDismiss: () {
+                    setState(() {
+                      replyTo = null;
+                      _bottomHeight = 75;
+                    });
+                  },
+                  textEditingController: textEditingController,
+                  friend: widget.friend,
+                  onSuffixTap: () async {
+                    SpotifyDetails? _currentlyPlaying =
+                        await Spotify().currentlyPlaying();
+                    if (_currentlyPlaying != null) {
+                      setState(() {
+                        spotifyTrack = _currentlyPlaying.item;
+                        // _bottomHeight = 100;
+                      });
+                    }
+                  },
+                ),
               ),
             )
           ],
@@ -89,80 +126,4 @@ class _ChatMessagesPageState extends State<ChatMessagesPage> {
       ),
     );
   }
-}
-
-class TrackSummary extends StatelessWidget implements PreferredSizeWidget {
-  const TrackSummary(
-      {Key? key, required this.friends, required this.playlistID})
-      : super(key: key);
-  final Friends friends;
-  final String playlistID;
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<SpotifyData>>(
-        stream: FirebaseFirestore.instance
-            .collection('meevyPlaylists')
-            .doc(playlistID)
-            .collection('tracks')
-            .orderBy('date_added', descending: true)
-            .snapshots()
-            .map((event) => event.docs
-                .map((e) => Item.fromJson(e.data()['track']))
-                .toList()),
-        builder: (context, snapshot) {
-          if (snapshot.data != null) {
-            return Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: defaultMargin, vertical: defaultMargin / 2),
-              margin: scaffoldPadding,
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(20)),
-              // color: Theme.of(context).colorScheme.primaryContainer,
-              // color: Colors.red,
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  RowSuper(
-                      innerDistance: -10,
-                      children: snapshot.data!
-                          .map((e) => SoulCircleAvatar(
-                                imageUrl: e.image,
-                                radius: 15,
-                              ))
-                          .toList()),
-                  Expanded(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: defaultMargin),
-                      child: TextScroll(
-                        joinList(snapshot.data!, count: 3),
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                    ),
-                  ),
-                  IconContainer(
-                    onPress: () {
-                      mutualPlaylistPlayAll(context, playlistID);
-                    },
-                    icon: const Icon(
-                      CupertinoIcons.play_fill,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                    size: 35,
-                    color: Theme.of(context).colorScheme.tertiary,
-                  )
-                ],
-              ),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        });
-  }
-
-  @override
-  // TODO: implement preferredSize
-  Size get preferredSize => Size.fromHeight(50);
 }

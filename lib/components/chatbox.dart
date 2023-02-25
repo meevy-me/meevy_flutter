@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:soul_date/components/chatbox_spotify.dart';
+import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
@@ -18,10 +19,12 @@ class ChatBox extends StatefulWidget {
     required this.width,
     this.height,
     required this.profile,
+    this.mine = false,
     required this.friends,
   }) : super(key: key);
 
   final double width;
+  final bool mine;
   final double? height;
   final Message message;
   final Friends friends;
@@ -33,38 +36,8 @@ class ChatBox extends StatefulWidget {
 }
 
 class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
-  bool isText = true;
-  bool mine = false;
-  bool isSpotifyUrl = false;
-  final SoulController soulController = Get.find<SoulController>();
+  // final SoulController soulController = Get.find<SoulController>();
   // SpotifyData? spotifyData;
-  @override
-  void initState() {
-    if (widget.message.sender != widget.profile.user.id) {
-      mine = true;
-    }
-    setState(() {
-      isSpotifyUrl = matchText();
-    });
-
-    super.initState();
-  }
-
-  matchText() {
-    if (widget.message.content.contains("https://open.spotify.com/")) {
-      var text =
-          widget.message.content.replaceAll("https://open.spotify.com/", "");
-      var keys = text.split("/");
-      var field = keys[0];
-
-      var fieldId = keys[1];
-      if (fieldId.contains("?")) {
-        fieldId = fieldId.split("?")[0];
-      }
-      return true;
-    }
-    return false;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,9 +56,9 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
         iconSize: 20,
         child: Column(
           crossAxisAlignment:
-              mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              widget.mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            !isSpotifyUrl
+            widget.message.spotifyData == null
                 ? Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: defaultMargin * 2,
@@ -93,14 +66,14 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
                     width: widget.width,
                     height: widget.height,
                     decoration: BoxDecoration(
-                        color: mine
+                        color: widget.mine
                             ? Theme.of(context).primaryColor
                             : Colors.white,
                         borderRadius: BorderRadius.only(
                             topLeft: r,
                             topRight: r,
-                            bottomLeft: mine ? r : r / 4,
-                            bottomRight: mine ? r / 4 : r),
+                            bottomLeft: widget.mine ? r : r / 4,
+                            bottomRight: widget.mine ? r / 4 : r),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.02),
@@ -128,7 +101,7 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
                           textAlign: TextAlign.left,
                           style:
                               Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    color: mine ? Colors.white : null,
+                                    color: widget.mine ? Colors.white : null,
                                   ),
                         ),
                       ],
@@ -137,7 +110,8 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
                 : ChatSpotify(
                     profile: widget.friends.friendsProfile,
                     width: widget.width,
-                    message: widget.message,
+                    spotifyData: widget.message.spotifyData!,
+                    replyTo: widget.message.repliedMessage,
                     key: ValueKey(widget.message),
                   ),
             if (widget.onSwipe != null)
@@ -225,13 +199,30 @@ class ReplyChatBox extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
-            child: Text(
-              message.content.trim(),
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1!
-                  .copyWith(overflow: TextOverflow.ellipsis),
-            ),
+            child: message.spotifyData == null
+                ? Text(
+                    message.content.trim(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyText1!
+                        .copyWith(overflow: TextOverflow.ellipsis),
+                  )
+                : Row(
+                    children: [
+                      SoulCircleAvatar(
+                        imageUrl: message.spotifyData!.image,
+                        radius: 12,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: defaultPadding),
+                        child: Text(
+                          message.spotifyData!.itemName,
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      )
+                    ],
+                  ),
           ),
         ],
       ),

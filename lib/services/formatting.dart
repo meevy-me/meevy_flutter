@@ -53,7 +53,7 @@ String joinList(List<Object> items, {int count = 3}) {
   String namesTemp = items.take(count).join(", ");
   int remainingCount = items.length - count;
   if (items.length > count) {
-    return namesTemp + " & ${remainingCount} more";
+    return namesTemp + " & $remainingCount more.";
   }
   return namesTemp;
 }

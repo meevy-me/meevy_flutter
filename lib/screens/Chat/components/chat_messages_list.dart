@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:soul_date/components/chatbox.dart';
+import 'package:soul_date/controllers/SoulController.dart';
 
 import '../../../constants/constants.dart';
 import '../../../models/models.dart';
@@ -10,10 +12,12 @@ class ChatMessagesList extends StatefulWidget {
     Key? key,
     required this.friend,
     required this.height,
+    this.repliedMessage,
   }) : super(key: key);
 
   final Friends friend;
   final double height;
+  final void Function(Message message)? repliedMessage;
 
   @override
   State<ChatMessagesList> createState() => _ChatMessagesListState();
@@ -22,6 +26,7 @@ class ChatMessagesList extends StatefulWidget {
 class _ChatMessagesListState extends State<ChatMessagesList> {
   late Stream<QuerySnapshot>? _stream;
   final ScrollController scrollController = ScrollController();
+  final SoulController soulController = Get.find<SoulController>();
   @override
   void initState() {
     _stream = FirebaseFirestore.instance
@@ -42,6 +47,7 @@ class _ChatMessagesListState extends State<ChatMessagesList> {
           return SizedBox(
             height: widget.height,
             child: ListView.builder(
+                addAutomaticKeepAlives: true,
                 reverse: true,
                 padding: scaffoldPadding,
                 // shrinkWrap: true,
@@ -51,12 +57,18 @@ class _ChatMessagesListState extends State<ChatMessagesList> {
                   var docs = snapshot.data!.docs;
                   var data = docs[index].data() as Map<String, dynamic>;
                   return ChatBox(
+                    mine:
+                        widget.friend.currentProfile == soulController.profile!,
                     key: UniqueKey(),
                     friends: widget.friend,
                     profile: widget.friend.friendsProfile,
                     message: Message.fromJson(data),
                     width: size.width * 0.65,
-                    onSwipe: ((message) {}),
+                    onSwipe: ((message) {
+                      if (widget.repliedMessage != null) {
+                        widget.repliedMessage!(message);
+                      }
+                    }),
                   );
                 }),
           );
