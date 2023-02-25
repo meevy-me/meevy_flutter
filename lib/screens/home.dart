@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     // VinylsPage(),
     // PlaylistsPage(),
     MessagesPage(),
-    MusicMapScreen(),
+    // MusicMapScreen(),
     MyProfileScreen()
   ];
   @override

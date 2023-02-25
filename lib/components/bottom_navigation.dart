@@ -66,23 +66,11 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
                 widget.onTap(2);
               });
             },
-            child: _BottomNavigationItem(
-              active: widget.activeIndex == 2 ? true : false,
-              assetUrl: 'assets/images/map-marker-three.svg',
-              title: "Map",
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                widget.onTap(3);
-              });
-            },
             child: GetBuilder<SoulController>(
                 // tag: 'profile',
                 builder: (controller) {
               return _BottomNavigationItem(
-                active: widget.activeIndex == 3 ? true : false,
+                active: widget.activeIndex == 2 ? true : false,
                 child: controller.profile != null
                     ? SoulCircleAvatar(
                         imageUrl: controller.profile!.profilePicture.image,

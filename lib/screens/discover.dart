@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/animations/animations.dart';
@@ -9,6 +10,7 @@ import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/profile_model.dart';
+import 'package:soul_date/screens/home/music_map.dart';
 import 'package:soul_date/services/navigation.dart';
 
 import '../components/inputfield.dart';
@@ -161,24 +163,36 @@ class _DiscoverPageState extends State<DiscoverPage>
         style: Theme.of(context).textTheme.headline4,
       ),
       actions: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
+          child: IconContainer(
+              onPress: () {
+                scrollController.animateTo(
+                    scrollController.position.minScrollExtent,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.linear);
+
+                _focusNode.requestFocus();
+              },
+              color: _focusNode.hasFocus
+                  ? Colors.grey.withOpacity(0.5)
+                  : Colors.grey.withOpacity(0.3),
+              size: 40,
+              icon: const Icon(
+                Icons.search,
+                color: Colors.black87,
+                size: 25,
+              )),
+        ),
         IconContainer(
             onPress: () {
-              scrollController.animateTo(
-                  scrollController.position.minScrollExtent,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.linear);
-
-              _focusNode.requestFocus();
+              // Navigation.push(context, screen: const MusicMapScreen());
             },
             color: _focusNode.hasFocus
                 ? Colors.grey.withOpacity(0.5)
                 : Colors.grey.withOpacity(0.3),
             size: 40,
-            icon: const Icon(
-              Icons.search,
-              color: Colors.black87,
-              size: 25,
-            ))
+            icon: SvgPicture.asset('assets/images/map-marker-three.svg'))
       ],
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       expandedHeight: 150,
