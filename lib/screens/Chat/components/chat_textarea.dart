@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/screens/Chat/components/reply_to.dart';
@@ -19,6 +20,7 @@ class ChatInput extends StatefulWidget {
     this.spotifyData,
     this.onReplyDismiss,
     this.onTrackDismiss,
+    this.noTextField = false,
   }) : super(key: key);
 
   final TextEditingController textEditingController;
@@ -29,6 +31,7 @@ class ChatInput extends StatefulWidget {
 
   final Message? replyTo;
   final SpotifyData? spotifyData;
+  final bool noTextField;
 
   @override
   State<ChatInput> createState() => _ChatInputState();
@@ -49,7 +52,7 @@ class _ChatInputState extends State<ChatInput> {
         Row(
           children: [
             Expanded(
-              child: widget.spotifyData == null
+              child: widget.noTextField || widget.spotifyData == null
                   ? TextFormField(
                       controller: widget.textEditingController,
                       style: Theme.of(context)
@@ -70,8 +73,8 @@ class _ChatInputState extends State<ChatInput> {
                           suffixIcon: GestureDetector(
                             onTap: widget.onSuffixTap,
                             child: const Icon(
-                              FontAwesomeIcons.spotify,
-                              color: Colors.grey,
+                              CupertinoIcons.headphones,
+                              color: Colors.white,
                             ),
                           ),
                           hintStyle: Theme.of(context).textTheme.caption,
@@ -155,20 +158,30 @@ class _ChatInputState extends State<ChatInput> {
                     });
                   }
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: defaultMargin + defaultPadding,
-                      vertical: defaultMargin),
-                  decoration: BoxDecoration(
-                      color: enabled || widget.spotifyData != null
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey,
-                      borderRadius: BorderRadius.circular(20)),
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    CupertinoIcons.paperplane_fill,
-                    color: Colors.white,
-                  ),
+                child: PrimarySendButton(
+                  enabled: enabled || widget.spotifyData != null,
+                  onTap: () {
+                    if (widget.spotifyData != null || enabled) {
+                      final text = widget.textEditingController.text;
+                      sendMessage(
+                          friends: widget.friend,
+                          msg: widget.spotifyData != null
+                              ? widget.spotifyData!.url
+                              : text,
+                          spotifyData: widget.spotifyData,
+                          replyTo: widget.replyTo);
+                      widget.textEditingController.clear();
+                      if (widget.onTrackDismiss != null) {
+                        widget.onTrackDismiss!();
+                      }
+                      if (widget.onReplyDismiss != null) {
+                        widget.onReplyDismiss!();
+                      }
+                      setState(() {
+                        enabled = false;
+                      });
+                    }
+                  },
                 ),
               ),
             )

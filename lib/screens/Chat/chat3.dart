@@ -60,16 +60,9 @@ class _ChatMessagesPageState extends State<ChatMessagesPage> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20)),
                 child: SafeArea(
-                  child: Column(
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
                     children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.symmetric(vertical: defaultMargin),
-                        child: ChatAppBar(
-                            friendsProfile: widget.friend.friendsProfile),
-                      ),
-                      TrackSummary(
-                          friends: widget.friend, playlistID: _playlistID),
                       ChatMessagesList(
                           repliedMessage: (message) {
                             setState(() {
@@ -81,7 +74,19 @@ class _ChatMessagesPageState extends State<ChatMessagesPage> {
                           height: size.height * 0.9 -
                               80 -
                               _bottomHeight -
-                              _keyboardHeight)
+                              _keyboardHeight),
+                      Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: defaultMargin),
+                            child: ChatAppBar(
+                                friendsProfile: widget.friend.friendsProfile),
+                          ),
+                          TrackSummary(
+                              friends: widget.friend, playlistID: _playlistID),
+                        ],
+                      )
                     ],
                   ),
                 )),

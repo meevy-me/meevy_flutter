@@ -1,15 +1,23 @@
+import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/components/Chat/chat_field.dart';
+import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/components/cached_image_error.dart';
+import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/models/models.dart';
+import 'package:soul_date/screens/Chat/components/chat_textarea.dart';
+import 'package:soul_date/services/messaging_utils.dart';
+import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/services/spotify_utils.dart';
 
 class ShareDataScreen extends StatefulWidget {
@@ -99,206 +107,258 @@ class _ShareDataScreenState extends State<ShareDataScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          "Send to friends",
-          style: Theme.of(context).textTheme.headline6,
-        ),
-        leading: InkWell(
-          onTap: () => Navigator.pop(context),
-          child: const Icon(
-            CupertinoIcons.clear,
-            color: Colors.black,
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: scaffoldPadding,
-        child: ListView(
-          primary: false,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      body: SizedBox(
+        height: size.height,
+        child: Stack(
           children: [
-            Builder(builder: (context) {
-              if (spotifyData != null) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: SoulCachedNetworkImage(
-                        imageUrl: spotifyData!.image,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: defaultMargin),
-                      child: Column(
+            Container(
+              height: size.height - 80,
+              width: size.width,
+              margin: scaffoldPadding / 2,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              child: SafeArea(
+                child: Padding(
+                  padding: scaffoldPadding,
+                  child: Column(
+                    children: [
+                      Column(
                         children: [
-                          Text(
-                            spotifyData!.itemName,
-                            style: Theme.of(context).textTheme.bodyText1,
+                          Row(
+                            children: [
+                              IconContainer(
+                                icon: const Icon(
+                                  Icons.close,
+                                  size: 30,
+                                  color: Colors.black,
+                                ),
+                                onPress: () => Navigation.pop(context),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: defaultMargin),
+                                child: Text(
+                                  "Send to friends",
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                              )
+                            ],
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: defaultPadding),
-                            child: Text(
-                              spotifyData!.caption,
-                              style: Theme.of(context).textTheme.caption,
+                                vertical: defaultMargin),
+                            child: SizedBox(
+                              height: 45,
+                              child: CupertinoSearchTextField(
+                                // controller: captionText,
+                                onChanged: searchFriend,
+                              ),
                             ),
-                          ),
-                          Text(
-                            spotifyData!.spotifyDataType.name.toUpperCase(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .caption!
-                                .copyWith(fontSize: 11),
                           ),
                         ],
                       ),
-                    )
-                  ],
-                );
-              } else if (spotifyData == null) {
-                return SpinKitPulse(
-                  color: Theme.of(context).primaryColor,
-                );
-              }
-              return const SizedBox.shrink();
-            }),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-              child: SizedBox(
-                height: 45,
-                child: CupertinoSearchTextField(
-                  // controller: captionText,
-                  onChanged: searchFriend,
+                      Expanded(
+                        child: ListView(
+                          primary: false,
+                          children: [
+                            currentProfileId != null
+                                ? ListView.builder(
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    itemCount: friends.length,
+                                    itemBuilder: (context, index) {
+                                      Friends friend = friends[index];
+
+                                      Profile friendsProfile =
+                                          friend.friendsProfileSafe(
+                                              currentProfileId!);
+                                      return InkWell(
+                                        onTap: () {
+                                          if (selectedFriends
+                                              .contains(friend)) {
+                                            setState(() {
+                                              selectedFriends.remove(friend);
+                                            });
+                                          } else {
+                                            setState(() {
+                                              selectedFriends.add(friend);
+                                            });
+                                          }
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: defaultMargin),
+                                          child: Row(
+                                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              SoulCircleAvatar(
+                                                  imageUrl: friendsProfile
+                                                      .profilePicture.image),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            defaultMargin),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      friendsProfile.name,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText1,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 200,
+                                                      child: Padding(
+                                                        padding: const EdgeInsets
+                                                                .symmetric(
+                                                            vertical:
+                                                                defaultPadding),
+                                                        child: Text(
+                                                          friendsProfile.bio,
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .caption,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              const Spacer(),
+                                              Container(
+                                                height: 10,
+                                                width: 10,
+                                                decoration: BoxDecoration(
+                                                    color: selectedFriends
+                                                            .contains(friend)
+                                                        ? Theme.of(context)
+                                                            .primaryColor
+                                                        : Colors.grey,
+                                                    shape: BoxShape.circle),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    })
+                                : SpinKitPulse(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            SizedBox(
-                height: size.height * 0.6,
-                child: currentProfileId != null
-                    ? ListView.builder(
-                        // primary: false,
-                        itemCount: friends.length,
-                        itemBuilder: (context, index) {
-                          Friends friend = friends[index];
-
-                          Profile friendsProfile =
-                              friend.friendsProfileSafe(currentProfileId!);
-                          return InkWell(
-                            onTap: () {
-                              if (selectedFriends.contains(friend)) {
-                                setState(() {
-                                  selectedFriends.remove(friend);
-                                });
-                              } else {
-                                setState(() {
-                                  selectedFriends.add(friend);
-                                });
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: defaultMargin),
+            Positioned(
+              bottom: 0,
+              child: Builder(builder: (context) {
+                if (spotifyData != null) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: defaultMargin, vertical: defaultMargin),
+                    height: 70,
+                    width: size.width,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(
+                        //       vertical: defaultPadding),
+                        //   child: RowSuper(
+                        //       innerDistance: -10,
+                        //       children: selectedFriends
+                        //           .map((e) => DelayedDisplay(
+                        //                 delay:
+                        //                     const Duration(milliseconds: 100),
+                        //                 child: SoulCircleAvatar(
+                        //                   imageUrl: e
+                        //                       .friendsProfileSafe(
+                        //                           currentProfileId!)
+                        //                       .profilePicture
+                        //                       .image,
+                        //                   radius: 10,
+                        //                 ),
+                        //               ))
+                        //           .toList()),
+                        // ),
+                        Row(
+                          children: [
+                            Expanded(
                               child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   SoulCircleAvatar(
-                                      imageUrl:
-                                          friendsProfile.profilePicture.image),
+                                    imageUrl: spotifyData!.image,
+                                    radius: 17,
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: defaultMargin),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                        horizontal: defaultPadding),
+                                    child: Row(
                                       children: [
                                         Text(
-                                          friendsProfile.name,
+                                          spotifyData!.itemName,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .bodyText1,
+                                              .bodyText1!
+                                              .copyWith(color: Colors.white),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        SizedBox(
-                                          width: 200,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: defaultPadding),
-                                            child: Text(
-                                              friendsProfile.bio,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .caption,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
+                                        Container(
+                                          width: 5,
+                                          height: 5,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: defaultPadding),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.grey,
+                                              shape: BoxShape.circle),
+                                        ),
+                                        Text(
+                                          spotifyData!.caption,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText2!
+                                              .copyWith(color: Colors.white),
                                         )
                                       ],
                                     ),
                                   ),
-                                  const Spacer(),
-                                  Container(
-                                    height: 10,
-                                    width: 10,
-                                    decoration: BoxDecoration(
-                                        color: selectedFriends.contains(friend)
-                                            ? Theme.of(context).primaryColor
-                                            : Colors.grey,
-                                        shape: BoxShape.circle),
-                                  )
                                 ],
                               ),
                             ),
-                          );
-                        })
-                    : SpinKitPulse(
-                        color: Theme.of(context).primaryColor,
-                      )),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-              child: Row(
-                children: selectedFriends
-                    .map((e) => SoulCircleAvatar(
-                          imageUrl: e
-                              .friendsProfileSafe(currentProfileId!)
-                              .profilePicture
-                              .image,
-                          radius: 15,
-                        ))
-                    .toList(),
-              ),
-            ),
-            Visibility(
-              visible: spotifyData != null && selectedFriends.isNotEmpty,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ChatTextField(captionText: captionText),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20))),
-                      onPressed: () {
-                        if (spotifyData != null) {
-                          sendSpotifyItem(
-                              item: spotifyData!,
-                              friends: selectedFriends,
-                              caption: captionText.text);
-
-                          captionText.clear();
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: const Icon(CupertinoIcons.paperplane_fill))
-                ],
-              ),
+                            PrimarySendButton(
+                              enabled: spotifyData != null &&
+                                  selectedFriends.isNotEmpty,
+                              onTap: () {
+                                if (spotifyData != null &&
+                                    selectedFriends.isNotEmpty) {
+                                  for (var friend in selectedFriends) {
+                                    sendMessage(
+                                        friends: friend, msg: spotifyData!.url);
+                                  }
+                                  Navigation.pop(context);
+                                }
+                              },
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  );
+                }
+                return LoadingPulse();
+              }),
             )
           ],
         ),

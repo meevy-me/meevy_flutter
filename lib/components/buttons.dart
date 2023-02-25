@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -135,6 +136,38 @@ class _RoundedIconButtonState extends State<RoundedIconButton> {
           widget.icon,
           color: update ? Colors.white : widget.color,
         )),
+      ),
+    );
+  }
+}
+
+class PrimarySendButton extends StatelessWidget {
+  const PrimarySendButton({
+    Key? key,
+    required this.enabled,
+    this.onTap,
+  }) : super(key: key);
+
+  final bool enabled;
+  // final ChatInput widget;
+  final void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: defaultMargin + defaultPadding,
+            vertical: defaultMargin),
+        decoration: BoxDecoration(
+            color: enabled ? Theme.of(context).primaryColor : Colors.grey,
+            borderRadius: BorderRadius.circular(20)),
+        alignment: Alignment.center,
+        child: const Icon(
+          CupertinoIcons.paperplane_fill,
+          color: Colors.white,
+        ),
       ),
     );
   }

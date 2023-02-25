@@ -49,6 +49,7 @@ class SoulController extends GetxController {
     WidgetsFlutterBinding.ensureInitialized();
     await getProfile();
     registerDevice();
+    firebaseSignIn();
     getFriends();
     currentlyPlaying();
     super.onInit();
@@ -78,20 +79,31 @@ class SoulController extends GetxController {
     });
   }
 
+  void firebaseSignIn() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? firebaseToken = preferences.getString('firebase_token');
+
+    if (firebaseToken != null) {
+      FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
+    }
+  }
+
   void registerDevice() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    if (preferences.containsKey('firebase_token')) {
-      String? firebaseToken = preferences.getString('firebase_token');
-      if (firebaseToken != null) {
-        FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
-      }
-    } else {
+    if (!preferences.containsKey('fcm_token')) {
+      // if (preferences.containsKey('firebase_token')) {
+      //   String? firebaseToken = preferences.getString('firebase_token');
+      //   if (firebaseToken != null) {
+      //     FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
+      //   }
+      // } else {
       var fireToken = await FirebaseMessaging.instance.getToken();
       //firebase_token
       http.Response response = await client
           .post(registerDeviceUrl, body: {'firebase_token': fireToken!});
+
       if (response.statusCode <= 210) {
-        preferences.setString('firebase_token', fireToken);
+        preferences.setString('fcm_token', fireToken);
       }
     }
   }
