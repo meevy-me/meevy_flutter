@@ -150,12 +150,14 @@ void trackAddToPlaylist(
       .collection('meevyPlaylists')
       .doc(playlistID)
       .get();
+
   if (!doc_ref.exists) {
     FirebaseFirestore.instance
         .collection('meevyPlaylists')
         .doc(playlistID)
         .set(playlistMetadata);
   }
+
   FirebaseFirestore.instance
       .collection('meevyPlaylists')
       .doc(playlistID)

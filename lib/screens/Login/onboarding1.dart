@@ -12,6 +12,7 @@ class Page1 extends StatelessWidget {
     return Onboarding(
       assetUrl: "assets/images/girl_onboarding.jpg",
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           //Indicator Widget
           // const Indicators(
@@ -27,51 +28,56 @@ class Page1 extends StatelessWidget {
                   .copyWith(fontWeight: FontWeight.w600),
             ),
           ),
-          Center(
-            child: Text(
-              "Music draws the rhythm in our lives. Meevy is there to find people with the same wavelength as us.",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                    color: Colors.grey,
-                    height: 1.5,
-                  ),
+          // const Spacer(),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
+            child: Center(
+              child: Text(
+                "Music draws the rhythm in our lives. Meevy is there to find people with the same wavelength as us.",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+              ),
             ),
           ),
-          const SizedBox(
-            height: defaultMargin * 2,
-          ),
-          ElevatedButton(
-              onPressed: onPress,
-              style: ElevatedButton.styleFrom(
-                  fixedSize: Size(size.width, 50),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  backgroundColor: Theme.of(context).primaryColor),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.login,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(
-                        width: defaultMargin,
-                      ),
-                      Text(
-                        "Proceed to Meevy",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(color: Colors.white),
-                      )
-                    ],
+          // const Spacer(),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+            child: ElevatedButton(
+                onPressed: onPress,
+                style: ElevatedButton.styleFrom(
+                    fixedSize: Size(size.width, 50),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    backgroundColor: Theme.of(context).primaryColor),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.login,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(
+                          width: defaultMargin,
+                        ),
+                        Text(
+                          "Proceed to Meevy",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(color: Colors.white),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ))
+                )),
+          )
         ],
       ),
     );

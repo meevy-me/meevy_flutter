@@ -41,7 +41,7 @@ class Onboarding extends StatelessWidget {
         ),
         Container(
             // alignment: Alignment.bottomCenter,
-            height: size.height * 0.3,
+            // height: size.height * 0.3,
             padding: scaffoldPadding,
             decoration: const BoxDecoration(
                 color: Colors.white,

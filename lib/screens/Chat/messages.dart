@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/Modals/invite_modal.dart';
 import 'package:soul_date/components/icon_container.dart';
+import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/components/spot.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -100,57 +101,7 @@ class _MessagesPageState extends State<MessagesPage>
         ],
       ),
       floatingActionButton: controller.profile != null
-          ? InkWell(
-              child: Material(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                type: MaterialType.button,
-                // padding: const EdgeInsets.symmetric(
-                //       vertical: defaultMargin,
-                //       horizontal: defaultMargin + defaultPadding),
-                //   decoration: BoxDecoration(
-                //       color: Theme.of(context).colorScheme.primaryContainer,
-                //       borderRadius: BorderRadius.circular(20)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: defaultMargin,
-                      horizontal: defaultMargin + defaultPadding),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/status.svg',
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      const SizedBox(
-                        width: defaultPadding,
-                      ),
-                      Text(
-                        "Create Spot",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(color: Colors.white, fontSize: 13),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              onTap: () async {
-                SpotifyDetails? item =
-                    await controller.spotify.currentlyPlaying();
-                if (item != null) {
-                  Navigation.push(context,
-                      customPageTransition: PageTransition(
-                          child: MySpotScreen(details: item.item),
-                          type: PageTransitionType.fromBottom));
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text(
-                          "There is an issue, you can try playing a song")));
-                }
-              })
+          ? _SpotActionButton(controller: controller)
           : null,
       body: SafeArea(
         child: Column(
@@ -177,6 +128,79 @@ class _MessagesPageState extends State<MessagesPage>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class _SpotActionButton extends StatelessWidget {
+  const _SpotActionButton({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
+
+  final SoulController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        child: Material(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          type: MaterialType.button,
+          // padding: const EdgeInsets.symmetric(
+          //       vertical: defaultMargin,
+          //       horizontal: defaultMargin + defaultPadding),
+          //   decoration: BoxDecoration(
+          //       color: Theme.of(context).colorScheme.primaryContainer,
+          //       borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                vertical: defaultMargin,
+                horizontal: defaultMargin + defaultPadding),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GetBuilder<SoulController>(
+                    id: 'currentlyPlaying',
+                    builder: (controller) {
+                      return controller.currentlyPlayingSong == null
+                          ? SvgPicture.asset(
+                              'assets/images/status.svg',
+                              color: Theme.of(context).primaryColor,
+                            )
+                          : SoulCircleAvatar(
+                              imageUrl:
+                                  controller.currentlyPlayingSong!.item.image,
+                              radius: 8,
+                            );
+                    }),
+                const SizedBox(
+                  width: defaultPadding,
+                ),
+                Text(
+                  "Create Spot",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: Colors.white, fontSize: 13),
+                )
+              ],
+            ),
+          ),
+        ),
+        onTap: () async {
+          SpotifyDetails? item = await controller.spotify.currentlyPlaying();
+          if (item != null) {
+            Navigation.push(context,
+                customPageTransition: PageTransition(
+                    child: MySpotScreen(details: item.item),
+                    type: PageTransitionType.fromBottom));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content:
+                    Text("There is an issue, you can try playing a song")));
+          }
+        });
+  }
 }
 
 class _SpotSection extends StatefulWidget {

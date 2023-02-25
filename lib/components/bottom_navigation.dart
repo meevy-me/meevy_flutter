@@ -56,21 +56,20 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
             },
             child: _BottomNavigationItem(
               active: widget.activeIndex == 1 ? true : false,
-              assetUrl: 'assets/images/headset.svg',
-              title: "Activity",
+              assetUrl: 'assets/images/users-alt.svg',
+              title: "Friends",
             ),
           ),
           InkWell(
             onTap: () {
               setState(() {
-                // selectedIndex = 2;
                 widget.onTap(2);
               });
             },
             child: _BottomNavigationItem(
               active: widget.activeIndex == 2 ? true : false,
-              assetUrl: 'assets/images/album.svg',
-              title: "Playlists",
+              assetUrl: 'assets/images/map-marker-three.svg',
+              title: "Map",
             ),
           ),
           InkWell(
@@ -79,23 +78,11 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
                 widget.onTap(3);
               });
             },
-            child: _BottomNavigationItem(
-              active: widget.activeIndex == 3 ? true : false,
-              assetUrl: 'assets/images/users-alt.svg',
-              title: "Friends",
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                widget.onTap(4);
-              });
-            },
             child: GetBuilder<SoulController>(
                 // tag: 'profile',
                 builder: (controller) {
               return _BottomNavigationItem(
-                active: widget.activeIndex == 4 ? true : false,
+                active: widget.activeIndex == 3 ? true : false,
                 child: controller.profile != null
                     ? SoulCircleAvatar(
                         imageUrl: controller.profile!.profilePicture.image,

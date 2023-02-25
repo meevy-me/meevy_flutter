@@ -24,9 +24,17 @@ import 'package:url_launcher/url_launcher_string.dart';
 class Spotify {
   // late String accessToken;
   // late String refreshToken;
+
+  static final Spotify _singleton = Spotify._internal();
+
   SpotifyUser? currentUser;
-  Spotify() {
-    // getCurrentUser();
+
+  factory Spotify() {
+    return _singleton;
+  }
+
+  Spotify._internal() {
+    // initialization code here
   }
 
   SpotifyClient client = SpotifyClient();

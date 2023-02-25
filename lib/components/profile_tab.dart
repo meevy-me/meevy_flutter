@@ -1,20 +1,28 @@
 import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:soul_date/animations/page_transition.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/profile_action_button.dart';
 import 'package:soul_date/components/profile_tab_button.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/favourite_model.dart';
+import 'package:soul_date/screens/Playlists/models/meevy_playlist_detail.dart';
+import 'package:soul_date/screens/Playlists/playlists_detail.dart';
 import 'package:soul_date/screens/favourite_playlists.dart';
 import 'package:soul_date/screens/favourite_song.dart';
 import 'package:soul_date/screens/my_images.dart';
 import 'package:soul_date/screens/profile2.dart';
 import 'package:soul_date/services/formatting.dart';
+import 'package:soul_date/services/navigation.dart';
 
 import '../constants/constants.dart';
+import '../models/Spotify/base_model.dart';
+import '../models/models.dart';
+import '../services/spotify_utils.dart';
 
 class ProfileTabView extends StatefulWidget {
   const ProfileTabView({
@@ -115,6 +123,8 @@ class _ProfileDetails extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _LikedActionButton(),
+
           ProfileActionButton(
             iconData: CupertinoIcons.person,
             title: "Profile",
@@ -140,6 +150,84 @@ class _ProfileDetails extends StatelessWidget {
         ],
       );
     });
+  }
+}
+
+class _LikedActionButton extends StatefulWidget {
+  const _LikedActionButton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_LikedActionButton> createState() => _LikedActionButtonState();
+}
+
+class _LikedActionButtonState extends State<_LikedActionButton> {
+  final SoulController controller = Get.find<SoulController>();
+
+  Future<List<SpotifyData>> getTracks() async {
+    var collection = await FirebaseFirestore.instance
+        .collection('likedPlaylist')
+        .doc(controller.profile!.user.id.toString())
+        .collection('tracks')
+        .orderBy('date_added', descending: true)
+        .get();
+    return collection.docs.map((e) {
+      // print(e.data());
+      var item = Item.fromJson(e.data()['track']);
+      return item;
+    }).toList();
+  }
+
+  late Future<List<SpotifyData>> _future;
+
+  @override
+  void initState() {
+    _future = getTracks();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<SpotifyData>>(
+        future: _future,
+        builder: (context, snapshot) {
+          return ProfileActionButton(
+            iconData: CupertinoIcons.heart,
+            title: "Liked Songs",
+            child1: snapshot.data != null
+                ? RowSuper(
+                    children: snapshot.data!
+                        .take(3)
+                        .map((e) => SoulCircleAvatar(
+                              imageUrl: e.image,
+                              radius: 12,
+                            ))
+                        .toList())
+                : null,
+            subtitle: snapshot.data != null && snapshot.data!.isNotEmpty
+                ? "Contains ${snapshot.data!.length} tracks"
+                : "Songs you have liked while using meevy",
+            onTap: () {
+              if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+                Navigation.push(context,
+                    customPageTransition: PageTransition(
+                        child: PlaylistDetailPage(
+                          onPlay: () {
+                            favouritesPlayAll(context);
+                          },
+                          tracksFn: getTracks,
+                          meevyBasePlaylist: MeevyBasePlaylist(
+                              name: "Meevy Favourites",
+                              description:
+                                  "Songs you have liked while using meevy",
+                              contributors: [controller.profile!]),
+                        ),
+                        type: PageTransitionType.fromBottom));
+              }
+            },
+          );
+        });
   }
 }
 

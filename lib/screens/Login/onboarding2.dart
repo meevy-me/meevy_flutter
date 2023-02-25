@@ -13,6 +13,7 @@ class Page2 extends StatelessWidget {
     return Onboarding(
       assetUrl: "assets/images/man_onboarding.jpg",
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           //Indicator Widget
           // const Indicators(
@@ -28,18 +29,21 @@ class Page2 extends StatelessWidget {
                   .copyWith(fontWeight: FontWeight.w600),
             ),
           ),
-          Center(
-            child: Text(
-              "Link your Spotify account to enjoy Meevy. By proceeding you agree to the Terms & Conditions and Privacy Policy.",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                    color: Colors.grey,
-                    height: 1.5,
-                  ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
+            child: Center(
+              child: Text(
+                "Link your Spotify account to enjoy Meevy. By proceeding you agree to the Terms & Conditions and Privacy Policy.",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                      color: Colors.grey,
+                      height: 1.5,
+                    ),
+              ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultMargin * 3),
+            padding: const EdgeInsets.symmetric(vertical: defaultMargin),
             child: ElevatedButton(
                 onPressed: onPress,
                 style: ElevatedButton.styleFrom(

@@ -87,6 +87,16 @@ class Friends extends Comparable<Friends> {
     }
   }
 
+  Profile get currentProfile {
+    final SoulController controller = Get.find<SoulController>();
+
+    if (controller.profile!.id != profile1.id) {
+      return profile2;
+    } else {
+      return profile1;
+    }
+  }
+
   Profile friendsProfileSafe(int id) {
     if (id == profile1.id) {
       return profile2;

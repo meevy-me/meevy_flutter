@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/Chat/profile_status.dart';
 import 'package:soul_date/components/chatbox.dart';
 import 'package:soul_date/components/empty_widget.dart';
+import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
@@ -65,7 +67,16 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: ProfileStatus(profile: profile),
-        actions: const [],
+        actions: const [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: defaultMargin),
+            child: IconContainer(
+                icon: Icon(
+              CupertinoIcons.music_albums,
+              color: Colors.black,
+            )),
+          )
+        ],
         centerTitle: true,
       ),
       body: SafeArea(

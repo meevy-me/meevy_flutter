@@ -42,7 +42,7 @@ class SoulController extends GetxController {
   List<FavouritePlaylist> favouritePlaylist = [];
   Spotify spotify = Spotify();
   Map<int, Profile> profileCache = {};
-  Cron cron = Cron();
+  SpotifyDetails? currentlyPlayingSong;
 
   @override
   void onInit() async {
@@ -65,6 +65,7 @@ class SoulController extends GetxController {
     Timer.periodic(const Duration(minutes: 1), (timer) async {
       if (profile != null) {
         SpotifyDetails? data = await spotify.currentlyPlaying();
+        currentlyPlayingSong = data;
         if (data != null) {
           FirebaseDatabase.instance
               .ref()
@@ -72,6 +73,7 @@ class SoulController extends GetxController {
               .child(profile!.user.id.toString())
               .set(data.item.toJson());
         }
+        update(['currentlyPlaying']);
       }
     });
   }

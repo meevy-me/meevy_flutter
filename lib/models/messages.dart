@@ -27,7 +27,9 @@ class Message {
         content: json["message"],
         datePosted:
             json['date_sent'] != null ? json["date_sent"] as Timestamp : null,
-        sender: int.parse(json["sender"]),
+        sender: json['sender'] is String
+            ? int.parse(json["sender"])
+            : json['sender'],
         replyTo: json['reply_to']);
   }
   // spot: json["spot"],

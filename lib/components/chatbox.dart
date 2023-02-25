@@ -35,19 +35,22 @@ class ChatBox extends StatefulWidget {
 class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
   bool isText = true;
   bool mine = false;
+  bool isSpotifyUrl = false;
   final SoulController soulController = Get.find<SoulController>();
-  SpotifyData? spotifyData;
+  // SpotifyData? spotifyData;
   @override
   void initState() {
     if (widget.message.sender != widget.profile.user.id) {
       mine = true;
     }
-    matchText();
+    setState(() {
+      isSpotifyUrl = matchText();
+    });
 
     super.initState();
   }
 
-  matchText() async {
+  matchText() {
     if (widget.message.content.contains("https://open.spotify.com/")) {
       var text =
           widget.message.content.replaceAll("https://open.spotify.com/", "");
@@ -58,11 +61,9 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
       if (fieldId.contains("?")) {
         fieldId = fieldId.split("?")[0];
       }
-      SpotifyData? data = await soulController.spotify.getItem(field, fieldId);
-      setState(() {
-        spotifyData = data;
-      });
+      return true;
     }
+    return false;
   }
 
   @override
@@ -84,7 +85,7 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
           crossAxisAlignment:
               mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            spotifyData == null
+            !isSpotifyUrl
                 ? Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: defaultMargin * 2,
@@ -134,8 +135,9 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
                     ),
                   )
                 : ChatSpotify(
-                    widget: widget,
-                    spotifyData: spotifyData,
+                    profile: widget.friends.friendsProfile,
+                    width: widget.width,
+                    message: widget.message,
                     key: ValueKey(widget.message),
                   ),
             if (widget.onSwipe != null)
