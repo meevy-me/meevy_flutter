@@ -15,5 +15,5 @@ abstract class SpotifyFavouriteItem {
   }
 
   @override
-  int get hashCode => super.hashCode;
+  int get hashCode => id.hashCode;
 }

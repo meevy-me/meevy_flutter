@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/chat_item.dart';
 import 'package:soul_date/components/pulse.dart';
-import 'package:soul_date/models/friend_model.dart';
 import 'package:soul_date/models/models.dart';
 
 import '../../../constants/constants.dart';

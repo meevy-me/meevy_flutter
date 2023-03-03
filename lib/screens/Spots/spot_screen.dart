@@ -18,7 +18,6 @@ import 'package:soul_date/models/spots.dart';
 import 'package:soul_date/screens/Spots/share_item.dart';
 import 'package:soul_date/services/modal.dart';
 import 'package:soul_date/services/navigation.dart';
-import 'package:widgets_to_image/widgets_to_image.dart';
 
 import 'components/spot_background.dart';
 import 'components/spot_song_image.dart';
@@ -34,7 +33,6 @@ class SpotScreen extends StatefulWidget {
 class _SpotScreenState extends State<SpotScreen> {
   final SoulController controller = Get.find<SoulController>();
   final SpotController spotController = Get.find<SpotController>();
-  final WidgetsToImageController imageController = WidgetsToImageController();
   // late Future<List<SpotBuddy>> _future;
 
   @override

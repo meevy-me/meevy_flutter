@@ -1,5 +1,7 @@
+import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+import 'package:soul_date/services/date_format.dart';
 
 import '../constants/constants.dart';
 
@@ -147,82 +149,20 @@ class _DateInputFieldState extends State<DateInputField> {
               .bodyText1!
               .copyWith(color: widget.labelColor ?? textBlack97),
         ),
-        Row(
-          children: [
-            Expanded(
-              child: TextFormField(
-                  style: Theme.of(context).textTheme.bodyText1,
-                  controller: day,
-                  keyboardType: textInputType,
-                  onChanged: onChange,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    FilteringTextInputFormatter.allow(RegExp(r'[1-31]'))
-                  ],
-                  textAlign: TextAlign.center,
-                  decoration: decoration(context, "Day")),
-            ),
-            const SizedBox(
-              width: defaultMargin * 2,
-              child: Text(
-                "/",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            Expanded(
-              child: TextFormField(
-                  style: Theme.of(context).textTheme.bodyText1,
-                  controller: month,
-                  keyboardType: textInputType,
-                  textAlign: TextAlign.center,
-                  onChanged: onChange,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    FilteringTextInputFormatter.allow(RegExp(r'[1-12]'))
-                  ],
-                  validator: ((value) {
-                    if (value != null) {
-                      var month = int.parse(value);
-                      if (month > 12 || month < 1) {
-                        return "Enter a valid month";
-                      }
-                    }
-                    return null;
-                  }),
-                  decoration: decoration(context, "Month")),
-            ),
-            const SizedBox(
-              width: defaultMargin * 2,
-              child: Text(
-                "/",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-            Expanded(
-              child: TextFormField(
-                  style: Theme.of(context).textTheme.bodyText1,
-                  controller: year,
-                  keyboardType: textInputType,
-                  onChanged: onChange,
-                  validator: (value) {
-                    if (value != null) {
-                      var now = DateTime.now();
-                      var selected = int.parse(value);
-                      if ((now.year - selected) < 18) {
-                        return "You don't meet the age requirements.";
-                      }
-                    }
-                    return null;
-                  },
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  textAlign: TextAlign.center,
-                  decoration: decoration(context, "Year")),
-            ),
-          ],
+        DateTimeFormField(
+          dateTextStyle: Theme.of(context).textTheme.bodyText1,
+          mode: DateTimeFieldPickerMode.date,
+          onDateSelected: widget.selectedDate,
+          decoration: decoration(
+              context,
+              widget.initialDate != null
+                  ? formatDate(widget.initialDate!,
+                      pattern: formatDate(widget.initialDate!,
+                          pattern: DateFormat.yMMMd().pattern))
+                  : 'When were you born :)'),
+          initialDate: widget.initialDate,
+          lastDate: DateTime(DateTime.now().year),
+          firstDate: DateTime(1920),
         )
       ],
     );

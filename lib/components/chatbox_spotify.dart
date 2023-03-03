@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:soul_date/components/chatbox.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
@@ -48,6 +47,7 @@ class _ChatSpotifyState extends State<ChatSpotify>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     var spotifyData = widget.spotifyData;
     return GestureDetector(
       onTap: (() async {
@@ -162,6 +162,7 @@ class _SongActionsState extends State<_SongActions>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [

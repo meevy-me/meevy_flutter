@@ -30,6 +30,7 @@ class _DiscoverMatchState extends State<DiscoverMatch>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         // Match match = widget.matchesList[_index];

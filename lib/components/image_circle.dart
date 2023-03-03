@@ -43,6 +43,7 @@ class _ProfileAvatarState extends State<ProfileAvatar>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return FutureBuilder<ProfileImages>(
       future: _future,
       builder: (context, snapshot) {

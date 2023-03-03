@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';

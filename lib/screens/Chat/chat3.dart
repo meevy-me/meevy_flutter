@@ -1,18 +1,11 @@
-import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:soul_date/components/icon_container.dart';
-import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/screens/Chat/components/chat_appbar.dart';
 import 'package:soul_date/screens/Chat/components/chat_messages_list.dart';
 import 'package:soul_date/screens/Chat/components/chat_textarea.dart';
-import 'package:soul_date/services/formatting.dart';
 import 'package:soul_date/services/spotify.dart';
 import 'package:soul_date/services/spotify_utils.dart';
-import 'package:text_scroll/text_scroll.dart';
 
 import '../../models/models.dart';
 import 'components/track_summary.dart';
@@ -26,7 +19,6 @@ class ChatMessagesPage extends StatefulWidget {
 
 class _ChatMessagesPageState extends State<ChatMessagesPage> {
   final TextEditingController textEditingController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
   double _bottomHeight = 75;
 
   SpotifyData? spotifyTrack;

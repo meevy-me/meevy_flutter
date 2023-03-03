@@ -1,18 +1,8 @@
-import 'dart:async';
-import 'dart:math';
 
-import 'package:assorted_layout_widgets/assorted_layout_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:soul_date/components/icon_container.dart';
-import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/screens/Chat/components/expanded_track_summary.dart';
-import 'package:soul_date/screens/Playlists/components/playlist_song_card.dart';
-import 'package:soul_date/services/formatting.dart';
-import 'package:soul_date/services/spotify_utils.dart';
-import 'package:text_scroll/text_scroll.dart';
 
 import '../../../constants/constants.dart';
 import '../../../models/models.dart';

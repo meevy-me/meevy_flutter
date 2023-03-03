@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:get/get.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:http/http.dart' as http;
@@ -12,7 +13,6 @@ import 'package:soul_date/screens/datafetch.dart';
 import 'package:soul_date/screens/password.dart';
 import 'package:soul_date/screens/profile.dart';
 import 'package:soul_date/screens/reset_code_Screen.dart';
-import 'package:soul_date/screens/splash_screen.dart';
 import 'package:soul_date/services/analytics.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/notifications.dart';
@@ -91,6 +91,9 @@ class SpotifyController extends GetxController {
     } else {
       endpoint = loginUrl;
     }
+    if (context != null) {
+      context.loaderOverlay.show();
+    }
     http.Response response = await client.post(endpoint, body: body);
     if (response.statusCode <= 210) {
       Map json = jsonDecode(response.body);
@@ -109,9 +112,7 @@ class SpotifyController extends GetxController {
         if (json['profile'] != null) {
           if (context != null) _showSnackBar("Success. Welcome back", context);
 
-          Get.to(() => DataFetchPage(
-              accessToken: preferences.getString('spotify_accesstoken')!,
-              refreshToken: preferences.getString('spotify_refreshtoken')!));
+          Get.to(() => const DataFetchPage());
         } else {
           if (context != null) {
             _showSnackBar("Success. Create Profile", context);
@@ -121,6 +122,9 @@ class SpotifyController extends GetxController {
         }
       }
     } else {
+      if (context != null) {
+        context.loaderOverlay.hide();
+      }
       log(response.body, name: "LOGIN ERROR");
       errors = json.decode(response.body);
       update(["Login_errors"]);
@@ -129,7 +133,6 @@ class SpotifyController extends GetxController {
 
   void createProfile(Map<String, String> body,
       {bool update = false, BuildContext? context}) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
     http.Response res = await client.post(profileUrl, body: body);
     if (res.statusCode <= 210) {
       if (context != null) {
@@ -138,28 +141,9 @@ class SpotifyController extends GetxController {
                 ? "Profile Updated Successfully"
                 : "Profile created successfully")));
       }
-      Get.to(() => DataFetchPage(
-          accessToken: preferences.getString('spotify_accesstoken')!,
-          refreshToken: preferences.getString('spotify_refreshtoken')!));
+      Get.to(() => const DataFetchPage());
     } else {
       log(res.body, name: "API ERROR");
-    }
-  }
-
-  void fetchData() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    http.Response response = await client.post(fetchDataUrl, body: {
-      'access_token': preferences.getString('spotify_accesstoken')!,
-      'refresh_token': preferences.getString('spotify_refreshtoken')!
-    });
-
-    if (response.statusCode <= 210) {
-      Get.to(() => const SplashScreen());
-    } else if (response.statusCode <= 500) {
-      log(response.body);
-      // Get.to(() => const SplashScreen());
-    } else {
-      log(response.body, name: "ERROR");
     }
   }
 

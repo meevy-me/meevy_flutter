@@ -7,7 +7,6 @@ import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:swipe_to/swipe_to.dart';
 

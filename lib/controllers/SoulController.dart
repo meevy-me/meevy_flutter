@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cron/cron.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/SpotifySearch/my_spotify_playlists.dart';
@@ -43,6 +43,7 @@ class SoulController extends GetxController {
   Spotify spotify = Spotify();
   Map<int, Profile> profileCache = {};
   SpotifyDetails? currentlyPlayingSong;
+  bool loading = false;
 
   @override
   void onInit() async {
@@ -172,7 +173,6 @@ class SoulController extends GetxController {
 
   Future<Friends> getFriend(int id) async {
     http.Response response = await client.get(fetchFriendsUrl + "$id/");
-
     return Friends.fromJson(json.decode(response.body));
   }
 
@@ -286,11 +286,13 @@ class SoulController extends GetxController {
   }
 
   void updateProfile(Map body, {required BuildContext context}) async {
-    http.Response res = await client.patch('${profileUrl}1/', body);
+    context.loaderOverlay.show();
+    http.Response res = await client.patch('${profileUrl}2/', body);
+    context.loaderOverlay.hide();
     if (res.statusCode <= 210) {
       getProfile(reset: true);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Profile Updated. Matches will update tomorrow")));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Profile Updated.")));
     } else {
       log(res.body, name: "UPDATE PROFILE");
       ScaffoldMessenger.of(context)
@@ -307,8 +309,14 @@ class SoulController extends GetxController {
   }
 
   uploadImage(XFile file, {required BuildContext context}) async {
+    loading = true;
+    update(['loading']);
+    context.loaderOverlay.show();
     http.Response res = await client.post(uploadImageUrl,
         body: {'profile': profile!.id.toString()}, file: file);
+    context.loaderOverlay.hide();
+    loading = false;
+    update(['loading']);
     if (res.statusCode <= 210) {
       getProfile(reset: true);
       Get.back();
@@ -322,7 +330,9 @@ class SoulController extends GetxController {
   }
 
   deleteImage(int id, {required BuildContext context}) async {
+    context.loaderOverlay.show();
     var res = await client.delete(picturesUrl + '$id/');
+    context.loaderOverlay.hide();
     if (res.statusCode <= 210) {
       getProfile(reset: true);
       ScaffoldMessenger.of(context).showSnackBar(

@@ -85,7 +85,9 @@ class Profile extends HiveObject {
 
   List<ProfileImages> get validImages {
     if (images.isNotEmpty) {
-      return images.takeWhile((element) => !element.isDefault).toList();
+      return images.where((element) {
+        return !element.isDefault;
+      }).toList();
     } else {
       return images.toList();
     }

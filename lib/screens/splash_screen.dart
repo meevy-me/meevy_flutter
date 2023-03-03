@@ -6,6 +6,8 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/Login/login.dart';
 import 'package:soul_date/screens/home.dart';
 
+import 'datafetch.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -20,6 +22,14 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
   }
 
+  Future<bool> isValidRefresh() async {
+    var preferences = await SharedPreferences.getInstance();
+    var cacheTime = preferences.getInt('datefetch');
+    return cacheTime != null &&
+        (DateTime.now().millisecondsSinceEpoch - cacheTime) <
+            24 * 60 * 60 * 1000;
+  }
+
   void checkLogin() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     // final service = FlutterBackgroundService();
@@ -30,8 +40,17 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       Get.put(SoulController(), permanent: true);
 
+      late Widget destination;
+      if (!await isValidRefresh()) {
+        destination = const DataFetchPage();
+      } else {
+        destination = const HomePage();
+      }
+
+      // if(preferences.get)
+
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => destination),
           (route) => false);
     }
   }

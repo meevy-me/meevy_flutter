@@ -141,6 +141,7 @@ class _FeedbackQuestion1State extends State<FeedbackQuestion1>
   int selectedNumber = 0;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 230, 230, 230),

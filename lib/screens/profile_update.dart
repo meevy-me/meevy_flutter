@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
@@ -45,98 +46,107 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          padding: scaffoldPadding,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(defaultMargin),
-              child: Row(
-                children: [
-                  SizedBox(
-                      width: 20,
-                      child: IconContainer(
-                        icon: const Icon(Icons.arrow_back_ios),
-                        onPress: () => Navigator.pop(context),
-                      )),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        "My Profile",
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            fontWeight: FontWeight.w600, fontSize: 16),
+        child: LoaderOverlay(
+          useDefaultLoading: false,
+          overlayWidget: Center(
+            child: LoadingPulse(color: Theme.of(context).primaryColor),
+          ),
+          child: ListView(
+            padding: scaffoldPadding,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(defaultMargin),
+                child: Row(
+                  children: [
+                    SizedBox(
+                        width: 20,
+                        child: IconContainer(
+                          icon: const Icon(Icons.arrow_back_ios),
+                          onPress: () => Navigator.pop(context),
+                        )),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          "My Profile",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(
+                                  fontWeight: FontWeight.w600, fontSize: 16),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  )
-                ],
+                    const SizedBox(
+                      width: 20,
+                    )
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                      width: size.width, child: _buildProfileImage(context)),
-                  const SizedBox(
-                    height: defaultMargin * 2,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SecondaryTextInput(
-                        label: "Display Name",
-                        validator: (String? value) {
-                          if (value!.isEmpty) {
-                            return "Field is required";
-                          }
-                          return null;
-                        },
-                        controller: name,
-                      ),
-                      Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: defaultMargin * 4),
-                          child: DateInputField(
-                            selectedDate: (date) {
-                              setState(() {
-                                selectedDate = date;
-                              });
-                            },
-                            initialDate: soulController.profile!.dateOfBirth,
-                            label: "Date Of Birth",
-                          )),
-                      SecondaryTextInput(
-                        label: "Bio",
-                        maxLines: 5,
-                        controller: bio,
-                      )
-                    ],
-                  )
-                ],
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                        width: size.width, child: _buildProfileImage(context)),
+                    const SizedBox(
+                      height: defaultMargin * 2,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SecondaryTextInput(
+                          label: "Display Name",
+                          validator: (String? value) {
+                            if (value!.isEmpty) {
+                              return "Field is required";
+                            }
+                            return null;
+                          },
+                          controller: name,
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: defaultMargin * 4),
+                            child: DateInputField(
+                              selectedDate: (date) {
+                                setState(() {
+                                  selectedDate = date;
+                                });
+                              },
+                              initialDate: soulController.profile!.dateOfBirth,
+                              label: "Date Of Birth",
+                            )),
+                        SecondaryTextInput(
+                          label: "Bio",
+                          maxLines: 5,
+                          controller: bio,
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: defaultMargin * 4,
-            ),
-            PrimaryButton(
-              onPress: () {
-                Map<String, String> body = {
-                  "bio": bio.text,
-                  "name": name.text,
-                  "looking_for": target,
-                  "date_of_birth":
-                      DateFormat("yyyy-MM-d").format(selectedDate!).toString()
-                };
+              const SizedBox(
+                height: defaultMargin * 4,
+              ),
+              PrimaryButton(
+                onPress: () {
+                  Map<String, String> body = {
+                    "bio": bio.text,
+                    "name": name.text,
+                    "looking_for": target,
+                    "date_of_birth":
+                        DateFormat("yyyy-MM-d").format(selectedDate!).toString()
+                  };
 
-                soulController.updateProfile(body, context: context);
-              },
-              text: "Update",
-              icon: const Icon(Icons.sync),
-            )
-          ],
+                  soulController.updateProfile(body, context: context);
+                },
+                text: "Update",
+                icon: const Icon(Icons.sync),
+              )
+            ],
+          ),
         ),
       ),
     );

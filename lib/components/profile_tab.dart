@@ -15,7 +15,7 @@ import 'package:soul_date/screens/Playlists/playlists_detail.dart';
 import 'package:soul_date/screens/favourite_playlists.dart';
 import 'package:soul_date/screens/favourite_song.dart';
 import 'package:soul_date/screens/my_images.dart';
-import 'package:soul_date/screens/profile2.dart';
+import 'package:soul_date/screens/profile_update.dart';
 import 'package:soul_date/services/formatting.dart';
 import 'package:soul_date/services/navigation.dart';
 
@@ -123,7 +123,7 @@ class _ProfileDetails extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _LikedActionButton(),
+          const _LikedActionButton(),
 
           ProfileActionButton(
             iconData: CupertinoIcons.person,

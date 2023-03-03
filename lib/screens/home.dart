@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:clipboard_listener/clipboard_listener.dart';
-import 'package:clipboard_monitor/clipboard_monitor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -11,9 +9,6 @@ import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:soul_date/screens/Chat/messages.dart';
 import 'package:soul_date/screens/discover.dart';
-import 'package:soul_date/screens/home/music_map.dart';
-import 'package:soul_date/screens/home/vinyls.dart';
-import 'package:soul_date/screens/Playlists/playlists.dart';
 import 'package:soul_date/screens/profile_home.dart';
 import 'package:soul_date/screens/send_spot_screen.dart';
 

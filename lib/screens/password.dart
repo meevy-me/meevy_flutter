@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:soul_date/components/appbar.dart';
 import 'package:soul_date/components/authfield.dart';
 import 'package:soul_date/components/buttons.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/AuthController.dart';
 import 'package:soul_date/models/spotifyuser.dart';
@@ -62,78 +64,84 @@ class _PasswordScreenBodyState extends State<_PasswordScreenBody> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: scaffoldPadding,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-          child: Column(
-            children: [
-              ClipOval(
-                  child: CachedNetworkImage(
-                imageUrl: widget.user.image,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              )),
-              const SizedBox(
-                height: defaultPadding,
-              ),
-              Text(
-                "Hello ${widget.user.displayName}",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
-          ),
-        ),
-        GetBuilder<SpotifyController>(
-            id: "Login_errors",
-            builder: (controller) {
-              return Text(
-                controller.errors,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(color: Colors.red),
-              );
-            }),
-        Form(
-          key: formKey,
-          child: Padding(
+    return LoaderOverlay(
+      useDefaultLoading: false,
+      overlayWidget: Center(
+        child: LoadingPulse(color: Theme.of(context).primaryColor),
+      ),
+      child: ListView(
+        padding: scaffoldPadding,
+        children: [
+          Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultMargin),
-            child: widget.registered
-                ? _RegisterWidget(
-                    pass1: pass1,
-                    pass2: pass2,
-                    email: email,
-                  )
-                : _LoginWidget(
-                    user: widget.user,
-                    pass: pass1,
-                  ),
+            child: Column(
+              children: [
+                ClipOval(
+                    child: CachedNetworkImage(
+                  imageUrl: widget.user.image,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                )),
+                const SizedBox(
+                  height: defaultPadding,
+                ),
+                Text(
+                  "Hello ${widget.user.displayName}",
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
-            child: PrimaryButton(
-                onPress: () {
-                  if (formKey.currentState!.validate()) {
-                    late Map<String, String> body;
-                    if (widget.registered) {
-                      body = {
-                        'email': email.text,
-                        'password1': pass1.text,
-                        'password2': pass2.text
-                      };
-                    } else {
-                      body = {'password': pass1.text};
+          GetBuilder<SpotifyController>(
+              id: "Login_errors",
+              builder: (controller) {
+                return Text(
+                  controller.errors,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: Colors.red),
+                );
+              }),
+          Form(
+            key: formKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: defaultMargin),
+              child: widget.registered
+                  ? _RegisterWidget(
+                      pass1: pass1,
+                      pass2: pass2,
+                      email: email,
+                    )
+                  : _LoginWidget(
+                      user: widget.user,
+                      pass: pass1,
+                    ),
+            ),
+          ),
+          Padding(
+              padding: const EdgeInsets.symmetric(vertical: defaultMargin * 2),
+              child: PrimaryButton(
+                  onPress: () {
+                    if (formKey.currentState!.validate()) {
+                      late Map<String, String> body;
+                      if (widget.registered) {
+                        body = {
+                          'email': email.text,
+                          'password1': pass1.text,
+                          'password2': pass2.text
+                        };
+                      } else {
+                        body = {'password': pass1.text};
+                      }
+                      spotifyController.authenticate(body);
                     }
-                    spotifyController.authenticate(body);
-                  }
-                },
-                text: widget.registered ? "Register" : "Login",
-                icon: const Icon(Icons.login)))
-      ],
+                  },
+                  text: widget.registered ? "Register" : "Login",
+                  icon: const Icon(Icons.login)))
+        ],
+      ),
     );
   }
 }

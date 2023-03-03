@@ -24,7 +24,7 @@ class ProfileImages {
 
   @override
   String toString() {
-    return image;
+    return isDefault.toString();
   }
 }
 

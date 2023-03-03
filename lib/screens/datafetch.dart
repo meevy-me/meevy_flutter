@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
 
-import 'package:get/get.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
-import 'package:soul_date/controllers/AuthController.dart';
+import 'package:soul_date/services/spotify.dart';
 
 class DataFetchPage extends StatefulWidget {
-  const DataFetchPage(
-      {Key? key, required this.accessToken, required this.refreshToken})
-      : super(key: key);
-  final String accessToken;
-  final String refreshToken;
+  const DataFetchPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<DataFetchPage> createState() => _DataFetchPageState();
 }
 
 class _DataFetchPageState extends State<DataFetchPage> {
-  final SpotifyController spotifyController = Get.find<SpotifyController>();
+  // final SpotifyController spotifyController = Get.find<SpotifyController>();
   @override
   void initState() {
-    spotifyController.fetchData();
+    Spotify().fetchData();
     super.initState();
   }
 

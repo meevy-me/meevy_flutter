@@ -2,22 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/empty_widget.dart';
 import 'package:soul_date/components/icon_container.dart';
-import 'package:soul_date/components/match_card.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
-import 'package:soul_date/models/match_model.dart';
 import 'package:soul_date/models/profile_model.dart';
-import 'package:soul_date/screens/home/music_map.dart';
-import 'package:soul_date/services/navigation.dart';
 
 import '../components/inputfield.dart';
 import '../components/pulse.dart';
 import '../components/search_profile_dialog.dart';
 import 'home/components/discover_match_card.dart';
-import 'match_detail.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({Key? key}) : super(key: key);
@@ -75,6 +69,7 @@ class _DiscoverPageState extends State<DiscoverPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -119,8 +114,8 @@ class _DiscoverPageState extends State<DiscoverPage>
                                         controller.fetchMatches(
                                             loading: loading);
                                       },
-                                      icon: Icon(Icons.refresh),
-                                      label: Text("Refresh")),
+                                      icon: const Icon(Icons.refresh),
+                                      label: const Text("Refresh")),
                                 )
                               ]),
                             ),

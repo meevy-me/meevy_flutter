@@ -32,9 +32,11 @@ class _ContactsRequestContainerState extends State<ContactsRequestContainer> {
 
   void syncContacts() async {
     var items = await getContactProfiles();
-    setState(() {
-      profiles = items;
-    });
+    if (mounted) {
+      setState(() {
+        profiles = items;
+      });
+    }
   }
 
   Future<bool> isAuthenticated() async {

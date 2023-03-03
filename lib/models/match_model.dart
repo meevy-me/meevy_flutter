@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-import 'package:soul_date/models/details_model.dart';
 import 'package:soul_date/models/models.dart';
 
 List<Match> matchFromJson(String str) =>

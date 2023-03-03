@@ -35,6 +35,7 @@ class _PlaylistsPageState extends State<PlaylistsPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,

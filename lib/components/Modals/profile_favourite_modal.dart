@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:soul_date/components/cached_image_error.dart';
-import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/pulse.dart';
-import 'package:soul_date/components/spotify_favourite.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';

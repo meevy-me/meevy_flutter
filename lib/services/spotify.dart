@@ -3,8 +3,10 @@ import 'dart:developer';
 
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/models/Spotify/album_model.dart';
 import 'package:soul_date/models/Spotify/artist_model.dart';
@@ -16,6 +18,8 @@ import 'package:soul_date/models/SpotifySearch/my_spotify_playlists.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_search.dart';
 import 'package:soul_date/models/spotify_spot_details.dart' as Spot;
 import 'package:soul_date/models/spotifyuser.dart';
+import 'package:soul_date/screens/home.dart';
+import 'package:soul_date/screens/splash_screen.dart';
 import 'package:soul_date/services/analytics.dart';
 import 'package:soul_date/services/network.dart';
 import 'package:soul_date/services/notifications.dart';
@@ -82,6 +86,25 @@ class Spotify {
       return null;
     } catch (e) {
       return null;
+    }
+  }
+
+  void fetchData() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    http.Response response = await client.client.post(fetchDataUrl, body: {
+      'access_token': preferences.getString('spotify_accesstoken')!,
+      'refresh_token': preferences.getString('spotify_refreshtoken')!
+    });
+    // print(response.body);
+
+    if (response.statusCode <= 210) {
+      preferences.setInt('datefetch', DateTime.now().millisecondsSinceEpoch);
+      Get.to(() => const SplashScreen());
+    } else if (response.statusCode <= 500) {
+      log(response.body);
+      Get.to(() => const HomePage());
+    } else {
+      log(response.body, name: "ERROR");
     }
   }
 

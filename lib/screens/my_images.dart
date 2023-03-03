@@ -24,6 +24,7 @@ class _MyImagesState extends State<MyImages> {
   XFile? _file;
   @override
   Widget build(BuildContext context) {
+    print(controller.profile!.validImages);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
           onPressed: () async {

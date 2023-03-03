@@ -6,7 +6,6 @@ import 'dart:convert';
 
 import 'package:soul_date/models/Spotify/album_model.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
-import 'package:soul_date/services/spotify_utils.dart';
 
 SpotifyTrack spotifyTrackFromJson(String str) =>
     SpotifyTrack.fromJson(json.decode(str));

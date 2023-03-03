@@ -21,7 +21,7 @@ class Page1 extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultMargin),
             child: Text(
-              "Find Your Musical Soulmate",
+              "Find Your Harmony",
               style: Theme.of(context)
                   .textTheme
                   .headline4!

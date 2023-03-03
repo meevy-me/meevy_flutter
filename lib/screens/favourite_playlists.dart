@@ -9,7 +9,6 @@ import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/SpotifySearch/my_spotify_playlists.dart';
 import 'package:soul_date/models/SpotifySearch/spotify_favourite_item.dart';
-import 'package:soul_date/services/queue.dart';
 
 class FavouritePlaylistScreen extends StatefulWidget {
   const FavouritePlaylistScreen({Key? key}) : super(key: key);

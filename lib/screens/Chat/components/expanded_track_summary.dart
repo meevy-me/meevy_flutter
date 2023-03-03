@@ -1,7 +1,6 @@
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/models/Spotify/base_model.dart';
 import 'package:soul_date/screens/Playlists/components/playlist_song_card.dart';
@@ -44,7 +43,7 @@ class _ExpandedTrackSummaryState extends State<ExpandedTrackSummary> {
           children: [
             IconContainer(
                 onPress: widget.onCollapse,
-                icon: Icon(
+                icon: const Icon(
                   Icons.keyboard_arrow_down,
                   color: Colors.white,
                   size: 35,

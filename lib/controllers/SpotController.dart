@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -19,16 +20,16 @@ class SpotController extends GetxController {
   RxList<SpotsView> mySpots = <SpotsView>[].obs;
   HttpClient client = HttpClient();
   WebSocketChannel? channel;
-  Future<List<SpotsView>?> fetchSpots() async {
-    http.Response res = await client.get(fetchSpotsUrl);
-    if (res.statusCode <= 210) {
-      var spotsList = spotsViewFromJson(utf8.decode(res.bodyBytes));
-      spots.value = spotsList;
-      return spotsList;
-    } else {
-      log(res.body, name: "SPOTS ERROR");
-    }
-    return null;
+  Future<void> fetchSpots() async {
+    Timer.periodic(const Duration(seconds: 40), (timer) async {
+      http.Response res = await client.get(fetchSpotsUrl);
+      if (res.statusCode <= 210) {
+        var spotsList = spotsViewFromJson(utf8.decode(res.bodyBytes));
+        spots.value = spotsList;
+      } else {
+        log(res.body, name: "SPOTS ERROR");
+      }
+    });
   }
 
   @override

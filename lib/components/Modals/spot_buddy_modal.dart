@@ -84,6 +84,7 @@ class _SpotBuddyProfileState extends State<_SpotBuddyProfile>
   int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     Size size = MediaQuery.of(context).size;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -32,6 +32,7 @@ class _VinylListState extends State<VinylList>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       children: [
         Padding(
@@ -118,6 +119,7 @@ class _VinylSentListState extends State<VinylSentList>
     with AutomaticKeepAliveClientMixin<VinylSentList> {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return StreamBuilder<QuerySnapshot>(
         stream: widget.stream,
         builder: (context, snapshot) {
