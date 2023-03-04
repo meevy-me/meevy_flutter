@@ -135,7 +135,7 @@ class _PasswordScreenBodyState extends State<_PasswordScreenBody> {
                       } else {
                         body = {'password': pass1.text};
                       }
-                      spotifyController.authenticate(body);
+                      spotifyController.authenticate(body, context: context);
                     }
                   },
                   text: widget.registered ? "Register" : "Login",

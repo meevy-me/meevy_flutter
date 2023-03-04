@@ -133,7 +133,13 @@ class SpotifyController extends GetxController {
 
   void createProfile(Map<String, String> body,
       {bool update = false, BuildContext? context}) async {
+    if (context != null) {
+      context.loaderOverlay.show();
+    }
     http.Response res = await client.post(profileUrl, body: body);
+    if (context != null) {
+      context.loaderOverlay.hide();
+    }
     if (res.statusCode <= 210) {
       if (context != null) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
