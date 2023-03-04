@@ -104,7 +104,7 @@ class _DiscoverPageState extends State<DiscoverPage>
                               delegate: SliverChildListDelegate([
                                 EmptyWidget(
                                   text:
-                                      "Oops, you have no matches. Don't worry",
+                                      "Don't lose hope! If you haven't found your music soulmates yet, why not try our app? Keep exploring and share to more users.",
                                   child: ElevatedButton.icon(
                                       style: ElevatedButton.styleFrom(
                                           backgroundColor:

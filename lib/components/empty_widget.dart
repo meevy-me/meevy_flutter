@@ -27,6 +27,7 @@ class EmptyWidget extends StatelessWidget {
         if (text != null)
           Text(
             text!,
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.caption,
           ),
         child != null ? child! : const SizedBox.shrink()

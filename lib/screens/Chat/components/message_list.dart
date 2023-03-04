@@ -37,41 +37,48 @@ class MessagesSection extends StatelessWidget {
                   .snapshots(),
               builder: (context, snapshot) {
                 return snapshot.data != null
-                    ? ListView.separated(
-                        separatorBuilder: (context, index) {
-                          return const Divider();
-                        },
-                        shrinkWrap: true,
-                        itemCount: snapshot.data!.size,
-                        itemBuilder: ((context, index) {
-                          var doc = snapshot.data!.docs[index];
-                          Map<String, dynamic> data =
-                              doc.data() as Map<String, dynamic>;
-                          return FutureBuilder<Friends>(
-                              future: messageController
-                                  .getFriend(int.parse(doc.id)),
-                              builder: (context, friendSnapshot) {
-                                if (friendSnapshot.connectionState ==
-                                        ConnectionState.done &&
-                                    friendSnapshot.data != null) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: defaultPadding),
-                                    child: ChatItem(
-                                        friend: friendSnapshot.data!,
-                                        lastMessage:
-                                            data.containsKey('last_message')
-                                                ? Message.fromJson(
-                                                    data['last_message'])
-                                                : null,
-                                        size: size),
-                                  );
-                                }
-                                return LoadingPulse(
-                                  color: Theme.of(context).primaryColor,
-                                );
-                              });
-                        }))
+                    ? snapshot.data!.size != 0
+                        ? ListView.separated(
+                            separatorBuilder: (context, index) {
+                              return const Divider();
+                            },
+                            shrinkWrap: true,
+                            itemCount: snapshot.data!.size,
+                            itemBuilder: ((context, index) {
+                              var doc = snapshot.data!.docs[index];
+                              Map<String, dynamic> data =
+                                  doc.data() as Map<String, dynamic>;
+                              return FutureBuilder<Friends>(
+                                  future: messageController
+                                      .getFriend(int.parse(doc.id)),
+                                  builder: (context, friendSnapshot) {
+                                    if (friendSnapshot.connectionState ==
+                                            ConnectionState.done &&
+                                        friendSnapshot.data != null) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: defaultPadding),
+                                        child: ChatItem(
+                                            friend: friendSnapshot.data!,
+                                            lastMessage:
+                                                data.containsKey('last_message')
+                                                    ? Message.fromJson(
+                                                        data['last_message'])
+                                                    : null,
+                                            size: size),
+                                      );
+                                    }
+                                    return LoadingPulse(
+                                      color: Theme.of(context).primaryColor,
+                                    );
+                                  });
+                            }))
+                        : Center(
+                            child: Text(
+                              "You have no friends yet, :(",
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                          )
                     : const LoadingPulse();
               })),
     );
