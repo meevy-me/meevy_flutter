@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/Modals/invite_modal.dart';
@@ -20,6 +21,7 @@ import 'package:soul_date/screens/my_spot_screen.dart';
 import 'package:soul_date/services/modal.dart';
 import 'package:soul_date/services/navigation.dart';
 
+import '../../models/models.dart';
 import 'components/message_list.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -45,12 +47,15 @@ class _MessagesPageState extends State<MessagesPage>
 
   int? profileID;
   void getProfileID() async {
+    var profileBox = await Hive.openBox<Profile>('profile');
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
-    int id = preferences.getInt('profileID')!;
-    setState(() {
-      profileID = id;
-    });
+    int? id = preferences.getInt('profileID');
+    if (id != null && profileBox.containsKey(id)) {
+      setState(() {
+        profileID = profileBox.get(id)!.user.id;
+      });
+    }
   }
 
   @override

@@ -31,8 +31,8 @@ class ChatAppBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SoulCircleAvatar(
-              imageUrl: friendsProfile.images.first.image,
+            ProfileAvatar(
+              profileID: friendsProfile.id,
               radius: 15,
             ),
             const SizedBox(

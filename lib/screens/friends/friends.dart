@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soul_date/constants/constants.dart';
 
-import 'components/contact_requests_container.dart';
 import 'components/friend_requests_container.dart';
 
 class FriendsPage extends StatelessWidget {
@@ -50,10 +49,6 @@ class FriendsPage extends StatelessWidget {
           child: ListView(
             children: const [
               FriendRequestsContainer(),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: defaultMargin),
-                child: ContactsRequestContainer(),
-              )
             ],
           ),
         ),

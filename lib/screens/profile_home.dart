@@ -23,21 +23,8 @@ class MyProfileScreen extends StatelessWidget {
                 padding: scaffoldPadding,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const FeedbackScreen()));
-                          },
-                          iconSize: 25,
-                          icon: const Icon(
-                            FeatherIcons.messageCircle,
-                            size: 25,
-                          )),
                       IconButton(
                           onPressed: () {
                             showDialog(

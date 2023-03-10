@@ -46,6 +46,7 @@ class _ChatBoxState extends State<ChatBox> with AutomaticKeepAliveClientMixin {
       onLongPress: () =>
           widget.onSwipe != null ? widget.onSwipe!(widget.message) : null,
       child: SwipeTo(
+        offsetDx: 0.6,
         onRightSwipe: widget.onSwipe != null
             ? () {
                 widget.onSwipe!(widget.message);
