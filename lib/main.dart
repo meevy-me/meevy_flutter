@@ -161,6 +161,7 @@ class _MyAppState extends State<MyApp> {
                     ));
           }
         } else if (isInviteLink(settings.name)) {
+          print("Hello");
           if (settings.arguments != null) {
             return MaterialPageRoute(
                 builder: (_) => InvitePage(

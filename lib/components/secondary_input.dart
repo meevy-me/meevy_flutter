@@ -109,32 +109,12 @@ class _DateInputFieldState extends State<DateInputField> {
               .caption!
               .copyWith(fontSize: 12, fontWeight: FontWeight.w600));
 
-  TextInputType textInputType = TextInputType.number;
-  TextEditingController day = TextEditingController();
-  TextEditingController month = TextEditingController();
-  TextEditingController year = TextEditingController();
-
   @override
   void initState() {
     if (widget.initialDate != null) {
-      setState(() {
-        day.text = widget.initialDate!.day.toString();
-        month.text = widget.initialDate!.month.toString();
-        year.text = widget.initialDate!.year.toString();
-      });
+      setState(() {});
     }
     super.initState();
-  }
-
-  void onChange(String value) {
-    int dayTemp = int.parse(day.text);
-    int monthTemp = int.parse(month.text);
-    int yearTemp = int.parse(year.text);
-    if (widget.selectedDate != null) {
-      setState(() {
-        widget.selectedDate!(DateTime(yearTemp, monthTemp, dayTemp));
-      });
-    }
   }
 
   @override

@@ -151,43 +151,32 @@ class _DiscoverPageState extends State<DiscoverPage>
 
   SliverAppBar _buildSliverAppbar(BuildContext context) {
     return SliverAppBar(
+      elevation: 0,
       titleSpacing: 0,
       pinned: true,
       title: Text(
         "Your Matches",
-        style: Theme.of(context).textTheme.headline4,
+        style: Theme.of(context).textTheme.headline5,
       ),
       actions: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
-          child: IconContainer(
-              onPress: () {
-                scrollController.animateTo(
-                    scrollController.position.minScrollExtent,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.linear);
-
-                _focusNode.requestFocus();
-              },
-              color: _focusNode.hasFocus
-                  ? Colors.grey.withOpacity(0.5)
-                  : Colors.grey.withOpacity(0.3),
-              size: 40,
-              icon: const Icon(
-                Icons.search,
-                color: Colors.black87,
-                size: 25,
-              )),
-        ),
         IconContainer(
             onPress: () {
-              // Navigation.push(context, screen: const MusicMapScreen());
+              scrollController.animateTo(
+                  scrollController.position.minScrollExtent,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linear);
+
+              _focusNode.requestFocus();
             },
             color: _focusNode.hasFocus
                 ? Colors.grey.withOpacity(0.5)
                 : Colors.grey.withOpacity(0.3),
             size: 40,
-            icon: SvgPicture.asset('assets/images/map-marker-three.svg'))
+            icon: const Icon(
+              Icons.search,
+              color: Colors.black87,
+              size: 25,
+            )),
       ],
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       expandedHeight: 150,

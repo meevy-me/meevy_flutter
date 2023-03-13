@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:soul_date/screens/match_detail.dart';
+import 'package:soul_date/screens/profile_detail.dart';
 import 'package:soul_date/services/profile_utils.dart';
 
 class InvitePage extends StatefulWidget {
@@ -41,7 +42,7 @@ class _InvitePageState extends State<InvitePage> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.data != null) {
-              return MatchDetail(profile: snapshot.data!);
+              return ProfileDetailScreen(profile: snapshot.data!);
             } else if (snapshot.hasError) {
               return Text(snapshot.error.toString());
             } else if (snapshot.connectionState == ConnectionState.waiting) {

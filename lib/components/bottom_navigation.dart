@@ -72,9 +72,9 @@ class _SoulBottomNavigationBarState extends State<SoulBottomNavigationBar> {
               return _BottomNavigationItem(
                 active: widget.activeIndex == 2 ? true : false,
                 child: controller.profile != null
-                    ? SoulCircleAvatar(
-                        imageUrl: controller.profile!.profilePicture.image,
+                    ? ProfileAvatar(
                         radius: 12,
+                        profileID: controller.profile!.id,
                       )
                     : null,
                 assetUrl: 'assets/images/user.svg',

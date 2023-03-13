@@ -6,6 +6,7 @@ import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/models/models.dart';
 import '../../../animations/page_transition.dart';
 import '../../../constants/constants.dart';
+import '../../profile_detail.dart';
 
 class DiscoverMatch extends StatefulWidget {
   const DiscoverMatch({
@@ -37,7 +38,7 @@ class _DiscoverMatchState extends State<DiscoverMatch>
 
         SwipeDetector(
           onSwipeRight: (offset) {
-            if (currentIndex >0) {
+            if (currentIndex > 0) {
               setState(() {
                 currentIndex -= 1;
               });
@@ -51,11 +52,11 @@ class _DiscoverMatchState extends State<DiscoverMatch>
             }
           },
           child: InkWell(
-            onTap: () => Navigation.push(context,
-                customPageTransition: PageTransition(
-                    child: MatchDetail(
-                        match: widget.match, profile: widget.match.profile),
-                    type: PageTransitionType.fromTop)),
+            onTap: () => Navigation.push(
+              context,
+              screen: ProfileDetailScreen(
+                  match: widget.match, profile: widget.match.profile),
+            ),
             child: MatchCard(
                 profile: widget.match.profile,
                 matchElement: widget.match.matches[currentIndex]),

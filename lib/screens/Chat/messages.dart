@@ -70,24 +70,6 @@ class _MessagesPageState extends State<MessagesPage>
             style: Theme.of(context).textTheme.headline5),
         // centerTitle: true,
         actions: [
-          GetBuilder<SoulController>(builder: (controller) {
-            return controller.profile != null
-                ? IconContainer(
-                    onPress: () {
-                      showModal(context, const InviteModal());
-                    },
-                    size: 40,
-                    icon: const Center(
-                      child: Icon(
-                        FeatherIcons.upload,
-                        color: Colors.black,
-                        size: 20,
-                      ),
-                    ),
-                    color: Colors.grey.withOpacity(0.2),
-                  )
-                : const LoadingPulse();
-          }),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
             child: IconContainer(

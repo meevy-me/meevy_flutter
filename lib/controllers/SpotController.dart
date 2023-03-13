@@ -36,7 +36,7 @@ class SpotController extends GetxController {
   void onInit() {
     fetchSpots();
     fetchMySpot();
-    openConnection();
+    // openConnection();
     super.onInit();
   }
 

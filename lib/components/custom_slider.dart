@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:slide_to_act/slide_to_act.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
+import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 
@@ -21,7 +24,7 @@ class SoulSlider extends StatefulWidget {
   final double? width;
   final double? height;
   final EdgeInsets? padding;
-  final Function onComplete;
+  final void Function() onComplete;
   final String defaultText;
   final Widget completedWidget;
 
@@ -41,29 +44,32 @@ class _SoulSliderState extends State<SoulSlider>
 
   @override
   Widget build(BuildContext context) {
-    return slideComplete
-        ? widget.completedWidget
-        : ConfirmationSlider(
-            onConfirmation: () {
-              widget.onComplete();
-              setState(() {
-                slideComplete = true;
-              });
-            },
-            iconColor: Theme.of(context).primaryColor,
-            foregroundColor: Theme.of(context).primaryColor,
-            shadow: BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              offset: const Offset(6.0, 6.0),
-              blurRadius: 16.0,
-            ),
-            sliderButtonContent: const Icon(
-              FontAwesomeIcons.heartCirclePlus,
-              color: Colors.white,
-            ),
-            text: "Slide to send pair request",
-            textStyle: Theme.of(context).textTheme.caption,
-          );
+    Size size = MediaQuery.of(context).size;
+    return SizedBox(
+      width: size.width,
+      height: widget.height!,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
+        child: SlideAction(
+          elevation: 0,
+          sliderRotate: false,
+          onSubmit: widget.onComplete,
+          borderRadius: 20,
+          sliderButtonIconPadding: defaultMargin,
+          innerColor: Theme.of(context).primaryColor,
+          outerColor: Colors.grey.withOpacity(0.2),
+          text: widget.defaultText,
+          textStyle: Theme.of(context)
+              .textTheme
+              .bodyText1!
+              .copyWith(color: Colors.white70),
+          sliderButtonIcon: const Icon(
+            FontAwesomeIcons.heartCirclePlus,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -71,9 +77,11 @@ class SoulSliderCheck extends StatefulWidget {
   const SoulSliderCheck({
     Key? key,
     required this.profile,
+    this.height,
   }) : super(key: key);
 
   final Profile profile;
+  final double? height;
 
   @override
   State<SoulSliderCheck> createState() => _SoulSliderCheckState();
@@ -91,47 +99,70 @@ class _SoulSliderCheckState extends State<SoulSliderCheck> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return widget.profile.id != controller.profile!.id
-        ? FutureBuilder<bool>(
-            future: _future,
-            builder: (context, snapshot) {
-              return snapshot.connectionState == ConnectionState.done
-                  ? Padding(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: defaultMargin),
-                      child: Center(
-                        child: snapshot.data != null &&
-                                snapshot.hasData &&
-                                snapshot.data!
-                            ? Text(
-                                ":( You already sent a request",
-                                style: Theme.of(context).textTheme.bodyText1,
-                              )
-                            : SoulSlider(
-                                completedWidget:
-                                    const Text("You have sent a request"),
-                                defaultText:
-                                    "Slide to match with ${widget.profile.name}",
-                                onComplete: () async {
-                                  await controller.sendRequest({
-                                    'profile2': widget.profile.id.toString()
-                                  }, context: context);
-                                },
-                              ),
-                        // child: SlideToLike(
-                        //     match: match.matched,
-                        //     onLiked: (value) {
-                        //       controller.sendRequest({'matchID': match.id.toString()},
-                        //           context: context);
-                        //     })
-                      ),
-                    )
-                  : SpinKitRing(
-                      color: Theme.of(context).primaryColor,
-                      lineWidth: 2,
-                      size: 20,
-                    );
-            })
-        : const SizedBox.shrink();
+        ? SizedBox(
+            width: size.width,
+            child: FutureBuilder<bool>(
+                future: _future,
+                builder: (context, snapshot) {
+                  return snapshot.connectionState == ConnectionState.done
+                      ? Center(
+                          child: snapshot.data != null &&
+                                  snapshot.hasData &&
+                                  snapshot.data!
+                              ? Container(
+                                  height: widget.height,
+                                  width: widget.height,
+                                  padding: const EdgeInsetsDirectional.all(16),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.done,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                )
+                              : SoulSlider(
+                                  height: widget.height,
+                                  completedWidget:
+                                      const Text("You have sent a request"),
+                                  defaultText:
+                                      "Slide to match with ${widget.profile.name}",
+                                  onComplete: () async {
+                                    await controller.sendRequest({
+                                      'profile2': widget.profile.id.toString()
+                                    }, context: context);
+
+                                    setState(() {});
+                                  },
+                                ),
+                          // child: SlideToLike(
+                          //     match: match.matched,
+                          //     onLiked: (value) {
+                          //       controller.sendRequest({'matchID': match.id.toString()},
+                          //           context: context);
+                          //     })
+                        )
+                      : LoadingPulse();
+                }),
+          )
+        : SizedBox(
+            width: size.width,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Text(
+                  "This is you. Nice :)",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(color: textBlack97),
+                ),
+              ),
+            ),
+          );
   }
 }

@@ -22,7 +22,9 @@ import 'package:soul_date/services/navigation.dart';
 import '../constants/constants.dart';
 import '../models/Spotify/base_model.dart';
 import '../models/models.dart';
+import '../services/modal.dart';
 import '../services/spotify_utils.dart';
+import 'Modals/invite_modal.dart';
 
 class ProfileTabView extends StatefulWidget {
   const ProfileTabView({
@@ -141,6 +143,14 @@ class _ProfileDetails extends StatelessWidget {
               Get.to(() => const MyImages());
             },
           ),
+          ProfileActionButton(
+            iconData: CupertinoIcons.share,
+            title: "Invite",
+            subtitle: "Invite Your friends to Meevy",
+            onTap: () {
+              showModal(context, const InviteModal());
+            },
+          ),
           // ProfileActionButton(
           //   iconData: CupertinoIcons.staroflife,
           //   title: "Top Items",
@@ -197,6 +207,7 @@ class _LikedActionButtonState extends State<_LikedActionButton> {
             title: "Liked Songs",
             child1: snapshot.data != null
                 ? RowSuper(
+                    innerDistance: -10,
                     children: snapshot.data!
                         .take(3)
                         .map((e) => SoulCircleAvatar(

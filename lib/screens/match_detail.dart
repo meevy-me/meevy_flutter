@@ -37,6 +37,7 @@ class _MatchDetailState extends State<MatchDetail> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       body: Stack(
         children: [
           SizedBox(
