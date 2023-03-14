@@ -8,13 +8,14 @@ import 'package:soul_date/components/buttons.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/pulse.dart';
-import 'package:soul_date/components/radio_container.dart';
 import 'package:soul_date/components/secondary_input.dart';
 import 'package:soul_date/components/soul_spotify_border.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/models.dart';
 import 'package:soul_date/services/spotify.dart';
+
+import '../components/gender_button.dart';
 
 class ProfileUpdate extends StatefulWidget {
   const ProfileUpdate({Key? key}) : super(key: key);
@@ -89,12 +90,71 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                   children: [
                     SizedBox(
                         width: size.width, child: _buildProfileImage(context)),
-                    const SizedBox(
-                      height: defaultMargin * 2,
-                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: defaultMargin * 2),
+                          child: Column(
+                            // crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Audience",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(color: textBlack97),
+                              ),
+                              const SizedBox(
+                                height: defaultMargin,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: GenderButton(
+                                      text: "Male",
+                                      active: target == 'M',
+                                      onPress: () {
+                                        setState(() {
+                                          target = 'M';
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: defaultMargin,
+                                  ),
+                                  Expanded(
+                                    child: GenderButton(
+                                      text: "Female",
+                                      active: target == 'F',
+                                      onPress: () {
+                                        setState(() {
+                                          target = 'F';
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: defaultMargin,
+                                  ),
+                                  Expanded(
+                                    child: GenderButton(
+                                      text: "Both",
+                                      active: target == 'A',
+                                      onPress: () {
+                                        setState(() {
+                                          target = 'A';
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
                         SecondaryTextInput(
                           label: "Display Name",
                           validator: (String? value) {
@@ -107,7 +167,7 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
                         ),
                         Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: defaultMargin * 4),
+                                vertical: defaultMargin * 3),
                             child: DateInputField(
                               selectedDate: (date) {
                                 setState(() {
@@ -154,196 +214,175 @@ class _ProfileUpdateState extends State<ProfileUpdate> {
 
   Widget _buildProfileImage(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return SizedBox(
-      width: size.width,
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    FutureBuilder<SpotifyUser?>(
-                        future: _future,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                                  ConnectionState.done &&
-                              snapshot.data != null) {
-                            return SpotifyBorder(
-                              padding:
-                                  const EdgeInsets.all(defaultPadding / 2.5),
-                              child: SoulCircleAvatar(
-                                imageUrl: snapshot.data!.image,
-                                radius: 50,
-                              ),
-                            );
-                          }
-                          return const LoadingPulse(
-                            color: spotifyGreen,
-                          );
-                        }),
-                    const Positioned(
-                      bottom: -15,
-                      right: 0,
-                      left: 0,
-                      child: IconContainer(
-                        size: 40,
-                        icon: Icon(
-                          FontAwesomeIcons.spotify,
-                          color: Colors.white,
-                          size: 25,
-                        ),
-                        color: spotifyGreen,
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            FutureBuilder<SpotifyUser?>(
+                future: _future,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done &&
+                      snapshot.data != null) {
+                    return SpotifyBorder(
+                      padding: const EdgeInsets.all(defaultPadding / 2.5),
+                      child: SoulCircleAvatar(
+                        imageUrl: snapshot.data!.image,
+                        radius: 50,
                       ),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: defaultMargin * 2,
-                ),
-                Text(
-                  soulController.profile.toString(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                Text(
-                  soulController.profile!.birthday,
+                    );
+                  }
+                  return const LoadingPulse(
+                    color: spotifyGreen,
+                  );
+                }),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+          child: Text(
+            soulController.profile.toString(),
+            style: Theme.of(context)
+                .textTheme
+                .bodyText1!
+                .copyWith(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: defaultPadding / 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                FontAwesomeIcons.cakeCandles,
+                size: 15,
+                color: textBlack97,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: defaultMargin),
+                child: Text(
+                  soulController.profile!.birthdayFormat,
                   style: Theme.of(context)
                       .textTheme
                       .caption!
                       .copyWith(fontWeight: FontWeight.w600),
-                )
-              ],
-            ),
-          ),
-          Positioned(
-            right: defaultMargin * 2,
-            child: _TargetPick(
-              selectedTarget: target,
-              onChange: (value) {
-                setState(() {
-                  target = value;
-                });
-              },
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _TargetPick extends StatefulWidget {
-  const _TargetPick({
-    Key? key,
-    required this.selectedTarget,
-    this.onChange,
-  }) : super(key: key);
-  final String selectedTarget;
-  final void Function(String value)? onChange;
-
-  @override
-  State<_TargetPick> createState() => _TargetPickState();
-}
-
-class _TargetPickState extends State<_TargetPick> {
-  late String activeTarget;
-  @override
-  void initState() {
-    activeTarget = widget.selectedTarget;
-
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Your Audience",
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-        const SizedBox(
-          height: defaultMargin,
-        ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                RadioContainer(
-                  onTap: () {
-                    if (widget.onChange != null) {
-                      widget.onChange!('M');
-                    }
-                    setState(() {
-                      activeTarget = 'M';
-                    });
-                  },
-                  active: activeTarget == 'M',
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        FontAwesomeIcons.male,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
                 ),
-                const SizedBox(
-                  height: defaultMargin * 1,
-                ),
-                RadioContainer(
-                  onTap: () {
-                    if (widget.onChange != null) {
-                      widget.onChange!('F');
-                    }
-                    setState(() {
-                      activeTarget = 'F';
-                    });
-                  },
-                  active: activeTarget == 'F',
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        FontAwesomeIcons.female,
-                        color: Colors.white,
-                      ),
-                      SizedBox(
-                        width: defaultMargin,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            RadioContainer(
-              onTap: () {
-                if (widget.onChange != null) {
-                  widget.onChange!('A');
-                }
-                setState(() {
-                  activeTarget = 'A';
-                });
-              },
-              active: activeTarget == 'A',
-              child: const Icon(
-                FontAwesomeIcons.peopleGroup,
-                color: Colors.white,
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        )
       ],
     );
   }
 }
+
+// class _TargetPick extends StatefulWidget {
+//   const _TargetPick({
+//     Key? key,
+//     required this.selectedTarget,
+//     this.onChange,
+//   }) : super(key: key);
+//   final String selectedTarget;
+//   final void Function(String value)? onChange;
+
+//   @override
+//   State<_TargetPick> createState() => _TargetPickState();
+// }
+
+// class _TargetPickState extends State<_TargetPick> {
+//   late String activeTarget;
+//   @override
+//   void initState() {
+//     activeTarget = widget.selectedTarget;
+
+//     super.initState();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           "Your Audience",
+//           style: Theme.of(context).textTheme.bodyText1,
+//         ),
+//         const SizedBox(
+//           height: defaultMargin,
+//         ),
+//         Row(
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Column(
+//               children: [
+//                 RadioContainer(
+//                   onTap: () {
+//                     if (widget.onChange != null) {
+//                       widget.onChange!('M');
+//                     }
+//                     setState(() {
+//                       activeTarget = 'M';
+//                     });
+//                   },
+//                   active: activeTarget == 'M',
+//                   child: Column(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: const [
+//                       Icon(
+//                         FontAwesomeIcons.male,
+//                         color: Colors.white,
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 const SizedBox(
+//                   height: defaultMargin * 1,
+//                 ),
+//                 RadioContainer(
+//                   onTap: () {
+//                     if (widget.onChange != null) {
+//                       widget.onChange!('F');
+//                     }
+//                     setState(() {
+//                       activeTarget = 'F';
+//                     });
+//                   },
+//                   active: activeTarget == 'F',
+//                   child: Column(
+//                     mainAxisAlignment: MainAxisAlignment.center,
+//                     children: const [
+//                       Icon(
+//                         FontAwesomeIcons.female,
+//                         color: Colors.white,
+//                       ),
+//                       SizedBox(
+//                         width: defaultMargin,
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             RadioContainer(
+//               onTap: () {
+//                 if (widget.onChange != null) {
+//                   widget.onChange!('A');
+//                 }
+//                 setState(() {
+//                   activeTarget = 'A';
+//                 });
+//               },
+//               active: activeTarget == 'A',
+//               child: const Icon(
+//                 FontAwesomeIcons.peopleGroup,
+//                 color: Colors.white,
+//               ),
+//             ),
+//           ],
+//         ),
+//       ],
+//     );
+//   }
+// }

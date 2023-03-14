@@ -5,7 +5,7 @@ import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/models/messages.dart';
 import 'package:soul_date/models/profile_model.dart';
-import 'package:soul_date/screens/Chat/chat3.dart';
+import 'package:soul_date/screens/Chat/chat.dart';
 import 'package:soul_date/services/formatting.dart';
 import 'package:soul_date/services/navigation.dart';
 import '../constants/constants.dart';

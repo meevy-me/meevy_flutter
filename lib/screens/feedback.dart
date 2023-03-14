@@ -253,6 +253,7 @@ class _FeedbackQuestion2State extends State<FeedbackQuestion2>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 230, 230, 230),
       body: Padding(
@@ -322,6 +323,7 @@ class _FeedbackQuestion3State extends State<FeedbackQuestion3>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 230, 230, 230),
       body: Padding(

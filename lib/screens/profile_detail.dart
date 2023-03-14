@@ -1,24 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
-import 'package:soul_date/animations/slide_animation.dart';
-import 'package:soul_date/components/cached_image_error.dart';
 import 'package:soul_date/components/custom_slider.dart';
-import 'package:soul_date/components/image_circle.dart';
-import 'package:soul_date/components/spotify_card.dart';
-import 'package:soul_date/components/spotify_favourite.dart';
-import 'package:soul_date/components/spotify_profile_avatar.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/screens/home/components/profile_detail_favourites.dart';
 import 'package:soul_date/services/cache.dart';
-import 'package:soul_date/services/spotify.dart';
 
 import '../components/pulse.dart';
-import '../models/SpotifySearch/spotify_favourite_item.dart';
 import '../models/models.dart';
 import 'home/components/profile_detail_method_selector.dart';
 import 'home/components/profile_image_widget.dart';

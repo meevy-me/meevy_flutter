@@ -12,7 +12,7 @@ import 'package:soul_date/models/models.dart';
 import 'package:soul_date/screens/invite_page.dart';
 import 'package:soul_date/screens/send_spot_screen.dart';
 import 'package:soul_date/screens/splash_screen.dart';
-import 'package:soul_date/services/notifications.dart';
+import 'package:soul_date/services/meevy_notification_manager.dart';
 import 'package:soul_date/show_data_argument.dart';
 import 'package:soul_date/theme/theme.dart';
 
@@ -21,7 +21,7 @@ import 'init_data.dart';
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 
-  NotificationApi.showNotification(
+  MeevyNotificationManager.showNotification(
       id: message.notification.hashCode,
       title: message.notification?.title,
       body: message.notification?.body);
@@ -59,9 +59,12 @@ void main() async {
   Hive.registerAdapter(ProfileImagesAdapter());
   Hive.openBox<Profile>('profile');
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  MeevyNotificationManager.initialize();
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    NotificationApi.showNotification(
-        title: message.notification!.title, body: message.notification!.body);
+    MeevyNotificationManager.showNotification(
+        id: 0,
+        title: message.notification!.title,
+        body: message.notification!.body);
   });
 
   if (!kIsWeb) {
@@ -161,7 +164,6 @@ class _MyAppState extends State<MyApp> {
                     ));
           }
         } else if (isInviteLink(settings.name)) {
-          print("Hello");
           if (settings.arguments != null) {
             return MaterialPageRoute(
                 builder: (_) => InvitePage(

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_detector/flutter_swipe_detector.dart';
 import 'package:soul_date/components/match_card.dart';
-import 'package:soul_date/screens/match_detail.dart';
 import 'package:soul_date/services/navigation.dart';
 import 'package:soul_date/models/models.dart';
-import '../../../animations/page_transition.dart';
 import '../../../constants/constants.dart';
 import '../../profile_detail.dart';
 
@@ -23,7 +21,6 @@ class DiscoverMatch extends StatefulWidget {
 class _DiscoverMatchState extends State<DiscoverMatch>
     with AutomaticKeepAliveClientMixin<DiscoverMatch> {
   int currentIndex = 0;
-  final PageController _pageController = PageController();
   @override
   void initState() {
     super.initState();

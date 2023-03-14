@@ -30,7 +30,6 @@ class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController();
   int selectedIndex = 0;
 
-  bool _showModal = false;
   String link = '';
 
   List<Widget> pages = const [

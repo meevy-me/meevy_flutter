@@ -11,7 +11,7 @@ import 'package:soul_date/constants/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:soul_date/screens/datafetch.dart';
 import 'package:soul_date/screens/password.dart';
-import 'package:soul_date/screens/profile.dart';
+import 'package:soul_date/screens/profile_create.dart';
 import 'package:soul_date/screens/reset_code_Screen.dart';
 import 'package:soul_date/services/analytics.dart';
 import 'package:soul_date/services/network.dart';
@@ -94,40 +94,60 @@ class SpotifyController extends GetxController {
     if (context != null) {
       context.loaderOverlay.show();
     }
-    http.Response response = await client.post(endpoint, body: body);
-    if (response.statusCode <= 210) {
-      Map json = jsonDecode(response.body);
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String firebaseToken = json['firebase_token'];
-      preferences.setString('token', json['token']);
-      preferences.setString('firebase_token', firebaseToken);
-      // preferences.setString('spotify_accesstoken', spotify.accessToken);
-      // preferences.setString('spotify_refreshtoken', spotify.refreshToken);
-      await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
+    try {
+      http.Response response = await client.post(endpoint, body: body);
+      if (response.statusCode <= 210) {
+        Map json = jsonDecode(response.body);
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        String firebaseCustomToken = json['firebase_token'];
+        Map<String, dynamic> firebaseAuthDetails = json['firebase'];
 
-      if (body.containsKey('email')) {
-        if (context != null) _showSnackBar("Success. Create Profile", context);
-        Get.to(() => const ProfileCreatePage());
-      } else {
-        if (json['profile'] != null) {
-          if (context != null) _showSnackBar("Success. Welcome back", context);
+        String firebaseAccessToken = firebaseAuthDetails['idToken'];
+        String firebaseRefreshToken = firebaseAuthDetails['refreshToken'];
+        preferences.setString('token', json['token']);
+        preferences.setString('firebase_access_token', firebaseAccessToken);
+        preferences.setString('firebase_refresh_token', firebaseRefreshToken);
+        preferences.setString('firebase_custom_token', firebaseCustomToken);
 
-          Get.to(() => const DataFetchPage());
-        } else {
+        await FirebaseAuth.instance.signInWithCustomToken(firebaseCustomToken);
+
+        if (FirebaseAuth.instance.currentUser != null) {
+          FirebaseAuth.instance.currentUser!.getIdToken(true);
+        }
+
+        if (body.containsKey('email')) {
           if (context != null) {
             _showSnackBar("Success. Create Profile", context);
           }
-
           Get.to(() => const ProfileCreatePage());
+        } else {
+          if (json['profile'] != null) {
+            if (context != null) {
+              _showSnackBar("Success. Welcome back", context);
+            }
+
+            Get.to(() => const DataFetchPage());
+          } else {
+            if (context != null) {
+              _showSnackBar("Success. Create Profile", context);
+            }
+
+            Get.to(() => const ProfileCreatePage());
+          }
         }
+      } else {
+        if (context != null) {
+          context.loaderOverlay.hide();
+        }
+        log(response.body, name: "LOGIN ERROR");
+        errors = json.decode(response.body);
+        update(["Login_errors"]);
       }
-    } else {
+    } catch (e) {
       if (context != null) {
         context.loaderOverlay.hide();
+        showSnackBar(context, "An error has occured");
       }
-      log(response.body, name: "LOGIN ERROR");
-      errors = json.decode(response.body);
-      update(["Login_errors"]);
     }
   }
 

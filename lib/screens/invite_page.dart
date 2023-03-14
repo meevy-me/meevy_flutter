@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/models/models.dart';
-import 'package:soul_date/screens/match_detail.dart';
 import 'package:soul_date/screens/profile_detail.dart';
 import 'package:soul_date/services/profile_utils.dart';
 
