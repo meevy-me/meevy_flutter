@@ -44,6 +44,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "762432045224-5s8nmq6cgt0cnvsabdsb9mp8l755ahq4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.meevy.io",
+            "certificate_hash": "cf499ae8371f6a23aa49163634db61a417800958"
+          }
+        },
+        {
           "client_id": "762432045224-aebkbrl1tvvgp60ko7m08pnqk5r2oata.apps.googleusercontent.com",
           "client_type": 3
         }
