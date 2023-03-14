@@ -78,6 +78,10 @@ class Profile extends HiveObject {
     return DateFormat("dd-MM-yyy").format(dateOfBirth);
   }
 
+  String get birthdayFormat {
+    return DateFormat.MMMMd().format(dateOfBirth);
+  }
+
   @override
   String toString() {
     return name;

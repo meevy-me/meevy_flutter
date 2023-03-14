@@ -8,6 +8,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:soul_date/components/appbar.dart';
 import 'package:soul_date/components/authfield.dart';
 import 'package:soul_date/components/buttons.dart';
+import 'package:soul_date/components/gender_button.dart';
 import 'package:soul_date/components/pulse.dart';
 import 'package:soul_date/constants/constants.dart';
 import 'package:soul_date/controllers/AuthController.dart';
@@ -227,36 +228,6 @@ class __ProfileCreatePageBodyState extends State<_ProfileCreatePageBody> {
           )
         ],
       ),
-    );
-  }
-}
-
-class GenderButton extends StatelessWidget {
-  const GenderButton({
-    Key? key,
-    required this.text,
-    required this.onPress,
-    this.active = false,
-  }) : super(key: key);
-  final String text;
-  final void Function() onPress;
-  final bool active;
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPress,
-      child: AnimatedContainer(
-          height: 40,
-          duration: const Duration(milliseconds: 300),
-          decoration: BoxDecoration(
-              color: active ? Theme.of(context).primaryColor : Colors.grey,
-              borderRadius: BorderRadius.circular(10)),
-          child: Center(
-              child: Text(
-            text,
-            style: const TextStyle(
-                fontWeight: FontWeight.w600, color: Colors.white),
-          ))),
     );
   }
 }

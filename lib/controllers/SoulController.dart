@@ -86,6 +86,9 @@ class SoulController extends GetxController {
 
     if (firebaseToken != null) {
       FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
+      if (FirebaseAuth.instance.currentUser != null) {
+        FirebaseAuth.instance.currentUser!.getIdToken(true);
+      }
     }
   }
 

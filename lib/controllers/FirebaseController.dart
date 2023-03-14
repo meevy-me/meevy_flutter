@@ -1,15 +1,15 @@
-import 'dart:developer';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:get/get.dart';
-
-import '../services/notifications.dart';
+import 'package:soul_date/services/meevy_notification_manager.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class FirebaseController extends GetxController {
   @override
   void onInit() async {
     handleMessage();
+    scheduleNotification();
     super.onInit();
   }
 
@@ -23,9 +23,18 @@ class FirebaseController extends GetxController {
       //   hasChat = true;
       //   update(['hasChat']);
       // }
-      log(message.notification!.title!);
-      NotificationApi.showNotification(
-          title: message.notification!.title, body: message.notification!.body);
+      MeevyNotificationManager.showNotification(
+          id: 0,
+          title: message.notification!.title,
+          body: message.notification!.body);
     });
+  }
+
+  scheduleNotification() async {
+    tz.TZDateTime tzDateTime = MeevyNotificationManager.nextInstanceOfDate(
+        time: const Time(18, 0, 0), duration: const Duration(days: 1));
+
+    MeevyNotificationManager.scheduleNotification(
+        0, "Song Remainder", "Dont Forget To Send Them A Song", tzDateTime);
   }
 }
