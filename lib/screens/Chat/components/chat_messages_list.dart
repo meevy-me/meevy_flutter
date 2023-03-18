@@ -56,13 +56,15 @@ class _ChatMessagesListState extends State<ChatMessagesList> {
                 itemBuilder: (context, index) {
                   var docs = snapshot.data!.docs;
                   var data = docs[index].data() as Map<String, dynamic>;
+                  Message _msg = Message.fromJson(data);
+
                   return ChatBox(
                     mine:
-                        widget.friend.currentProfile == soulController.profile!,
+                        _msg.sender == soulController.profile!.user.id,
                     key: UniqueKey(),
                     friends: widget.friend,
                     profile: widget.friend.friendsProfile,
-                    message: Message.fromJson(data),
+                    message: _msg,
                     width: size.width * 0.65,
                     onSwipe: ((message) {
                       if (widget.repliedMessage != null) {

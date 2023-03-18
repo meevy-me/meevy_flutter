@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:soul_date/animations/animations.dart';
 import 'package:soul_date/components/image_circle.dart';

@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_date/animations/animations.dart';
-import 'package:soul_date/components/Modals/invite_modal.dart';
 import 'package:soul_date/components/icon_container.dart';
 import 'package:soul_date/components/image_circle.dart';
 import 'package:soul_date/components/pulse.dart';
@@ -15,10 +14,8 @@ import 'package:soul_date/controllers/MessagesController.dart';
 import 'package:soul_date/controllers/SoulController.dart';
 import 'package:soul_date/controllers/SpotController.dart';
 import 'package:collection/collection.dart';
-import 'package:soul_date/models/spotify_spot_details.dart';
 import 'package:soul_date/screens/friends/friends.dart';
 import 'package:soul_date/screens/my_spot_screen.dart';
-import 'package:soul_date/services/modal.dart';
 import 'package:soul_date/services/navigation.dart';
 
 import '../../models/models.dart';
